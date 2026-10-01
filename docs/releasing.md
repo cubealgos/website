@@ -22,7 +22,7 @@ section; a tag with a `-suffix` is marked pre-release) with two assets:
 - `site-vX.Y.Z.tar.gz.sha256`: `<hash>  site-vX.Y.Z.tar.gz`, verify with
   `shasum -a 256 -c site-vX.Y.Z.tar.gz.sha256`.
 
-The workflow does not check which branch the tag is on: tag only on `production`.
+The workflow refuses a tag whose commit is not on `production`, so a stray tag on another branch fails instead of publishing a release.
 
 ## Reproducibility
 

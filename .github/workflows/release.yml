@@ -21,6 +21,17 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      # A tag push can't be limited to a branch, so check it here: a release
+      # is only ever cut from a commit that is on production.
+      - name: Refuse a tag that is not on production
+        run: |
+          git fetch --no-tags origin production
+          if ! git merge-base --is-ancestor "$GITHUB_SHA" origin/production; then
+            echo "::error::$GITHUB_REF_NAME points at $GITHUB_SHA, which is not on production. Tag releases on production only (docs/releasing.md)."
+            exit 1
+          fi
       - uses: ./.github/actions/setup
       - name: Build the static site
         run: dart run tool/build.dart
