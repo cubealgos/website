@@ -14,3 +14,4 @@
 - UI motion, "Draw, then press": button press and hover, the amber underline drawn once, text rise with stagger, and the home sting once per session (still under reduced motion), all from the brand tokens; CI rejects duration/easing literals and non-`transform`/`opacity` animation, and `browser_check` covers the motion behaviour in headless Chrome (#9).
 - Home page, EN and DE: hero with the idle fish, two lanes, offers, workflow, care, FAQ with matching `FAQPage` JSON-LD and a closing call to action, all from one copy data file per page and tested against the built output (#10).
 - About page, EN and DE: who I am, why one person, how I work, where, with the idle fish in a figure slot a photo can replace (#11).
+- Contact page, EN and DE: mailto only with no form, script or tracking, what to put in the first email, what happens next and the company details (#12).

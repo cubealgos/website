@@ -5,6 +5,7 @@ import 'package:jaspr/server.dart';
 import 'package:website/src/chrome.dart';
 import 'package:website/src/page_meta.dart';
 import 'package:website/src/pages/about_page.dart';
+import 'package:website/src/pages/contact_page.dart';
 import 'package:website/src/pages/home_page.dart';
 import 'package:website/src/routes.dart';
 
@@ -70,6 +71,8 @@ class PageShell extends StatelessComponent {
             HomePage(lang: lang)
           else if (pageKey == PageKey.about)
             AboutPage(lang: lang)
+          else if (pageKey == PageKey.contact)
+            ContactPage(lang: lang)
           else
             div(classes: 'wrap', [
               h1(classes: 'rise', [Component.text(meta.h1)]),
