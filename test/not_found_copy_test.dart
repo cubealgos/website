@@ -69,7 +69,7 @@ void main() {
       test('is noindex, with no canonical or hreflang', () {
         expect(html, contains('<meta name="robots" content="noindex"/>'));
         expect(html, isNot(contains('rel="canonical"')));
-        expect(html, isNot(contains('hreflang="en" href')));
+        expect(html, isNot(contains('rel="alternate"')));
       });
     });
   }

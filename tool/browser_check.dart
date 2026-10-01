@@ -10,7 +10,7 @@
 //    focus to <main>, tab order = document order, a 2px focus ring in the
 //    focus token on every stop) in light and dark;
 //  * the language switch on every page lands on the same page in the other
-//    language;
+//    language (on the 404 pages: on the home page of the other language);
 //  * UI motion: the sting plays once per session on the home pages only (a
 //    new tab is a new session), uses the theme's background, and is replaced
 //    by its still under reduced motion (a second Chrome started with
@@ -199,7 +199,7 @@ Future<void> main(List<String> args) async {
       await loaded;
       final path = await page.eval('location.pathname');
       final lang = await page.eval('document.documentElement.lang');
-      final want = pathFor(r.key, r.lang.other);
+      final want = switchPath(r.key, r.lang.other);
       if (path != want || lang != r.lang.other.code) {
         failures.add(
           'language switch: ${pathFor(r.key, r.lang)} -> $path ($lang), '
