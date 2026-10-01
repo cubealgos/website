@@ -74,6 +74,10 @@ void main() {
         expect(RegExp('<title>(.*?)</title>').firstMatch(html)![1], meta.title);
       });
 
+      test('no <base> element: in-page links stay on the page', () {
+        expect(html, isNot(contains('<base')));
+      });
+
       test('the offers anchor exists and the secondary CTA targets it', () {
         expect(html, contains('id="offers"'));
         expect(html, contains('href="#offers"'));
