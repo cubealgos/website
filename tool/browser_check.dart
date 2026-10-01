@@ -17,7 +17,8 @@
 //    background and is replaced by its still under reduced motion (a second
 //    Chrome started with
 //    `--force-prefers-reduced-motion`); durations and easings are the tokens;
-//    only transform and opacity animate; button press and hover.
+//    only transform, opacity and the underline's background-size animate;
+//    button press and hover.
 //
 // `--screenshots <dir>` also writes the content pages EN/DE at 375 and 1280,
 // light and dark.
@@ -402,9 +403,9 @@ const _motionProbe = '''
     riseName: css(rise, 'animationName'),
     riseDuration: css(rise, 'animationDuration'),
     riseEasing: css(rise, 'animationTimingFunction'),
-    markName: css(mark, 'animationName', '::after'),
-    markDuration: css(mark, 'animationDuration', '::after'),
-    markEasing: css(mark, 'animationTimingFunction', '::after'),
+    markName: css(mark, 'animationName'),
+    markDuration: css(mark, 'animationDuration'),
+    markEasing: css(mark, 'animationTimingFunction'),
     pressDuration: css(btn, 'transitionDuration'),
     pressEasing: css(btn, 'transitionTimingFunction'),
     hoverDuration: css(btn, 'transitionDuration', '::before'),
@@ -515,7 +516,7 @@ Future<List<String>> _motionChecks(
 
   if (reduced) return out;
 
-  // Tokens on the real elements, transform/opacity only, stagger, press, hover.
+  // Tokens on the real elements, transform/opacity (and background-size), stagger, press, hover.
   final page = await session();
   await page.goto('$base${pathFor(PageKey.home, Lang.en)}');
   final p = await page.evalMap(_motionProbe);
@@ -547,7 +548,7 @@ Future<List<String>> _motionChecks(
     _seconds(_token('--duration-instant')),
   );
   expectEq('hover easing', p['hoverEasing'], _bezier(_token('--ease-out')));
-  if ('${p['animatedProps']}' != '[opacity, transform]') {
+  if ('${p['animatedProps']}' != '[backgroundSize, opacity, transform]') {
     out.add('motion: animated properties ${p['animatedProps']}');
   }
   if (!(p['animations']! as int > 0)) out.add('motion: nothing animates');
