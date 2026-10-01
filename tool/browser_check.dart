@@ -207,6 +207,10 @@ Future<void> main(List<String> args) async {
       await calm.close();
     }
 
+    // 6. The favicon set loads without a 404 and the SVG mark switches to
+    // paper in a dark browser theme.
+    failures.addAll(await _iconChecks(page, base));
+
     // 5. Screenshots for review (optional).
     if (shots != null) {
       for (final lang in Lang.values) {
@@ -242,6 +246,78 @@ Future<void> main(List<String> args) async {
     'browser_check: ${all.length} pages x ${_widths.length} widths, '
     'keyboard walkthrough, language switch ok.',
   );
+}
+
+// --- Icons -------------------------------------------------------------------
+
+const _iconProbe = '''
+(async () => {
+  const out = [];
+  const hrefs = [...document.querySelectorAll(
+    'link[rel~="icon"],link[rel="apple-touch-icon"],link[rel="manifest"]')]
+    .map(l => l.href);
+  for (const href of hrefs) {
+    const r = await fetch(href);
+    out.push(href + ' ' + r.status);
+  }
+  const m = await (await fetch(document.querySelector(
+    'link[rel="manifest"]').href)).json();
+  for (const i of m.icons) {
+    const r = await fetch(i.src);
+    out.push(new URL(i.src, location.href).href + ' ' + r.status);
+  }
+  return out;
+})()
+''';
+
+const _svgPixel = '''
+new Promise((resolve, reject) => {
+  const img = new Image();
+  img.onload = () => {
+    const c = document.createElement('canvas');
+    c.width = 64; c.height = 64;
+    const x = c.getContext('2d');
+    x.drawImage(img, 0, 0, 64, 64);
+    const d = x.getImageData(4, 4, 1, 1).data;
+    resolve([d[0], d[1], d[2], d[3]]);
+  };
+  img.onerror = () => reject(new Error('favicon.svg did not load'));
+  img.src = '/brand/favicon/favicon.svg';
+})
+''';
+
+Future<List<String>> _iconChecks(ChromePage page, String base) async {
+  final failures = <String>[];
+  await page.setViewport(1280, 800);
+  await page.setMedia();
+  for (final r in [
+    (key: PageKey.home, lang: Lang.en),
+    (key: PageKey.impressum, lang: Lang.de),
+  ]) {
+    await page.goto('$base${pathFor(r.key, r.lang)}');
+    final results = (await page.eval(_iconProbe))! as List<dynamic>;
+    if (results.length < 8) {
+      failures.add('icons: ${pathFor(r.key, r.lang)}: only $results');
+    }
+    for (final line in results) {
+      if (!'$line'.endsWith(' 200')) failures.add('icons: $line');
+    }
+  }
+  // The mark is ink in a light theme and paper in a dark one.
+  for (final dark in [false, true]) {
+    await page.setMedia(dark: dark);
+    await page.goto('$base/');
+    final px = (await page.eval(_svgPixel))! as List<dynamic>;
+    final want = dark ? [0xED, 0xEE, 0xF1, 255] : [0x16, 0x18, 0x1D, 255];
+    if ('$px' != '$want') {
+      failures.add(
+        'favicon.svg ${dark ? 'dark' : 'light'}: pixel $px, '
+        'expected $want',
+      );
+    }
+  }
+  await page.setMedia();
+  return failures;
 }
 
 // --- UI motion ---------------------------------------------------------------

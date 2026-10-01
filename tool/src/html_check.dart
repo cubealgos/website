@@ -4,6 +4,7 @@
 /// links, fragments, foreign hosts (also in CSS) and the sitemap.
 library;
 
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:path/path.dart' as p;
@@ -84,9 +85,11 @@ List<Finding> checkSite(Directory buildDir) {
   final findings = <Finding>[];
   for (final page in pages.values) {
     _checkHead(page, findings);
+    _checkIcons(page, root, findings);
     _checkLinks(page, root, pages, findings);
   }
   _checkSitemap(root, pages, findings);
+  _checkManifest(root, findings);
   _checkThirdParty(buildDir, findings);
   _checkSiteStyles(buildDir, findings);
   return findings;
@@ -118,6 +121,61 @@ void _checkHead(_Page page, List<Finding> out) {
     (t) => t.attrs['rel'] == 'canonical' && (t.attrs['href'] ?? '').isNotEmpty,
   );
   if (!canonical) add('canonical', 'missing or empty canonical link');
+}
+
+bool _exists(String root, String urlPath) {
+  if (!urlPath.startsWith('/')) return false;
+  return File(p.join(root, urlPath.substring(1))).existsSync();
+}
+
+/// Every page links the SVG icon, the `.ico` fallback, the apple-touch icon
+/// and the manifest, and each linked file is in the build.
+void _checkIcons(_Page page, String root, List<Finding> out) {
+  void add(String msg) => out.add(Finding('icons', page.path, msg));
+  final links = page.named('link').toList();
+  Iterable<_Tag> rel(String r) => links.where(
+    (t) => (t.attrs['rel'] ?? '').split(RegExp(r'\s+')).contains(r),
+  );
+  final wanted = <String, _Tag?>{
+    'icon (image/svg+xml)': rel('icon')
+        .where((t) => t.attrs['type'] == 'image/svg+xml')
+        .firstOrNull,
+    'icon (.ico fallback)': rel('icon')
+        .where((t) => (t.attrs['href'] ?? '').endsWith('.ico'))
+        .firstOrNull,
+    'apple-touch-icon': rel('apple-touch-icon').firstOrNull,
+    'manifest': rel('manifest').firstOrNull,
+  };
+  for (final e in wanted.entries) {
+    final href = e.value?.attrs['href'] ?? '';
+    if (href.isEmpty) {
+      add('missing link ${e.key}');
+    } else if (!_exists(root, href)) {
+      add('link ${e.key} points at $href, not in the build');
+    }
+  }
+}
+
+/// `site.webmanifest` exists, names the site and lists icons that exist.
+void _checkManifest(String root, List<Finding> out) {
+  void add(String msg) => out.add(Finding('icons', 'site.webmanifest', msg));
+  final file = File(p.join(root, 'site.webmanifest'));
+  if (!file.existsSync()) {
+    add('missing site.webmanifest');
+    return;
+  }
+  try {
+    final json = jsonDecode(file.readAsStringSync()) as Map<String, dynamic>;
+    if ((json['name'] ?? '') == '') add('manifest has no name');
+    final icons = (json['icons'] as List?) ?? const [];
+    if (icons.isEmpty) add('manifest lists no icons');
+    for (final icon in icons) {
+      final src = (icon as Map)['src'] as String? ?? '';
+      if (!_exists(root, src)) add('manifest icon $src not in the build');
+    }
+  } on Object catch (e) {
+    add('unreadable manifest: $e');
+  }
 }
 
 Iterable<String> _refs(_Tag tag) sync* {
