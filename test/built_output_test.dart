@@ -298,10 +298,7 @@ void main() {
     }
 
     test('only the English page says the German text is authoritative', () {
-      expect(
-        read('/datenschutz/'),
-        isNot(contains('legally authoritative')),
-      );
+      expect(read('/datenschutz/'), isNot(contains('legally authoritative')));
     });
 
     test('title and description are as specified', () {
