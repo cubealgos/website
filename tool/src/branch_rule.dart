@@ -23,10 +23,16 @@ final branchNamePattern = RegExp(
   r'[0-9]+-[a-z0-9]+(-[a-z0-9]+)*$',
 );
 
+/// Release branches may carry the version as their slug:
+/// `release/<N>-<X.Y.Z>` (docs/releasing.md). The release family only.
+final releaseBranchPattern = RegExp(r'^release/[0-9]+-[0-9]+\.[0-9]+\.[0-9]+$');
+
 /// Returns an error message for a non-conforming [branch], or `null`.
 String? validateBranchName(String branch) {
   if (longLivedBranches.contains(branch)) return null;
   if (branchNamePattern.hasMatch(branch)) return null;
+  if (releaseBranchPattern.hasMatch(branch)) return null;
   return 'Branch "$branch" does not match <family>/<N>-<slug> '
-      '(family one of ${branchFamilies.join(', ')}).';
+      '(family one of ${branchFamilies.join(', ')}) '
+      'or release/<N>-<X.Y.Z>.';
 }

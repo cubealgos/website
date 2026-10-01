@@ -44,6 +44,8 @@ void main() {
         'production',
         'feature/4-jaspr-scaffold',
         'hotfix/10-x',
+        'release/30-0.1.0',
+        'release/14-1.0.0',
       ]) {
         expect(validateBranchName(b), isNull, reason: b);
       }
@@ -52,6 +54,19 @@ void main() {
       for (final b in ['main', 'feature/no-number', 'wip/4-x', 'chore/4-Big']) {
         expect(validateBranchName(b), isNotNull, reason: b);
       }
+    });
+    test('rejects version slugs outside release/<N>-<X.Y.Z>', () {
+      for (final b in [
+        'feature/14-1.0.0',
+        'release/14-1.0',
+        'release/14-v1.0.0',
+        'release/14-1.0.0.0',
+      ]) {
+        expect(validateBranchName(b), isNotNull, reason: b);
+      }
+    });
+    test('error message names the release shape', () {
+      expect(validateBranchName('main'), contains('release/<N>-<X.Y.Z>'));
     });
   });
 }
