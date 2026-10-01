@@ -60,17 +60,15 @@ void main() {
         expect(html, isNot(contains('href="tel:')));
       });
 
-      test('no form, no input, no script', () {
-        for (final tag in [
-          '<form',
-          '<input',
-          '<textarea',
-          '<button',
-          '<script',
-        ]) {
+      test('no form, no input, only the reveal script', () {
+        for (final tag in ['<form', '<input', '<textarea', '<button']) {
           expect(html, isNot(contains(tag)), reason: tag);
         }
         expect(html, isNot(contains('action=')));
+        // The only script is the same-origin scroll reveal, nothing inline.
+        expect(RegExp('<script[^>]*>').allMatches(html).map((m) => m[0]), [
+          '<script src="/reveal.js">',
+        ]);
       });
     });
   }
