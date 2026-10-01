@@ -4,6 +4,8 @@ import 'package:jaspr/dom.dart';
 import 'package:jaspr/server.dart';
 import 'package:website/src/chrome.dart';
 import 'package:website/src/icons.dart';
+import 'package:website/src/legal_content.dart';
+import 'package:website/src/legal_view.dart';
 import 'package:website/src/page_meta.dart';
 import 'package:website/src/routes.dart';
 
@@ -77,12 +79,15 @@ class PageShell extends StatelessComponent {
         id: mainId,
         attributes: const {'tabindex': '-1'},
         [
-          div(classes: 'wrap', [
-            if (pageKey == PageKey.home)
-              Hero(headline: meta.h1)
-            else
-              h1(classes: 'rise', [Component.text(meta.h1)]),
-          ]),
+          if (legalDocs[pageKey]?[lang] case final doc?)
+            LegalPage(heading: meta.h1, doc: doc)
+          else
+            div(classes: 'wrap', [
+              if (pageKey == PageKey.home)
+                Hero(headline: meta.h1)
+              else
+                h1(classes: 'rise', [Component.text(meta.h1)]),
+            ]),
         ],
       ),
       SiteFooter(pageKey: pageKey, lang: lang),

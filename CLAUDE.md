@@ -1,8 +1,9 @@
 # CLAUDE.md — website
 
 Cube Algos' public website (cubealgos.de): a Jaspr **static** site, English at the root and
-German under `/de/`. Public repo: no secrets, no phone numbers, no tax IDs, nothing beyond the
-company name, registered address and `hello@cubealgos.de` (see `NOTICE`).
+German under `/de/`. Public repo: no secrets and no personal data beyond the legal facts the Impressum
+publishes by law (`lib/src/legal_facts.dart`: company, address, managing director, register,
+VAT ID, email, phone) (see `NOTICE`).
 
 ## Read this before you do that
 
