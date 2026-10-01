@@ -137,9 +137,9 @@ Future<void> main(List<String> args) async {
     for (final dark in [false, true]) {
       await page.setMedia(dark: dark);
       for (final r in [
-        (key: PageKey.home, lang: Lang.en),
-        (key: PageKey.about, lang: Lang.en),
-        (key: PageKey.contact, lang: Lang.de),
+        (key: PageKey.home, lang: Lang.de),
+        (key: PageKey.about, lang: Lang.de),
+        (key: PageKey.contact, lang: Lang.en),
       ]) {
         final where = '${pathFor(r.key, r.lang)} (${dark ? 'dark' : 'light'})';
         await page.goto('$base${pathFor(r.key, r.lang)}');
@@ -246,16 +246,16 @@ Future<void> main(List<String> args) async {
     }
 
     // 4b. Unknown paths: the server falls back to the 404 page of the path's
-    // language (English, or German below /de/), from any depth, and the page
+    // language (German, or English below /en/), from any depth, and the page
     // renders with its styles and fish.
     for (final probe in [
-      (path: '/xyz', h1: 'This page swam off.'),
-      (path: '/some/deep/missing/path', h1: 'This page swam off.'),
-      (path: '/de/xyz', h1: 'Diese Seite ist davongeschwommen.'),
+      (path: '/xyz', h1: 'Diese Seite ist davongeschwommen.'),
       (
-        path: '/de/some/deep/missing/path',
+        path: '/some/deep/missing/path',
         h1: 'Diese Seite ist davongeschwommen.',
       ),
+      (path: '/en/xyz', h1: 'This page swam off.'),
+      (path: '/en/some/deep/missing/path', h1: 'This page swam off.'),
     ]) {
       await page.setViewport(1280, 800);
       await page.goto('$base${probe.path}');
@@ -439,8 +439,8 @@ Future<List<String>> _iconChecks(ChromePage page, String base) async {
   await page.setViewport(1280, 800);
   await page.setMedia();
   for (final r in [
-    (key: PageKey.home, lang: Lang.en),
-    (key: PageKey.impressum, lang: Lang.de),
+    (key: PageKey.home, lang: Lang.de),
+    (key: PageKey.impressum, lang: Lang.en),
   ]) {
     await page.goto('$base${pathFor(r.key, r.lang)}');
     final results = (await page.eval(_iconProbe))! as List<dynamic>;
@@ -674,7 +674,7 @@ Future<List<String>> _motionChecks(
 
   // Tokens on the real elements, transform/opacity (and background-size), stagger, press, hover.
   final page = await session();
-  await page.goto('$base${pathFor(PageKey.home, Lang.en)}');
+  await page.goto('$base${pathFor(PageKey.home, Lang.de)}');
   final p = await page.evalMap(_motionProbe);
   void expectEq(String what, Object? got, Object want) {
     if (got != want) out.add('motion: $what is $got, expected $want');

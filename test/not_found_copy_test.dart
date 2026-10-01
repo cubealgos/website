@@ -30,7 +30,7 @@ void main() {
       test('is emitted at the flat path and shows exactly the copy', () {
         expect(
           pathFor(PageKey.notFound, lang),
-          lang == Lang.en ? '/404.html' : '/de/404.html',
+          lang == Lang.de ? '/404.html' : '/en/404.html',
         );
         expect(mainBlocks(html), [
           c.headline,
@@ -46,7 +46,7 @@ void main() {
       });
 
       test('links home and to mailto, all URLs root-absolute', () {
-        final home = lang == Lang.en ? '/' : '/de/';
+        final home = lang == Lang.de ? '/' : '/en/';
         expect(html, contains('href="$home"'));
         expect(html, contains('href="mailto:hello@cubealgos.de"'));
         for (final m in RegExp(r'\b(?:href|src)="([^"]*)"').allMatches(html)) {

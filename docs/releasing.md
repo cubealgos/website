@@ -17,7 +17,7 @@ tag, refuses a tag that is not `vX.Y.Z` or does not equal the `pubspec.yaml` ver
 non-empty `CHANGELOG.md` section, then creates the GitHub release (notes = that CHANGELOG
 section; a tag with a `-suffix` is marked pre-release) with two assets:
 
-- `site-vX.Y.Z.tar.gz`: the contents of `build/jaspr/` at the top level (`index.html`, `de/`,
+- `site-vX.Y.Z.tar.gz`: the contents of `build/jaspr/` at the top level (`index.html`, `en/`,
   `brand/`, `fonts/`, ...), so it unpacks straight into a versioned directory.
 - `site-vX.Y.Z.tar.gz.sha256`: `<hash>  site-vX.Y.Z.tar.gz`, verify with
   `shasum -a 256 -c site-vX.Y.Z.tar.gz.sha256`.

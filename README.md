@@ -1,7 +1,7 @@
 # website
 
 Cube Algos' public website (cubealgos.de): a [Jaspr](https://jaspr.site) static site in Dart,
-English by default at the root and German under `/de/`. Hosting is plain static files, so the
+German by default at the root and English under `/en/`. Hosting is plain static files, so the
 build output is just files. The scaffold itself arrives in #4; this file is kept current as it
 lands.
 
@@ -60,16 +60,16 @@ licence fails. Recorded exceptions and hand-verified detection gaps are printed 
 `lib/src/routes.dart` is the single route table. Every page exists in both languages; the
 language switch, hreflang alternates and canonical URLs all derive from it.
 
-| page | English | German |
+| page | German | English |
 | --- | --- | --- |
-| Home | `/` | `/de/` |
-| About | `/about/` | `/de/ueber-mich/` |
-| Contact | `/contact/` | `/de/kontakt/` |
-| Impressum | `/impressum/` | `/de/impressum/` |
-| Datenschutz | `/datenschutz/` | `/de/datenschutz/` |
-| 404 | `/404.html` | `/de/404.html` |
+| Home | `/` | `/en/` |
+| About | `/ueber-cube-algos/` | `/en/about/` |
+| Contact | `/kontakt/` | `/en/contact/` |
+| Impressum | `/impressum/` | `/en/impressum/` |
+| Datenschutz | `/datenschutz/` | `/en/datenschutz/` |
+| 404 | `/404.html` | `/en/404.html` |
 
-Home, About, Contact and the 404 pages carry their content (copy as data in `lib/src/copy/`, tested against the built pages); Impressum and Datenschutz are still shells. The 404 pages are `noindex`, outside the sitemap and use root-absolute URLs only, so the server can answer any unknown path with them (German below `/de/`).
+Home, About, Contact and the 404 pages carry their content (copy as data in `lib/src/copy/`, tested against the built pages); Impressum and Datenschutz are still shells. The 404 pages are `noindex`, outside the sitemap and use root-absolute URLs only, so the server can answer any unknown path with them (English below `/en/`).
 The built HTML references only same-origin resources.
 
 ## Brand assets

@@ -84,7 +84,7 @@ class PageShell extends StatelessComponent {
                 attributes: {'hreflang': alt.code},
               ),
             link(
-              href: urlFor(pageKey, Lang.en),
+              href: urlFor(pageKey, Lang.de),
               rel: 'alternate',
               attributes: const {'hreflang': 'x-default'},
             ),
