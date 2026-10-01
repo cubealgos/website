@@ -30,7 +30,11 @@ String _page({
 const _head404 = '''
 <title>Page not found | Cube Algos</title>
 <meta name="description" content="Not found."/>
-<meta name="robots" content="noindex"/>''';
+<meta name="robots" content="noindex"/>
+<link href="/icon.svg" rel="icon" type="image/svg+xml"/>
+<link href="/icon.ico" rel="icon" sizes="any"/>
+<link href="/touch.png" rel="apple-touch-icon"/>
+<link href="/site.webmanifest" rel="manifest"/>''';
 
 const _sitemap = '''
 <urlset>

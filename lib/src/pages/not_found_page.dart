@@ -22,7 +22,7 @@ class NotFoundPage extends StatelessComponent {
     final c = notFoundCopy[lang]!;
     return el('section', classes: 'wrap hero', [
       el('div', classes: 'hero-text', [
-        h1(classes: 'rise', [t(c.headline)]),
+        h1(classes: 'rise h1-long', [t(c.headline)]),
         p(
           classes: 'lede rise',
           attributes: const {'style': '--i:1'},

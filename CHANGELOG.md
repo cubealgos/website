@@ -21,3 +21,4 @@
 - Contact page, EN and DE: mailto only with no form, script or tracking, what to put in the first email, what happens next and the company details (#12).
 - 404 pages, EN and DE: the confused fish with the microcopy, emitted as `404.html` and `de/404.html`, noindex, root-absolute URLs only; `html-check` exempts them from canonical and hreflang explicitly (and requires noindex), and the local static server answers `/de/` paths with the German page (#13).
 - The headline underline is an inline background that follows the wrapped phrase, one segment per line; headings no longer hyphenate (#10).
+- The 404 headline steps down the type scale on narrow screens instead of hyphenating its long German word (#13).
