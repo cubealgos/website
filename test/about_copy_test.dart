@@ -64,7 +64,7 @@ void main() {
 
       test('the portrait slot is a decorative figure with the idle fish', () {
         final figure = RegExp(
-          '<figure class="portrait">(.*?)</figure>',
+          '<figure class="portrait[^"]*"[^>]*>(.*?)</figure>',
           dotAll: true,
         ).firstMatch(html)![1]!;
         expect(figure, contains('/brand/fish/animated/idle.svg'));

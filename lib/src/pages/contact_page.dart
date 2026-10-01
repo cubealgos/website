@@ -18,67 +18,61 @@ class ContactPage extends StatelessComponent {
   @override
   Component build(BuildContext context) {
     final c = contactCopy[lang]!;
-    final at = c.details.indexOf(contactEmail);
-    assert(at >= 0, 'details must contain the address');
     return Component.fragment([
-      el('section', classes: 'wrap hero', [
-        el('div', classes: 'hero-text', [
-          h1(classes: 'rise', [t(c.h1)]),
-          p(
-            classes: 'lede rise',
-            attributes: const {'style': '--i:1'},
-            [t(c.lede)],
-          ),
+      el('section', classes: 'hero hero--page', [
+        el('div', classes: 'wrap hero-grid gridlines', [
+          el('div', classes: 'hero-text', [
+            h1(classes: 'hero-h1 rise', [t(c.h1)]),
+            p(
+              classes: 'hero-sub rise',
+              attributes: const {'style': '--i:1'},
+              [t(c.lede)],
+            ),
+            el(
+              'div',
+              classes: 'actions rise',
+              attrs: const {'style': '--i:2'},
+              [const MailButton(label: contactEmail)],
+            ),
+          ]),
           el(
-            'div',
-            classes: 'actions rise',
-            attrs: const {'style': '--i:2'},
-            [const MailButton(label: contactEmail)],
+            'section',
+            classes: 'ledger rise',
+            attrs: const {'style': '--i:2', 'aria-labelledby': 'include-title'},
+            [
+              div(classes: 'ledger-head', [
+                h2(id: 'include-title', classes: 'ledger-label', [
+                  t(c.includeTitle),
+                ]),
+                const div(classes: 'ledger-fish', [Fish(pose: 'idle')]),
+              ]),
+              p([t(c.includeIntro)]),
+              ul(classes: 'note-list', [
+                for (final item in c.include) li([t(item)]),
+              ]),
+              p(classes: 'note-outro', [t(c.includeOutro)]),
+            ],
           ),
         ]),
-        const div(classes: 'hero-fish', [Fish(pose: 'idle')]),
-      ]),
-      _section('include', c.includeTitle, [
-        p([t(c.includeIntro)]),
-        ul(classes: 'checks', [
-          for (final item in c.include) li([t(item)]),
-        ]),
-        p([t(c.includeOutro)]),
-      ]),
-      _section('next', c.nextTitle, [
-        ol(classes: 'steps', [
-          for (final step in c.next) li([t(step)]),
-        ]),
-        p(classes: 'after-steps', [t(c.nextNote)]),
       ]),
       el(
         'section',
-        classes: 'section',
-        attrs: const {'aria-label': 'Details'},
+        classes: 'sec sec--first sec--last',
+        id: 'next',
+        attrs: const {'aria-labelledby': 'next-title'},
         [
-          el('div', classes: 'wrap prose', [
-            p(classes: 'details reveal', [
-              t(c.details.substring(0, at)),
-              a([t(contactEmail)], href: 'mailto:$contactEmail'),
-              t(c.details.substring(at + contactEmail.length)),
+          el('div', classes: 'wrap', [
+            h2(id: 'next-title', classes: 'sec-h2 reveal', [t(c.nextTitle)]),
+            el('div', classes: 'rail-wrap rail-wrap--plain', [
+              ol(classes: 'rail reveal', [
+                for (var i = 0; i < c.next.length; i++)
+                  li(classes: i == 2 ? 'is-call' : null, [t(c.next[i])]),
+              ]),
             ]),
+            p(classes: 'next-note', [t(c.nextNote)]),
           ]),
         ],
       ),
     ]);
   }
-
-  Component _reveal(Component block) => el('div', classes: 'reveal', [block]);
-
-  Component _section(String id, String title, List<Component> body) => el(
-    'section',
-    classes: 'section',
-    attrs: {'aria-labelledby': '$id-title'},
-    [
-      el('div', classes: 'wrap prose', [
-        h2(id: '$id-title', classes: 'reveal', [t(title)]),
-        for (final block in body) _reveal(block),
-      ]),
-    ],
-  );
 }

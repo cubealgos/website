@@ -20,8 +20,8 @@ class NotFoundPage extends StatelessComponent {
   @override
   Component build(BuildContext context) {
     final c = notFoundCopy[lang]!;
-    return el('section', classes: 'wrap hero', [
-      el('div', classes: 'hero-text', [
+    return el('section', classes: 'wrap notfound', [
+      el('div', classes: 'notfound-text', [
         h1(classes: 'rise h1-long', [t(c.headline)]),
         p(
           classes: 'lede rise',
@@ -44,7 +44,7 @@ class NotFoundPage extends StatelessComponent {
       ]),
       // The `?` of the confused fish is ink: it needs a light ground in dark
       // mode, so the fish sits on a light stage in both themes.
-      const div(classes: 'hero-fish fish-stage', [Fish(pose: 'confused')]),
+      const div(classes: 'notfound-fish fish-stage', [Fish(pose: 'confused')]),
     ]);
   }
 }

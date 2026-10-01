@@ -25,7 +25,6 @@ List<String> expectedBlocks(Lang lang) {
     c.nextTitle,
     ...c.next,
     c.nextNote,
-    c.details,
   ];
 }
 

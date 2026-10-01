@@ -95,6 +95,7 @@ class PageShell extends StatelessComponent {
       SiteHeader(pageKey: pageKey, lang: lang),
       main_(
         id: mainId,
+        classes: revealPages.contains(pageKey) ? 'flush' : null,
         attributes: const {'tabindex': '-1'},
         [
           if (legalDocs[pageKey]?[lang] case final doc?)

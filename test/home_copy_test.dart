@@ -23,6 +23,12 @@ List<String> expectedBlocks(Lang lang) {
     c.subline,
     startProject[lang]!,
     c.secondaryCta,
+    // The price ledger beside the headline.
+    c.offersTitle,
+    for (final o in c.offers) offerHeading(o),
+    c.vatNote,
+    c.studioTitle,
+    c.studioText,
     c.lanesTitle,
     for (final lane in c.lanes) ...[
       lane.title,
@@ -37,13 +43,10 @@ List<String> expectedBlocks(Lang lang) {
     c.accessibleNote,
     c.workflowTitle,
     for (final s in c.steps) '${s.title} ${s.text}',
-    c.careTitle,
-    c.careText,
-    ...c.carePlans,
-    c.carePlansNote,
+    c.afterTitle,
+    c.afterText,
+    c.afterNote,
     c.vatNote,
-    c.studioTitle,
-    c.studioText,
     c.faqTitle,
     for (final q in c.faq) ...[q.question, q.answer],
     c.ctaTitle,
@@ -121,19 +124,28 @@ void main() {
   test('prices are formatted per language', () {
     final en = homeCopy[Lang.en]!.offers.map((o) => o.price);
     final de = homeCopy[Lang.de]!.offers.map((o) => o.price);
-    expect(en, [
-      '€490',
-      'from €2,490',
-      'from €8,900',
-      'from €9,900',
-      '€95 an hour',
-    ]);
-    expect(de, [
-      '490 €',
-      'ab 2.490 €',
-      'ab 8.900 €',
-      'ab 9.900 €',
-      '95 € pro Stunde',
-    ]);
+    expect(en, ['free', 'from €5,900', 'from €6,900', '€95 an hour']);
+    expect(de, ['kostenlos', 'ab 5.900 €', 'ab 6.900 €', '95 € pro Stunde']);
   });
+
+  test('the offer is apps and tools only: no website offer, no care plans', () {
+    for (final lang in Lang.values) {
+      final html = builtHtml(PageKey.home, lang);
+      expect(
+        html,
+        isNot(matches(RegExp('€ ?49|49 €|149|2[.,]490|490|8[.,]900'))),
+      );
+      expect(html, isNot(contains('Idea check')));
+    }
+  });
+
+  for (final lang in Lang.values) {
+    test('every ledger link on home ${lang.code} has a target', () {
+      final html = builtHtml(PageKey.home, lang);
+      for (final id in ['call', 'tool', 'mvp', 'after']) {
+        expect(html, contains('id="offer-$id"'));
+        expect('href="#offer-$id"'.allMatches(html), isNotEmpty);
+      }
+    });
+  }
 }
