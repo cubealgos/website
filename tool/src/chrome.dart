@@ -139,15 +139,18 @@ class ChromePage {
     {'width': width, 'height': height, 'deviceScaleFactor': 1, 'mobile': false},
   );
 
-  /// Emulates `prefers-color-scheme` and `prefers-reduced-motion`.
-  Future<void> setMedia({bool dark = false, bool reducedMotion = false}) =>
+  /// Emulates `prefers-color-scheme` and, unless [reducedMotion] is null,
+  /// `prefers-reduced-motion` (null leaves the browser's own setting, e.g. a
+  /// `--force-prefers-reduced-motion` launch flag, alone).
+  Future<void> setMedia({bool dark = false, bool? reducedMotion = false}) =>
       send('Emulation.setEmulatedMedia', {
         'features': [
           {'name': 'prefers-color-scheme', 'value': dark ? 'dark' : 'light'},
-          {
-            'name': 'prefers-reduced-motion',
-            'value': reducedMotion ? 'reduce' : 'no-preference',
-          },
+          if (reducedMotion != null)
+            {
+              'name': 'prefers-reduced-motion',
+              'value': reducedMotion ? 'reduce' : 'no-preference',
+            },
         ],
       });
 
@@ -203,6 +206,17 @@ class ChromePage {
       });
     }
   }
+
+  /// Dispatches a mouse event ([type]: `mouseMoved`, `mousePressed`,
+  /// `mouseReleased`) at ([x], [y]) CSS pixels.
+  Future<void> mouse(String type, double x, double y) =>
+      send('Input.dispatchMouseEvent', {
+        'type': type,
+        'x': x,
+        'y': y,
+        'button': type == 'mouseMoved' ? 'none' : 'left',
+        'clickCount': type == 'mouseMoved' ? 0 : 1,
+      });
 
   /// Saves a full-page PNG screenshot to [path].
   Future<void> screenshot(String path) async {

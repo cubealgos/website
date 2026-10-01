@@ -90,7 +90,15 @@ void main() {
             );
           }
         }
-        expect(read(path), isNot(contains('<script')), reason: path);
+        // Scripts: only the sting loader, same-origin, on the home pages.
+        final scripts = RegExp('<script[^>]*>').allMatches(read(path));
+        expect(
+          scripts.map((m) => m[0]),
+          resolve(path)?.key == PageKey.home
+              ? [contains('src="/sting.js"')]
+              : isEmpty,
+          reason: path,
+        );
       }
     }
   });

@@ -42,6 +42,8 @@ class PageShell extends StatelessComponent {
           const link(href: '/fonts/fonts.css', rel: 'stylesheet'),
           const link(href: '/brand/tokens.css', rel: 'stylesheet'),
           const link(href: '/site.css', rel: 'stylesheet'),
+          // The sting plays once per session, on the home page only.
+          if (pageKey == PageKey.home) const script(src: '/sting.js'),
           link(href: canonical, rel: 'canonical'),
           for (final alt in Lang.values)
             link(
@@ -63,7 +65,10 @@ class PageShell extends StatelessComponent {
         attributes: const {'tabindex': '-1'},
         [
           div(classes: 'wrap', [
-            h1([Component.text(meta.h1)]),
+            if (pageKey == PageKey.home)
+              Hero(headline: meta.h1)
+            else
+              h1(classes: 'rise', [Component.text(meta.h1)]),
           ]),
         ],
       ),
