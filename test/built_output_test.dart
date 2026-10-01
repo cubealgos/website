@@ -326,7 +326,7 @@ void main() {
 
     test('the claims hold for the built site', () {
       // No form, no cookie access, no third-party host (html_check covers the
-      // hosts), no storage but the one sessionStorage flag of the sting.
+      // hosts), no storage of any kind (html_check enforces it too).
       for (final f in Directory(_buildDir).listSync(recursive: true)) {
         if (f is! File) continue;
         final name = p.relative(f.path, from: _buildDir);
@@ -339,18 +339,9 @@ void main() {
         if (name.endsWith('.html')) {
           expect(text, isNot(contains('<form')), reason: name);
         }
-        if (name != 'sting.js') {
-          expect(text, isNot(contains('sessionStorage')), reason: name);
-        }
+        expect(text, isNot(contains('sessionStorage')), reason: name);
+        expect(text, isNot(contains('sting-seen')), reason: name);
       }
-      final sting = File('$_buildDir/sting.js').readAsStringSync();
-      expect(
-        RegExp(r"sessionStorage\.\w+Item\('([^']+)'")
-            .allMatches(sting)
-            .map((m) => m[1])
-            .toSet(),
-        {'sting-seen'},
-      );
     });
   });
 

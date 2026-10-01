@@ -57,7 +57,7 @@ class PageShell extends StatelessComponent {
           const link(href: '/fonts/fonts.css', rel: 'stylesheet'),
           const link(href: '/brand/tokens.css', rel: 'stylesheet'),
           const link(href: '/site.css', rel: 'stylesheet'),
-          // The sting plays once per session, on the home page only.
+          // The sting plays on arrival, not from a page of this site.
           if (pageKey == PageKey.home) const script(src: '/sting.js'),
           link(href: canonical, rel: 'canonical'),
           for (final alt in Lang.values)
