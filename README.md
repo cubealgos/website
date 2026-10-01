@@ -42,7 +42,7 @@ Dart of Flutter 3.47.5).
 | `test` | unit tests plus tests over a fresh build | `fvm dart test` |
 | `build` | the static build succeeds | `fvm dart run tool/build.dart` |
 | `licence-check` | pub (and npm lockfile) licences against the org policy; needs network (pub.dev) | `fvm dart run tool/licence_check.dart` |
-| `html-check` | head metadata, internal links, fragments, foreign hosts, sitemap, over the built site (build first) | `fvm dart run tool/html_check.dart` |
+| `html-check` | head metadata, internal links, fragments, foreign hosts (HTML and CSS, Google Fonts included), sitemap, over the built site (build first); the workflow also runs the font coverage check | `fvm dart run tool/html_check.dart`, `fvm dart run tool/fonts/check_coverage.dart build/jaspr` |
 | `branch-lint` | the branch is `<family>/<N>-<slug>` (no argument: audits all local branches) | `fvm dart run tool/branch_lint.dart [branch]` |
 | `lint-history` | every commit is `type(scope): description (#N)`; exempt by SHA only via `tool/commit-baseline.txt` | `fvm dart run tool/lint_history.dart` |
 | `changelog-check` | `CHANGELOG.md` exists with an `Unreleased` section | `fvm dart run tool/changelog_check.dart` |
@@ -69,6 +69,10 @@ language switch, hreflang alternates and canonical URLs all derive from it.
 The pages are empty shells for now (title, description, H1); content arrives in later issues.
 The built HTML references only same-origin resources.
 
+## Fonts
+
+Onest (800 display, 400 text) and DM Mono (400) are self-hosted from `web/fonts/` (SIL OFL 1.1, licences in `web/fonts/licenses/`); the built site makes no request to Google Fonts or any other third party, and `html-check` fails if a built page or stylesheet points at one. Source, subsetting recipe and coverage check: `tool/fonts/README.md`.
+
 ## Versions
 
 Jaspr 0.23.5 (`jaspr`, `jaspr_builder`, `jaspr_cli`, all pinned exactly). `build_runner` is held
@@ -84,7 +88,7 @@ releases exclude.
 | `lib/src/routes.dart` | The route table (page keys, both paths, switch target). |
 | `lib/src/page_meta.dart` | Title, description and H1 per page and language. |
 | `lib/src/page.dart` | The page shell (`lang`, title, description, canonical, hreflang). |
-| `web/` | Static files copied into the build as is (`robots.txt` for now). |
+| `web/` | Static files copied into the build as is: `robots.txt`, `fonts/` (self-hosted Onest and DM Mono woff2 subsets, `fonts.css`, OFL licences in `fonts/licenses/`). |
 | `test/` | Route-table unit tests and tests over the built output. |
 | `tool/` | One script per check (`licence_check.dart`, `html_check.dart`, ...) with shared code in `tool/src/`, `build.dart`, `hooks.dart`, the `hooks/commit-msg` git hook (POSIX `sh`), `commit-baseline.txt` and `licence-exceptions.yaml`. |
 | `.github/` | The setup action and one workflow per check. |

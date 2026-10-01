@@ -189,6 +189,38 @@ void main() {
     });
   });
 
+  group('third-party hosts', () {
+    test('pass for a stylesheet with local font urls', () {
+      final dir = _site({
+        'fonts/fonts.css': "@font-face{src:url('/fonts/a.woff2')}",
+        'fonts/a.woff2': 'x',
+      });
+      expect(checkSite(dir), isEmpty);
+    });
+    test('fail for Google Fonts in a page', () {
+      final dir = _site({
+        'index.html': _page(
+          head:
+              '$_head<link href="https://fonts.googleapis.com/css2" '
+              'rel="stylesheet"/>',
+        ),
+      });
+      expect(_rules(dir), containsAll(['third-party', 'foreign-host']));
+    });
+    test('fail for a foreign url or import in a stylesheet', () {
+      final dir = _site({
+        'a.css':
+            '@import "https://cdn.example.com/x.css"; '
+            '@font-face{src:url(//fonts.gstatic.com/a.woff2)}',
+      });
+      expect(_rules(dir), ['third-party', 'third-party']);
+    });
+    test('fail for a local url that does not resolve', () {
+      final dir = _site({'a.css': '@font-face{src:url(/fonts/gone.woff2)}'});
+      expect(_rules(dir), ['broken-link']);
+    });
+  });
+
   group('sitemap', () {
     test('passes when every page is listed (404 pages excepted)', () {
       final dir = _site({

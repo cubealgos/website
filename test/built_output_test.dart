@@ -94,4 +94,50 @@ void main() {
       }
     }
   });
+
+  test('fonts: only the display face is preloaded, all faces are built', () {
+    for (final entry in paths.values) {
+      for (final path in entry.values) {
+        final html = read(path);
+        expect(
+          RegExp('rel="preload"').allMatches(html),
+          hasLength(1),
+          reason: path,
+        );
+        expect(
+          html,
+          matches(RegExp(r'<link [^>]*href="/fonts/onest-800\.woff2"[^>]*>')),
+          reason: path,
+        );
+        final tag = RegExp('<link [^>]*preload[^>]*>').firstMatch(html)![0]!;
+        for (final attr in ['as="font"', 'type="font/woff2"', 'crossorigin']) {
+          expect(tag, contains(attr), reason: path);
+        }
+        expect(html, contains('href="/fonts/fonts.css"'), reason: path);
+      }
+    }
+    final css = File('$_buildDir/fonts/fonts.css').readAsStringSync();
+    expect('font-display: swap'.allMatches(css), hasLength(3));
+    for (final f in [
+      'onest-400.woff2',
+      'onest-800.woff2',
+      'dm-mono-400.woff2',
+    ]) {
+      expect(File('$_buildDir/fonts/$f').existsSync(), isTrue, reason: f);
+      expect(css, contains('/fonts/$f'));
+    }
+    expect(
+      File('$_buildDir/fonts/licenses/Onest-OFL.txt').existsSync() &&
+          File('$_buildDir/fonts/licenses/DMMono-OFL.txt').existsSync(),
+      isTrue,
+    );
+  });
+
+  test('the three font files total under 120 KB', () {
+    final total = [
+      for (final f in Directory('$_buildDir/fonts').listSync())
+        if (f is File && f.path.endsWith('.woff2')) f.lengthSync(),
+    ].fold<int>(0, (a, b) => a + b);
+    expect(total, lessThan(120 * 1000));
+  });
 }

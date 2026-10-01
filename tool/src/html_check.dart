@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 /// Offline checks over a built site (no network): head metadata, internal
-/// links, fragments, foreign hosts and the sitemap.
+/// links, fragments, foreign hosts (also in CSS) and the sitemap.
 library;
 
 import 'dart:io';
@@ -85,6 +85,7 @@ List<Finding> checkSite(Directory buildDir) {
     _checkLinks(page, root, pages, findings);
   }
   _checkSitemap(root, pages, findings);
+  _checkThirdParty(buildDir, findings);
   return findings;
 }
 
@@ -209,6 +210,52 @@ void _checkSitemap(String root, Map<String, _Page> pages, List<Finding> out) {
       out.add(
         Finding('sitemap', page.path, 'not listed in sitemap.xml ($url)'),
       );
+    }
+  }
+}
+
+final _googleFonts = RegExp(r'fonts\.(googleapis|gstatic)\.com');
+final _cssUrl = RegExp(
+  r'''(?:url\(\s*|@import\s+)(?:"([^"]*)"|'([^']*)'|([^\s)"']+))''',
+);
+
+/// No third-party host in built HTML or CSS (the privacy notice promises
+/// self-hosted fonts): Google Fonts hosts anywhere in a page, and any
+/// absolute or protocol-relative URL to another host in a stylesheet. Local
+/// `url()` references in a stylesheet must resolve to a built file.
+void _checkThirdParty(Directory buildDir, List<Finding> out) {
+  final root = buildDir.path;
+  for (final f in buildDir.listSync(recursive: true)) {
+    if (f is! File) continue;
+    final rel = p.relative(f.path, from: root);
+    if (f.path.endsWith('.html') &&
+        _googleFonts.hasMatch(f.readAsStringSync())) {
+      out.add(Finding('third-party', rel, 'references Google Fonts'));
+    }
+    if (!f.path.endsWith('.css')) continue;
+    final css = f.readAsStringSync().replaceAll(
+      RegExp(r'/\*.*?\*/', dotAll: true),
+      '',
+    );
+    final cssUri = Uri.parse('https://$siteHost/${rel.replaceAll(r'\', '/')}');
+    for (final m in _cssUrl.allMatches(css)) {
+      final value = (m[1] ?? m[2] ?? m[3] ?? '').trim();
+      if (value.isEmpty || value.startsWith('data:')) continue;
+      final uri = Uri.tryParse(value);
+      if (uri == null) continue;
+      if ((uri.hasScheme || value.startsWith('//')) && uri.host != siteHost) {
+        out.add(Finding('third-party', rel, '"$value" points at ${uri.host}'));
+        continue;
+      }
+      if (_fileFor(root, cssUri.resolve(value).path) == null) {
+        out.add(
+          Finding(
+            'broken-link',
+            rel,
+            '"$value" does not resolve to a built file',
+          ),
+        );
+      }
     }
   }
 }
