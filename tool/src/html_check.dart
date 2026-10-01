@@ -268,7 +268,9 @@ final _styleAttr = RegExp(r'''\sstyle\s*=\s*(?:"([^"]*)"|'([^']*)')''');
 
 /// The site's own CSS (every built stylesheet outside the vendored `brand/`
 /// directory, plus `<style>` blocks and `style` attributes in pages) takes its
-/// colours from the tokens: no hex, colour function or named colour.
+/// colours, durations and easings from the tokens (no hex, colour function,
+/// named colour, `ms`/`s` or easing literal) and animates only `transform` and
+/// `opacity`.
 void _checkSiteStyles(Directory buildDir, List<Finding> out) {
   final root = buildDir.path;
   for (final f in buildDir.listSync(recursive: true)) {
@@ -290,6 +292,12 @@ void _checkSiteStyles(Directory buildDir, List<Finding> out) {
     for (final text in css) {
       for (final hit in hardCodedColours(text)) {
         out.add(Finding('hard-coded-colour', rel, hit));
+      }
+      for (final hit in literalMotion(text)) {
+        out.add(Finding('literal-motion', rel, hit));
+      }
+      for (final hit in layoutMotion(text)) {
+        out.add(Finding('layout-motion', rel, hit));
       }
     }
   }

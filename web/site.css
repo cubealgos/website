@@ -122,33 +122,33 @@ main:focus {
 
 /* Theme-aware lockup: ink on light, paper on dark; all three theme states
    (OS preference, data-theme="light", data-theme="dark"). */
-.logo-dark {
+.for-dark {
   display: none;
 }
 
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .logo-light {
+  :root:not([data-theme="light"]) .for-light {
     display: none;
   }
 
-  :root:not([data-theme="light"]) .logo-dark {
+  :root:not([data-theme="light"]) .for-dark {
     display: block;
   }
 }
 
-:root[data-theme="dark"] .logo-light {
+:root[data-theme="dark"] .for-light {
   display: none;
 }
 
-:root[data-theme="dark"] .logo-dark {
+:root[data-theme="dark"] .for-dark {
   display: block;
 }
 
-:root[data-theme="light"] .logo-light {
+:root[data-theme="light"] .for-light {
   display: block;
 }
 
-:root[data-theme="light"] .logo-dark {
+:root[data-theme="light"] .for-dark {
   display: none;
 }
 
@@ -267,12 +267,14 @@ nav a[aria-current="page"] {
 .btn {
   --c: var(--chamfer-md);
 
+  position: relative;
   display: inline-block;
   padding: var(--spacing-3) var(--spacing-6);
   background: var(--color-accent-fill);
   color: var(--color-on-accent);
   font-weight: var(--font-weight-display);
   text-decoration: none;
+  transition: transform var(--duration-press) var(--ease-settle);
   clip-path: polygon(
     0 0,
     calc(100% - var(--c)) 0,
@@ -292,4 +294,119 @@ nav a[aria-current="page"] {
     drop-shadow(0 2px 0 var(--color-bg)) drop-shadow(0 -2px 0 var(--color-bg))
     drop-shadow(3px 0 0 var(--color-focus)) drop-shadow(-3px 0 0 var(--color-focus))
     drop-shadow(0 3px 0 var(--color-focus)) drop-shadow(0 -3px 0 var(--color-focus));
+}
+
+/* Hover darkens the fill: an overlay fades in (opacity only), so no colour or
+   layout property is animated. */
+.btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--color-on-accent);
+  opacity: 0;
+  transition: opacity var(--duration-instant) var(--ease-out);
+}
+
+.btn:hover::before {
+  opacity: 0.15;
+}
+
+/* Press: scales to the press token while pressed and settles back. */
+.btn:active {
+  transform: scale(var(--press-scale));
+}
+
+/* Hero (home) */
+.hero {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.hero > * {
+  margin-block: 0 var(--spacing-6);
+}
+
+/* The sting box keeps its aspect ratio whether it shows the still or the
+   animated SVG, so nothing shifts when the animation is inserted. */
+.sting {
+  width: min(100%, 28rem);
+  aspect-ratio: 325 / 120;
+}
+
+.sting img {
+  width: 100%;
+  height: auto;
+  vertical-align: top;
+}
+
+/* sting.js adds this class to <html> when it will play the animation. */
+:root.sting-play .sting-still:is(.for-light, .for-dark) {
+  display: none;
+}
+
+/* Motion: transform and opacity only; durations and easings from the tokens.
+   Final states are the base styles, so removing the animation (reduced
+   motion) leaves everything in place. */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(var(--spacing-2));
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.rise {
+  animation: rise var(--duration-base) var(--ease-settle) both;
+  /* About 60 ms between lines: 0.6 x the instant token. */
+  animation-delay: calc(var(--i, 0) * var(--duration-instant) * 0.6);
+}
+
+/* The amber underline under the key phrase: drawn left to right once. */
+@keyframes draw {
+  from {
+    transform: scaleX(0);
+  }
+
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.mark {
+  position: relative;
+  display: inline-block;
+}
+
+.mark::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -0.08em;
+  height: 0.12em;
+  background: var(--color-accent-fill);
+  transform-origin: left center;
+  animation: draw var(--duration-draw) var(--ease-draw) both;
+  animation-delay: var(--duration-base);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rise,
+  .mark::after {
+    animation: none;
+  }
+
+  .btn,
+  .btn::before {
+    transition: none;
+  }
+
+  .btn:active {
+    transform: none;
+  }
 }

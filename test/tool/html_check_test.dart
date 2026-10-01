@@ -268,4 +268,43 @@ void main() {
       expect(_rules(dir), ['hard-coded-colour']);
     });
   });
+
+  group('motion', () {
+    test('tokens pass, brand files are exempt', () {
+      final dir = _site({
+        'site.css': '''
+@keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+.a { animation: rise var(--duration-base) var(--ease-settle) both; animation-delay: calc(var(--i) * var(--duration-instant) * 0.6); }
+.b { transition: transform var(--duration-press) var(--ease-settle), opacity var(--duration-instant) var(--ease-out); }
+@media (prefers-reduced-motion: reduce) { .a { animation: none; transition: none; } }
+''',
+        'brand/fish/fish.css':
+            '.f { animation: x 900ms cubic-bezier(.65,0,.35,1); }',
+      });
+      expect(_rules(dir), isEmpty);
+    });
+    test('fails on duration and easing literals', () {
+      for (final css in [
+        '.a { transition: transform 200ms var(--ease-out); }',
+        '.a { animation-duration: .3s; }',
+        '.a { transition: transform var(--duration-base) ease-in-out; }',
+        '.a { animation-timing-function: cubic-bezier(.5, 0, .5, 1); }',
+      ]) {
+        expect(_rules(_site({'site.css': css})), [
+          'literal-motion',
+        ], reason: css);
+      }
+    });
+    test('fails on animating anything but transform and opacity', () {
+      for (final css in [
+        '@keyframes g { from { width: 0; } to { width: 10px; } }',
+        '.a { transition: color var(--duration-base) var(--ease-out) }',
+        '.a { transition-property: height; }',
+      ]) {
+        final rules = _rules(_site({'site.css': css}));
+        expect(rules, isNotEmpty, reason: css);
+        expect(rules, everyElement('layout-motion'), reason: css);
+      }
+    });
+  });
 }

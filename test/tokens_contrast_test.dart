@@ -67,4 +67,17 @@ void main() {
       expect(theme.value['--color-focus'], theme.value['--color-accent-text']);
     });
   }
+
+  test('no easing token overshoots or bounces', () {
+    final easings = RegExp(r'--ease-[\w-]+:\s*cubic-bezier\(([^)]*)\)')
+        .allMatches(css)
+        .toList();
+    expect(easings, hasLength(4));
+    for (final m in easings) {
+      final p = m[1]!.split(',').map((v) => double.parse(v.trim())).toList();
+      for (final y in [p[1], p[3]]) {
+        expect(y, inInclusiveRange(0, 1), reason: m[0]);
+      }
+    }
+  });
 }
