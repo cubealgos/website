@@ -3,6 +3,9 @@
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/server.dart';
 import 'package:website/src/chrome.dart';
+import 'package:website/src/icons.dart';
+import 'package:website/src/legal_content.dart';
+import 'package:website/src/legal_view.dart';
 import 'package:website/src/page_meta.dart';
 import 'package:website/src/pages/home_page.dart';
 import 'package:website/src/routes.dart';
@@ -40,10 +43,22 @@ class PageShell extends StatelessComponent {
             rel: 'preload',
             attributes: {'as': 'font', 'type': 'font/woff2', 'crossorigin': ''},
           ),
+          const link(
+            href: faviconSvg,
+            rel: 'icon',
+            attributes: {'type': 'image/svg+xml'},
+          ),
+          const link(
+            href: faviconIco,
+            rel: 'icon',
+            attributes: {'sizes': 'any'},
+          ),
+          const link(href: appleTouchIcon, rel: 'apple-touch-icon'),
+          const link(href: manifestPath, rel: 'manifest'),
           const link(href: '/fonts/fonts.css', rel: 'stylesheet'),
           const link(href: '/brand/tokens.css', rel: 'stylesheet'),
           const link(href: '/site.css', rel: 'stylesheet'),
-          // The sting plays once per session, on the home page only.
+          // The sting plays on arrival, not from a page of this site.
           if (pageKey == PageKey.home) const script(src: '/sting.js'),
           link(href: canonical, rel: 'canonical'),
           for (final alt in Lang.values)
@@ -65,7 +80,9 @@ class PageShell extends StatelessComponent {
         id: mainId,
         attributes: const {'tabindex': '-1'},
         [
-          if (pageKey == PageKey.home)
+          if (legalDocs[pageKey]?[lang] case final doc?)
+            LegalPage(heading: meta.h1, doc: doc)
+          else if (pageKey == PageKey.home)
             HomePage(lang: lang)
           else
             div(classes: 'wrap', [

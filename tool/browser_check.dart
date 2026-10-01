@@ -11,9 +11,11 @@
 //    focus token on every stop) in light and dark;
 //  * the language switch on every page lands on the same page in the other
 //    language;
-//  * UI motion: the sting plays once per session on the home pages only (a
-//    new tab is a new session), uses the theme's background, and is replaced
-//    by its still under reduced motion (a second Chrome started with
+//  * UI motion: the sting plays on the home pages only, on a direct load and
+//    not when arriving from a page of this site (same-origin referrer), with
+//    nothing written to session or local storage; it uses the theme's
+//    background and is replaced by its still under reduced motion (a second
+//    Chrome started with
 //    `--force-prefers-reduced-motion`); durations and easings are the tokens;
 //    only transform and opacity animate; button press and hover.
 //
@@ -212,13 +214,17 @@ Future<void> main(List<String> args) async {
       await calm.close();
     }
 
+    // 6. The favicon set loads without a 404 and the SVG mark switches to
+    // paper in a dark browser theme.
+    failures.addAll(await _iconChecks(page, base));
+
     // 5. Screenshots for review (optional).
     if (shots != null) {
       for (final key in _shotPages) {
         for (final lang in Lang.values) {
           for (final width in [375, 1280]) {
             for (final dark in [false, true]) {
-              // A new tab is a new session: the home sting plays; shoot once
+              // A fresh tab has no referrer: the home sting plays; shoot once
               // it ends.
               final shot = await chrome.newPage();
               await shot.setViewport(width, 800);
@@ -255,6 +261,78 @@ Future<void> main(List<String> args) async {
   );
 }
 
+// --- Icons -------------------------------------------------------------------
+
+const _iconProbe = '''
+(async () => {
+  const out = [];
+  const hrefs = [...document.querySelectorAll(
+    'link[rel~="icon"],link[rel="apple-touch-icon"],link[rel="manifest"]')]
+    .map(l => l.href);
+  for (const href of hrefs) {
+    const r = await fetch(href);
+    out.push(href + ' ' + r.status);
+  }
+  const m = await (await fetch(document.querySelector(
+    'link[rel="manifest"]').href)).json();
+  for (const i of m.icons) {
+    const r = await fetch(i.src);
+    out.push(new URL(i.src, location.href).href + ' ' + r.status);
+  }
+  return out;
+})()
+''';
+
+const _svgPixel = '''
+new Promise((resolve, reject) => {
+  const img = new Image();
+  img.onload = () => {
+    const c = document.createElement('canvas');
+    c.width = 64; c.height = 64;
+    const x = c.getContext('2d');
+    x.drawImage(img, 0, 0, 64, 64);
+    const d = x.getImageData(4, 4, 1, 1).data;
+    resolve([d[0], d[1], d[2], d[3]]);
+  };
+  img.onerror = () => reject(new Error('favicon.svg did not load'));
+  img.src = '/brand/favicon/favicon.svg';
+})
+''';
+
+Future<List<String>> _iconChecks(ChromePage page, String base) async {
+  final failures = <String>[];
+  await page.setViewport(1280, 800);
+  await page.setMedia();
+  for (final r in [
+    (key: PageKey.home, lang: Lang.en),
+    (key: PageKey.impressum, lang: Lang.de),
+  ]) {
+    await page.goto('$base${pathFor(r.key, r.lang)}');
+    final results = (await page.eval(_iconProbe))! as List<dynamic>;
+    if (results.length < 8) {
+      failures.add('icons: ${pathFor(r.key, r.lang)}: only $results');
+    }
+    for (final line in results) {
+      if (!'$line'.endsWith(' 200')) failures.add('icons: $line');
+    }
+  }
+  // The mark is ink in a light theme and paper in a dark one.
+  for (final dark in [false, true]) {
+    await page.setMedia(dark: dark);
+    await page.goto('$base/');
+    final px = (await page.eval(_svgPixel))! as List<dynamic>;
+    final want = dark ? [0xED, 0xEE, 0xF1, 255] : [0x16, 0x18, 0x1D, 255];
+    if ('$px' != '$want') {
+      failures.add(
+        'favicon.svg ${dark ? 'dark' : 'light'}: pixel $px, '
+        'expected $want',
+      );
+    }
+  }
+  await page.setMedia();
+  return failures;
+}
+
 // --- UI motion ---------------------------------------------------------------
 
 final String _tokens = File('web/brand/tokens.css').readAsStringSync();
@@ -274,6 +352,18 @@ String _bezier(String token) {
   return 'cubic-bezier($n)';
 }
 
+/// Clicks the site's own link to [path] (so the next page has a same-origin
+/// referrer, which `Page.navigate` would not give) and waits for the load.
+Future<void> _clickTo(ChromePage page, String path) async {
+  final loaded = page.waitForLoad();
+  final found = await page.eval(
+    "(() => { const a = document.querySelector('a[href=\"$path\"]'); "
+    'if (a) a.click(); return !!a; })()',
+  );
+  if (found != true) throw StateError('no link to $path on the page');
+  await loaded;
+}
+
 const _stingState = '''
 (() => {
   const anim = document.querySelector('.sting-anim');
@@ -285,7 +375,8 @@ const _stingState = '''
     animLoaded: anim ? anim.complete && anim.naturalWidth > 0 : null,
     stillVisible: stills.some(i => i.offsetParent !== null && i.getClientRects().length > 0),
     stillSrcs: stills.filter(i => getComputedStyle(i).display !== 'none').map(i => i.getAttribute('src')),
-    flag: (() => { try { return sessionStorage.getItem('sting-seen'); } catch (e) { return 'blocked'; } })(),
+    sessionLen: sessionStorage.length,
+    localLen: localStorage.length,
     scripts: document.scripts.length,
   };
 })()
@@ -369,17 +460,19 @@ Future<List<String>> _motionChecks(
       }
       if (first['anim'] != true ||
           first['stillVisible'] == true ||
-          !'${first['animSrc']}'.endsWith('sting-$theme.svg') ||
-          first['flag'] != '1') {
-        out.add('$where ($theme): first load does not play the sting: $first');
+          !'${first['animSrc']}'.endsWith('sting-$theme.svg')) {
+        out.add(
+          '$where ($theme): a direct load does not play the sting: $first',
+        );
       }
       await Future<void>.delayed(const Duration(milliseconds: 300));
       if (await page.eval("document.querySelector('.sting-anim').complete") !=
           true) {
         out.add('$where: animated sting did not load');
       }
-      // Navigate away and back in the same session: the still, no replay.
-      await page.goto('$base${pathFor(PageKey.about, lang)}');
+      // Home -> About -> Home through the site's own links: the second home
+      // load has a same-origin referrer, so the still, no replay.
+      await _clickTo(page, pathFor(PageKey.about, lang));
       final about = await page.evalMap(_stingState);
       if (about['box'] == true ||
           about['anim'] == true ||
@@ -389,27 +482,24 @@ Future<List<String>> _motionChecks(
           'page: $about',
         );
       }
-      await page.goto(home);
+      await _clickTo(page, pathFor(PageKey.home, lang));
       final back = await page.evalMap(_stingState);
       if (back['anim'] == true || back['stillVisible'] != true) {
         out.add('$where ($theme): sting replays on return to home: $back');
       }
-      // A new session (a new tab) plays it again.
+      // Nothing is written to any storage over the whole walk.
+      if (back['sessionLen'] != 0 || back['localLen'] != 0) {
+        out.add('$where ($theme): storage written: $back');
+      }
+      // A direct load in a fresh tab (no referrer) plays it again.
       final fresh = await session(dark: dark);
       await fresh.goto(home);
-      if ((await fresh.evalMap(_stingState))['anim'] != true) {
-        out.add('$where ($theme): a new session does not play the sting');
+      final freshState = await fresh.evalMap(_stingState);
+      if (freshState['anim'] != true) {
+        out.add('$where ($theme): a direct load does not play the sting');
       }
-      // Blocked storage falls back to once per page load.
-      final blocked = await session(dark: dark);
-      await blocked.send('Page.addScriptToEvaluateOnNewDocument', {
-        'source':
-            'Object.defineProperty(window, "sessionStorage", '
-            '{ get() { throw new Error("blocked"); } });',
-      });
-      await blocked.goto(home);
-      if ((await blocked.evalMap(_stingState))['anim'] != true) {
-        out.add('$where: blocked storage does not play the sting once');
+      if (freshState['sessionLen'] != 0 || freshState['localLen'] != 0) {
+        out.add('$where ($theme): storage written on direct load');
       }
     }
     // Every other page has no sting, whatever the session.
