@@ -31,7 +31,12 @@ const _widths = [320, 375, 768, 1280];
 
 /// The pages `--screenshots` writes (EN and DE, 375 and 1280 px, light and
 /// dark).
-const List<PageKey> _shotPages = [PageKey.home, PageKey.about, PageKey.contact];
+const List<PageKey> _shotPages = [
+  PageKey.home,
+  PageKey.about,
+  PageKey.contact,
+  PageKey.notFound,
+];
 
 const _overflowProbe = '''
 (() => {
@@ -210,6 +215,34 @@ Future<void> main(List<String> args) async {
       failures.addAll(await _motionChecks(calm, base, reduced: true));
     } finally {
       await calm.close();
+    }
+
+    // 4b. Unknown paths: the server falls back to the 404 page of the path's
+    // language (English, or German below /de/), from any depth, and the page
+    // renders with its styles and fish.
+    for (final probe in [
+      (path: '/xyz', h1: 'This page swam off.'),
+      (path: '/some/deep/missing/path', h1: 'This page swam off.'),
+      (path: '/de/xyz', h1: 'Diese Seite ist davongeschwommen.'),
+      (
+        path: '/de/some/deep/missing/path',
+        h1: 'Diese Seite ist davongeschwommen.',
+      ),
+    ]) {
+      await page.setViewport(1280, 800);
+      await page.goto('$base${probe.path}');
+      final s = await page.evalMap('''
+(() => ({
+  h1: document.querySelector('h1')?.textContent,
+  fishLoaded: [...document.querySelectorAll('img.fish-img')].every(i => i.complete && i.naturalWidth > 0),
+  styled: getComputedStyle(document.body).backgroundColor !== 'rgba(0, 0, 0, 0)',
+}))()
+''');
+      if (s['h1'] != probe.h1 ||
+          s['fishLoaded'] != true ||
+          s['styled'] != true) {
+        failures.add('unknown path ${probe.path}: $s');
+      }
     }
 
     // 5. Screenshots for review (optional).

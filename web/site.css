@@ -736,6 +736,22 @@ h3 {
   color: var(--color-muted);
 }
 
+/* A light stage for the confused fish (its `?` is ink). */
+.fish-stage {
+  --c: var(--chamfer-lg);
+
+  padding: var(--spacing-6);
+  background: var(--color-primitive-on-amber-white);
+  clip-path: polygon(
+    0 0,
+    calc(100% - var(--c)) 0,
+    100% var(--c),
+    100% 100%,
+    var(--c) 100%,
+    0 calc(100% - var(--c))
+  );
+}
+
 /* Motion: transform and opacity only; durations and easings from the tokens.
    Final states are the base styles, so removing the animation (reduced
    motion) leaves everything in place. */

@@ -65,6 +65,12 @@ String pathFor(PageKey key, Lang lang) => paths[key]![lang]!;
 /// The absolute URL of [key] in [lang] (canonical and hreflang).
 String urlFor(PageKey key, Lang lang) => '$siteOrigin${pathFor(key, lang)}';
 
+/// The target of the language link to [target] on [key]: the same page, except
+/// on the 404 page, whose switch leads to the home page in that language (the
+/// two 404 pages are no equivalents of each other).
+String switchPath(PageKey key, Lang target) =>
+    pathFor(key == PageKey.notFound ? PageKey.home : key, target);
+
 /// Where the language switch on [key] in [from] leads: the same page in the
 /// other language, never the other home page.
 String switchTarget(PageKey key, Lang from) => pathFor(key, from.other);

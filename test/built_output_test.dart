@@ -49,6 +49,13 @@ void main() {
         final title = RegExp('<title>(.*?)</title>').firstMatch(html)![1]!;
         expect(title, pageMeta[entry.key]![lang]!.title, reason: where);
         expect(titles.add('${lang.code}:$title'), isTrue, reason: where);
+        if (entry.key == PageKey.notFound) {
+          // noindex, no canonical, no hreflang alternates.
+          expect(html, contains('<meta name="robots" content="noindex"/>'));
+          expect(html, isNot(contains('rel="canonical"')), reason: where);
+          expect(html, isNot(contains('rel="alternate"')), reason: where);
+          continue;
+        }
         for (final alt in Lang.values) {
           expect(
             html,
@@ -218,7 +225,7 @@ void main() {
             final target = Lang.values.firstWhere(
               (l) => m[2] == l.code.toUpperCase(),
             );
-            expect(m[1], contains('href="${pathFor(entry.key, target)}"'));
+            expect(m[1], contains('href="${switchPath(entry.key, target)}"'));
             expect(m[1], contains('lang="${target.code}"'));
             expect(m[1], contains('hreflang="${target.code}"'));
             expect(

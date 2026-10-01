@@ -35,7 +35,7 @@ void main() {
   });
 
   test('the language switch leads to the equivalent page, both ways', () {
-    for (final key in PageKey.values) {
+    for (final key in PageKey.values.where((k) => k != PageKey.notFound)) {
       for (final lang in Lang.values) {
         final target = switchTarget(key, lang);
         final resolved = resolve(target);
@@ -47,6 +47,12 @@ void main() {
     expect(switchTarget(PageKey.about, Lang.en), '/de/ueber-mich/');
     expect(switchTarget(PageKey.contact, Lang.de), '/contact/');
     expect(switchTarget(PageKey.home, Lang.en), '/de/');
+  });
+
+  test('the 404 pages switch to the home page, not to each other', () {
+    expect(switchPath(PageKey.notFound, Lang.en), '/');
+    expect(switchPath(PageKey.notFound, Lang.de), '/de/');
+    expect(switchPath(PageKey.about, Lang.de), '/de/ueber-mich/');
   });
 
   test('resolve accepts paths with or without trailing slash', () {

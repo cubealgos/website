@@ -23,6 +23,11 @@ String _page({
     '<!DOCTYPE html><html lang="$lang"><head><base href="/"/>$head</head>\n'
     '<body>$body</body></html>';
 
+const _head404 = '''
+<title>Page not found | Cube Algos</title>
+<meta name="description" content="Not found."/>
+<meta name="robots" content="noindex"/>''';
+
 const _sitemap = '''
 <urlset>
   <url><loc>https://cubealgos.de/</loc></url>
@@ -221,11 +226,51 @@ void main() {
     });
   });
 
+  group('404 pages', () {
+    test('are exempt from canonical and hreflang, and need noindex', () {
+      final dir = _site({'404.html': _page(head: _head404)});
+      expect(checkSite(dir), isEmpty);
+    });
+    test('fail without noindex', () {
+      final dir = _site({
+        '404.html': _page(
+          head: _head404.replaceAll(
+            '<meta name="robots" content="noindex"/>',
+            '',
+          ),
+        ),
+      });
+      expect(_rules(dir), ['noindex']);
+    });
+    test('fail with a canonical or hreflang alternates', () {
+      final dir = _site({'404.html': _page()});
+      expect(_rules(dir), containsAll(['noindex', 'canonical', 'hreflang']));
+    });
+    test('fail on a relative URL', () {
+      final dir = _site({
+        '404.html': _page(
+          head: _head404,
+          body: '<h1>x</h1><a href="index.html">home</a>',
+        ),
+      });
+      expect(_rules(dir), ['relative-url']);
+    });
+    test('accept root-absolute URLs', () {
+      final dir = _site({
+        '404.html': _page(
+          head: _head404,
+          body: '<h1>x</h1><a href="/">home</a><a href="/de/">de</a>',
+        ),
+      });
+      expect(checkSite(dir), isEmpty);
+    });
+  });
+
   group('sitemap', () {
     test('passes when every page is listed (404 pages excepted)', () {
       final dir = _site({
-        '404.html': _page(),
-        'de/404.html': _page(lang: 'de'),
+        '404.html': _page(head: _head404),
+        'de/404.html': _page(lang: 'de', head: _head404),
       });
       expect(checkSite(dir), isEmpty);
     });

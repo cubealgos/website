@@ -92,6 +92,9 @@ List<Finding> checkSite(Directory buildDir) {
   return findings;
 }
 
+/// Whether [path] (relative to the build dir) is a 404 page.
+bool _is404(String path) => p.basename(path) == '404.html';
+
 void _checkHead(_Page page, List<Finding> out) {
   void add(String rule, String msg) => out.add(Finding(rule, page.path, msg));
   if (page.title.isEmpty) add('title', 'missing or empty <title>');
@@ -105,6 +108,23 @@ void _checkHead(_Page page, List<Finding> out) {
   final lang = page.named('html').firstOrNull?.attrs['lang'] ?? '';
   if (lang.trim().isEmpty) add('lang', 'missing or empty <html lang>');
   final links = page.named('link').toList();
+  if (_is404(page.path)) {
+    // Explicit exemptions, not a skip: a 404 page is noindex and has neither a
+    // canonical nor hreflang alternates (it is no equivalent of its sibling).
+    final robots = page
+        .named('meta')
+        .where((t) => t.attrs['name']?.toLowerCase() == 'robots');
+    if (!robots.any((t) => (t.attrs['content'] ?? '').contains('noindex'))) {
+      add('noindex', '404 page lacks <meta name="robots" content="noindex">');
+    }
+    if (links.any((t) => t.attrs['rel'] == 'canonical')) {
+      add('canonical', '404 page must not carry a canonical link');
+    }
+    if (links.any((t) => t.attrs['rel'] == 'alternate')) {
+      add('hreflang', '404 page must not carry alternate links');
+    }
+    return;
+  }
   for (final hreflang in ['en', 'de', 'x-default']) {
     final ok = links.any(
       (t) =>
@@ -155,6 +175,15 @@ void _checkLinks(
         continue;
       }
       if (uri.hasScheme && (uri.scheme == 'mailto' || uri.scheme == 'tel')) {
+        continue;
+      }
+      // A 404 page is served from any depth: only root-absolute URLs (and
+      // in-page fragments) keep working there.
+      if (_is404(page.path) &&
+          !value.startsWith('/') &&
+          !value.startsWith('#') &&
+          !uri.hasScheme) {
+        add('relative-url', '404 page uses a relative URL "$value"');
         continue;
       }
       if (uri.hasScheme && uri.scheme != 'http' && uri.scheme != 'https') {

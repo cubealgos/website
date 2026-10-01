@@ -46,7 +46,7 @@ class LangSwitch extends StatelessComponent {
           li([
             a(
               [Component.text(target.code.toUpperCase())],
-              href: pathFor(pageKey, target),
+              href: switchPath(pageKey, target),
               attributes: {
                 'lang': target.code,
                 'hreflang': target.code,
