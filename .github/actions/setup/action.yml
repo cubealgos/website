@@ -1,0 +1,52 @@
+name: Setup Dart toolchain
+description: >-
+  Downloads the pinned Dart SDK (3.13.4, the Dart of Flutter 3.47.5 pinned in
+  .fvmrc), verifies its sha256, caches it, restores the pub cache and runs
+  `dart pub get`. The single copy every workflow in .github/workflows calls.
+
+runs:
+  using: composite
+  steps:
+    # Keyed on the pinned version + a truncated sha256: a key miss only costs
+    # a re-download, it can never serve the wrong SDK.
+    - name: Cache Dart SDK
+      id: cache-dart
+      uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+      with:
+        path: ~/dart-sdk
+        key: dart-3.13.4-6487a10df5eab890
+
+    - name: Fetch Dart SDK
+      if: steps.cache-dart.outputs.cache-hit != 'true'
+      shell: bash
+      run: |
+        set -e
+        DART_VERSION=3.13.4
+        DART_SHA256=6487a10df5eab890d746d14a55f4c70bec3c1c0633f51804eb504cbc0fc395bb
+        curl -fsSL -o /tmp/dart.zip \
+          "https://storage.googleapis.com/dart-archive/channels/stable/release/${DART_VERSION}/sdk/dartsdk-linux-x64-release.zip"
+        echo "${DART_SHA256}  /tmp/dart.zip" | sha256sum -c -
+        unzip -q /tmp/dart.zip -d "$HOME"
+        rm /tmp/dart.zip
+
+    - name: Add Dart to PATH and disable analytics
+      shell: bash
+      run: |
+        set -e
+        echo "$HOME/dart-sdk/bin" >> "$GITHUB_PATH"
+        echo "DART_SUPPRESS_ANALYTICS=true" >> "$GITHUB_ENV"
+        "$HOME/dart-sdk/bin/dart" --disable-analytics
+
+    # A stale cache only slows `dart pub get` down, it never resolves
+    # anything incorrectly (pubspec.lock is the ground truth).
+    - name: Cache pub cache
+      uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+      with:
+        path: ~/.pub-cache
+        key: pub-${{ hashFiles('pubspec.lock') }}
+        restore-keys: |
+          pub-
+
+    - name: dart pub get
+      shell: bash
+      run: dart pub get

@@ -1,13 +1,33 @@
 // SPDX-License-Identifier: Apache-2.0
 
-// Builds the static site into `build/jaspr/` and prunes it to the deployable
-// files: `jaspr build` also leaves the build tooling's own bookkeeping
-// (`packages/`, `.dart_tool/`, `.build.manifest`) next to the pages.
+// Builds the static site into `build/jaspr/`, prunes it to the deployable
+// files (`jaspr build` also leaves the build tooling's own bookkeeping --
+// `packages/`, `.dart_tool/`, `.build.manifest` -- next to the pages) and
+// adds `sitemap.xml` from the route table.
 //
 // Run: `fvm dart run tool/build.dart`.
 import 'dart:io';
 
+import 'package:website/src/routes.dart';
+
 const _outDir = 'build/jaspr';
+// Every indexable page of the route table; the 404 pages stay out.
+void _writeSitemap() {
+  final urls = [
+    for (final entry in paths.entries)
+      if (entry.key != PageKey.notFound)
+        for (final lang in Lang.values) urlFor(entry.key, lang),
+  ];
+  final buffer = StringBuffer()
+    ..writeln('<?xml version="1.0" encoding="UTF-8"?>')
+    ..writeln('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">');
+  for (final url in urls) {
+    buffer.writeln('  <url><loc>$url</loc></url>');
+  }
+  buffer.writeln('</urlset>');
+  File('$_outDir/sitemap.xml').writeAsStringSync(buffer.toString());
+}
+
 const _leftovers = ['packages', '.dart_tool', '.build.manifest'];
 
 Future<void> main() async {
@@ -26,5 +46,6 @@ Future<void> main() async {
     final file = File('$_outDir/$name');
     if (file.existsSync()) file.deleteSync();
   }
+  _writeSitemap();
   stdout.writeln('static site written to $_outDir');
 }

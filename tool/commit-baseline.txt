@@ -1,0 +1,2 @@
+# Full SHAs of grandfathered commits that do not conform to the commit rule.
+# Exempt by SHA only, never by pattern. Empty: every commit conforms.
