@@ -8,6 +8,7 @@
 // Run: `fvm dart run tool/build.dart`.
 import 'dart:io';
 
+import 'package:website/src/icons.dart';
 import 'package:website/src/routes.dart';
 
 const _outDir = 'build/jaspr';
@@ -26,6 +27,14 @@ void _writeSitemap() {
   }
   buffer.writeln('</urlset>');
   File('$_outDir/sitemap.xml').writeAsStringSync(buffer.toString());
+}
+
+// The web manifest, with the paper token as theme and background colour.
+void _writeManifest() {
+  final paper = paperFromTokens(
+    File('$_outDir/brand/tokens.css').readAsStringSync(),
+  );
+  File('$_outDir$manifestPath').writeAsStringSync(webManifest(paper: paper));
 }
 
 const _leftovers = ['packages', '.dart_tool', '.build.manifest'];
@@ -47,5 +56,6 @@ Future<void> main() async {
     if (file.existsSync()) file.deleteSync();
   }
   _writeSitemap();
+  _writeManifest();
   stdout.writeln('static site written to $_outDir');
 }

@@ -13,7 +13,11 @@ const _head = '''
 <link href="https://cubealgos.de/" rel="canonical"/>
 <link hreflang="en" href="https://cubealgos.de/" rel="alternate"/>
 <link hreflang="de" href="https://cubealgos.de/de/" rel="alternate"/>
-<link hreflang="x-default" href="https://cubealgos.de/" rel="alternate"/>''';
+<link hreflang="x-default" href="https://cubealgos.de/" rel="alternate"/>
+<link href="/icon.svg" rel="icon" type="image/svg+xml"/>
+<link href="/icon.ico" rel="icon" sizes="any"/>
+<link href="/touch.png" rel="apple-touch-icon"/>
+<link href="/site.webmanifest" rel="manifest"/>''';
 
 String _page({
   String lang = 'en',
@@ -41,6 +45,10 @@ Directory _site(Map<String, String?> overrides) {
     'index.html': _page(),
     'de/index.html': _page(lang: 'de'),
     'sitemap.xml': _sitemap,
+    'icon.svg': '<svg/>',
+    'icon.ico': 'ico',
+    'touch.png': 'png',
+    'site.webmanifest': '{"name":"Cube Algos","icons":[{"src":"/touch.png"}]}',
     ...overrides,
   };
   final dir = Directory.systemTemp.createTempSync('html_check_');
@@ -60,6 +68,27 @@ List<String> _rules(Directory dir) => [for (final f in checkSite(dir)) f.rule];
 void main() {
   test('a valid site passes', () {
     expect(checkSite(_site({})), isEmpty);
+  });
+
+  group('icons', () {
+    test('fail when a page lacks the icon links', () {
+      final dir = _site({
+        'index.html': _page(
+          head: _head.replaceAll(RegExp('<link href="/icon[^>]*>'), ''),
+        ),
+      });
+      expect(_rules(dir), contains('icons'));
+    });
+    test('fail when a linked icon file is not in the build', () {
+      expect(_rules(_site({'touch.png': null})), contains('icons'));
+    });
+    test('fail without a manifest or when it lists a missing icon', () {
+      expect(_rules(_site({'site.webmanifest': null})), contains('icons'));
+      final dir = _site({
+        'site.webmanifest': '{"name":"x","icons":[{"src":"/nope.png"}]}',
+      });
+      expect(_rules(dir), contains('icons'));
+    });
   });
 
   group('title', () {
@@ -289,6 +318,20 @@ void main() {
     });
   });
 
+  group('storage', () {
+    test('fails on any storage API in a built script', () {
+      for (final js in [
+        'sessionStorage.getItem("a")',
+        'localStorage.x',
+        'indexedDB.open("a")',
+        'document.cookie = "a=b"',
+      ]) {
+        expect(_rules(_site({'sting.js': js})), ['storage'], reason: js);
+      }
+      expect(_rules(_site({'sting.js': 'document.referrer'})), isEmpty);
+    });
+  });
+
   group('hard-coded colours', () {
     test('tokens pass, brand files are exempt', () {
       final dir = _site({
@@ -350,6 +393,12 @@ void main() {
         expect(rules, isNotEmpty, reason: css);
         expect(rules, everyElement('layout-motion'), reason: css);
       }
+    });
+    test('allows background-size (paint-only: the inline underline)', () {
+      const css =
+          '@keyframes d { from { background-size: 0 0.1em; } '
+          'to { background-size: 100% 0.1em; } }';
+      expect(_rules(_site({'site.css': css})), isEmpty);
     });
   });
 }
