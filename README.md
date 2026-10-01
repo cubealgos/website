@@ -22,6 +22,8 @@ Dart tooling only: no `just`, no shell scripts beyond the git hook stub in `tool
 | `fvm dart test` | Unit tests plus tests over the freshly built output (builds first, takes a few seconds). |
 | `fvm dart run tool/hooks.dart` | Installs the git hooks (`git config core.hooksPath tool/hooks`). Run once per clone: the `commit-msg` hook then rejects any subject not shaped `type(scope): description (#N)`. |
 
+The static build starts a temporary server on port 8080 to crawl the routes, so stop `jaspr serve` before building or running the tests.
+
 `jaspr_cli` is a dev dependency and run through `dart run`; nothing is activated globally.
 
 ## Routes
