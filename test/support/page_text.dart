@@ -39,6 +39,8 @@ List<String> mainBlocks(String html) {
   final end = html.indexOf('</main>');
   var body = html.substring(start, end);
   body = body.replaceAll(RegExp('<script[^>]*>.*?</script>', dotAll: true), '');
+  // Decorative inline SVGs (the card sting) carry a stylesheet, not text.
+  body = body.replaceAll(RegExp('<style[^>]*>.*?</style>', dotAll: true), '');
   body = body.replaceAllMapped(RegExp(r'</?([a-zA-Z][a-zA-Z0-9]*)\b[^>]*>'), (
     m,
   ) {

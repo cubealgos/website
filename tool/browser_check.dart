@@ -599,7 +599,7 @@ Future<List<String>> _motionChecks(
       final theme = dark ? 'dark' : 'light';
       // Phone width: the card is below the fold, so the sting waits for it.
       final page = await session(dark: dark);
-      await page.setViewport(375, 800);
+      await page.setViewport(375, 500);
       await page.goto(home);
       final first = await page.evalMap(_stingState);
       final probe = await page.evalMap(_motionProbe);
@@ -737,7 +737,10 @@ Future<List<String>> _motionChecks(
     _seconds(_token('--duration-instant')),
   );
   expectEq('hover easing', p['hoverEasing'], _bezier(_token('--ease-out')));
-  if ('${p['animatedProps']}' != '[backgroundSize, opacity, transform]') {
+  // strokeDashoffset: the brand's mark sting draws its outline (the vendored
+  // SVG's own keyframes, exempt like the rest of brand/).
+  if ('${p['animatedProps']}' !=
+      '[backgroundSize, opacity, strokeDashoffset, transform]') {
     out.add('motion: animated properties ${p['animatedProps']}');
   }
   if (!(p['animations']! as int > 0)) out.add('motion: nothing animates');

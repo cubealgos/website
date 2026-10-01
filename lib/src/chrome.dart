@@ -92,25 +92,23 @@ class SiteHeader extends StatelessComponent {
           href: pathFor(PageKey.home, lang),
           classes: 'brand',
           attributes: {'aria-label': t.homeLabel},
-          [
-            ...const [
-              // Two renderings of the lockup; CSS shows the one that matches
-              // the theme (ink on light, paper on dark), see web/site.css.
-              img(
-                src: '/brand/logo/svg/lockup-horizontal-ink.svg',
-                alt: '',
-                classes: 'logo for-light',
-                width: 269,
-                height: 64,
-              ),
-              img(
-                src: '/brand/logo/svg/lockup-horizontal-paper.svg',
-                alt: '',
-                classes: 'logo for-dark',
-                width: 269,
-                height: 64,
-              ),
-            ],
+          const [
+            // Two renderings of the lockup; CSS shows the one that matches
+            // the theme (ink on light, paper on dark), see web/site.css.
+            img(
+              src: '/brand/logo/svg/lockup-horizontal-ink.svg',
+              alt: '',
+              classes: 'logo for-light',
+              width: 269,
+              height: 64,
+            ),
+            img(
+              src: '/brand/logo/svg/lockup-horizontal-paper.svg',
+              alt: '',
+              classes: 'logo for-dark',
+              width: 269,
+              height: 64,
+            ),
           ],
         ),
         nav(
