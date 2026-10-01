@@ -52,7 +52,7 @@ const Map<Lang, ChromeText> chromeText = {
     legalLabel: 'Rechtliches',
     tagline: 'Cube Algos, Heinsberg. Websites und Apps zum Festpreis.',
     home: 'Start',
-    about: 'Über mich',
+    about: 'Über Cube Algos',
     contact: 'Kontakt',
     impressum: 'Impressum',
     datenschutz: 'Datenschutz',

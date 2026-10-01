@@ -7,8 +7,8 @@ import 'package:website/src/copy/common_copy.dart';
 import 'package:website/src/routes.dart';
 import 'package:website/src/widgets.dart';
 
-/// The about page body: hero with the portrait slot, who I am, one person,
-/// how I work, where, closing call to action.
+/// The about page body: hero with the portrait slot, the founder, one person,
+/// how the studio works, where, closing call to action.
 class AboutPage extends StatelessComponent {
   /// Creates the about page in [lang].
   const new({required this.lang, super.key});
@@ -56,7 +56,7 @@ class AboutPage extends StatelessComponent {
           el('div', classes: 'cta-panel reveal', [
             el('div', classes: 'cta-text', [
               h2(id: 'cta-title', [t(c.ctaTitle)]),
-              MailButton(label: writeEmail[lang]!, inverse: true),
+              MailButton(label: writeToKevin[lang]!, inverse: true),
             ]),
           ]),
         ],
