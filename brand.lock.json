@@ -1,6 +1,6 @@
 {
   "repository": "cubealgos/branding",
-  "tag": "v1.0.0",
+  "tag": "v1.1.0",
   "files": {
     "favicon/apple-touch-icon.png": "c078c921ecc9621eb9ad91eb53a5810d517a30c0a975c355dd308500038f2bfb",
     "favicon/favicon.ico": "02340dbe1cabccd905e5a7a073f202da7afc7777ed22cb446e38725f2ee97046",
@@ -63,6 +63,8 @@
     "sting/sting-ink-still.png": "18a13d3a93172628e137ad38343f03b41e34a6cf100fc7afe1e935f027e51b69",
     "sting/sting-ink-still.svg": "04d83f178358b029995be0f239997679b47c6311e3e829b6695c24d5aa99e8ce",
     "sting/sting-ink.svg": "5cc8bf680e685bdbe44740752bef5e8a14ebbdb6528227c0bdae7dd3954b86aa",
+    "sting/sting-mark-still.svg": "986e851cdbfb6638637a6398ec0e6e31213cc0547afc867dfc07c682c552d4cf",
+    "sting/sting-mark.svg": "edad9af3ca7d7ea0181d135df6c092d617912b68f2465c57aeed19cc7a532090",
     "sting/sting-paper-still.png": "2d4e6f401cc8cc53adf336be2fb829eb3830037a7d6f8abbb9bd8633debcc9ec",
     "sting/sting-paper-still.svg": "aeb2b8f4f24c28ea8702ec1a465e86afb57f9272d6fb3e490544708c6b97814b",
     "sting/sting-paper.svg": "18f9d26cc2815b0469bd26385e6703ea3ea50d71df5a46d3e66fc135891e16ce",

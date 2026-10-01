@@ -101,6 +101,7 @@ final _keep = <RegExp>[
   RegExp(r'^fish/fish\.css$'),
   RegExp(r'^sting/sting-(paper|ink|amber)(-still)?\.svg$'),
   RegExp(r'^sting/sting-(paper|ink|amber)-still\.png$'),
+  RegExp(r'^sting/sting-mark(-still)?\.svg$'),
 ];
 
 bool _wanted(String rel) =>

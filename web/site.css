@@ -126,44 +126,6 @@ main:focus {
   padding-block: var(--spacing-2);
 }
 
-/* Home: the brand link holds the sting box instead of the lockup images. The
-   box is a little taller than the 2rem logo; the negative margins remove the
-   SVG's own padding so the lockup lines up with the grid. Its last frame is
-   the lockup, so it simply stays as the header logo: the slot never changes
-   height. A token proposal for the logo sizes is cubealgos/branding#33. */
-.brand--sting {
-  padding-block: var(--spacing-2) 0;
-  overflow: hidden;
-}
-
-.sting {
-  display: block;
-  height: 3.75rem;
-  aspect-ratio: 325 / 120;
-  margin: -0.875rem 0 -0.875rem -0.81rem;
-}
-
-.sting img {
-  height: 100%;
-  width: auto;
-}
-
-.sting-anim {
-  display: block;
-}
-
-/* sting.js adds this class to <html> when it will play the animation. */
-:root.sting-play .sting-still:is(.for-light, .for-dark) {
-  display: none;
-}
-
-@media (min-width: 48rem) {
-  .sting {
-    height: 4.5rem;
-    margin: -1.05rem 0 -1.05rem -0.97rem;
-  }
-}
-
 .logo {
   display: block;
   height: 2rem;
@@ -622,6 +584,30 @@ nav a[aria-current="page"] {
   letter-spacing: var(--font-scale-label-tracking);
   text-transform: uppercase;
   color: var(--color-muted);
+}
+
+.ledger-mark {
+  /* The mark sting (inline SVG, 120 units for a 64-unit mark): the box is the
+     mark's 2.5rem, the SVG overflows it by its padding. Without sting.js
+     arming it (JS off, reduced motion, arrived from this site) the animation
+     is off and the SVG's base styles are the resting mark. */
+  position: relative;
+  width: 2.5rem;
+  aspect-ratio: 1;
+  flex: none;
+  margin-block: calc(var(--spacing-1) * -1) 0;
+  color: var(--color-fg);
+}
+
+.ledger-mark svg {
+  position: absolute;
+  inset: -43.75%;
+  width: 187.5%;
+  height: 187.5%;
+}
+
+:root:not(.sting-play) .ledger-mark .cas-a {
+  animation: none;
 }
 
 .ledger-fish {
