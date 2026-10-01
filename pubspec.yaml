@@ -1,0 +1,31 @@
+name: website
+description: >-
+  Cube Algos' public website (cubealgos.de): a Jaspr static site, English at
+  the root and German under /de/.
+publish_to: none
+version: 0.1.0
+
+environment:
+  sdk: ^3.13.4
+
+dependencies:
+  # MIT. Exact pin: the current stable Jaspr at the time of #4 (static mode).
+  jaspr: 0.23.5
+
+dev_dependencies:
+  # BSD-3-Clause. Runs `jaspr_builder`. Held at 2.15.1: jaspr_builder 0.23.5
+  # needs analyzer ^12.1.0, which newer build_runner releases exclude.
+  build_runner: ">=2.15.1 <2.15.2"
+  # BSD-3-Clause. Lets `jaspr build` finish without leaving build-tool files in
+  # the output.
+  build_web_compilers: ^4.8.5
+  # MIT. Generates lib/main.server.options.dart; same exact version as jaspr.
+  jaspr_builder: 0.23.5
+  # MIT. The `jaspr build` / `jaspr serve` CLI, run as `dart run jaspr_cli:jaspr`.
+  jaspr_cli: 0.23.5
+  path: ^1.9.0
+  test: ^1.25.0
+  very_good_analysis: ^11.0.0
+
+jaspr:
+  mode: static
