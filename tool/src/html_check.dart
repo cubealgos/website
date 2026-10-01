@@ -1,0 +1,214 @@
+// SPDX-License-Identifier: Apache-2.0
+
+/// Offline checks over a built site (no network): head metadata, internal
+/// links, fragments, foreign hosts and the sitemap.
+library;
+
+import 'dart:io';
+
+import 'package:path/path.dart' as p;
+
+/// The only host the built pages may point at.
+const siteHost = 'cubealgos.de';
+
+/// One rule violation.
+class Finding {
+  /// Creates a finding of [rule] on [page].
+  const new(this.rule, this.page, this.message);
+
+  /// The rule id, e.g. `broken-link`.
+  final String rule;
+
+  /// The page path (relative to the build dir) it was found on.
+  final String page;
+
+  /// What is wrong.
+  final String message;
+
+  @override
+  String toString() => '[$rule] $page: $message';
+}
+
+final _comment = RegExp('<!--.*?-->', dotAll: true);
+final _tag = RegExp(r'<([a-zA-Z][a-zA-Z0-9]*)\b([^>]*)>');
+final _attr = RegExp(
+  r'''([a-zA-Z_:][-a-zA-Z0-9_:.]*)\s*=\s*(?:"([^"]*)"|'([^']*)')''',
+);
+final _title = RegExp('<title>(.*?)</title>', dotAll: true);
+
+class _Tag {
+  new(this.name, this.attrs);
+  final String name;
+  final Map<String, String> attrs;
+}
+
+class _Page {
+  new(this.path, String html) {
+    final stripped = html.replaceAll(_comment, '');
+    title = _title.firstMatch(stripped)?[1]?.trim() ?? '';
+    for (final m in _tag.allMatches(stripped)) {
+      tags.add(
+        _Tag(m[1]!.toLowerCase(), {
+          for (final a in _attr.allMatches(m[2]!))
+            a[1]!.toLowerCase(): a[2] ?? a[3] ?? '',
+        }),
+      );
+    }
+  }
+
+  final String path;
+  final tags = <_Tag>[];
+  late final String title;
+
+  Iterable<_Tag> named(String name) => tags.where((t) => t.name == name);
+  Set<String> get ids => {
+    for (final t in tags) ...[
+      ?t.attrs['id'],
+      if (t.name == 'a') ?t.attrs['name'],
+    ],
+  };
+}
+
+/// Runs every rule over the built site in [buildDir].
+List<Finding> checkSite(Directory buildDir) {
+  final root = buildDir.path;
+  final pages = <String, _Page>{};
+  for (final f in buildDir.listSync(recursive: true)) {
+    if (f is File && f.path.endsWith('.html')) {
+      final rel = p.relative(f.path, from: root);
+      pages[rel] = _Page(rel, f.readAsStringSync());
+    }
+  }
+  final findings = <Finding>[];
+  for (final page in pages.values) {
+    _checkHead(page, findings);
+    _checkLinks(page, root, pages, findings);
+  }
+  _checkSitemap(root, pages, findings);
+  return findings;
+}
+
+void _checkHead(_Page page, List<Finding> out) {
+  void add(String rule, String msg) => out.add(Finding(rule, page.path, msg));
+  if (page.title.isEmpty) add('title', 'missing or empty <title>');
+  final desc = page
+      .named('meta')
+      .where((t) => t.attrs['name']?.toLowerCase() == 'description');
+  if (desc.isEmpty ||
+      desc.every((t) => (t.attrs['content'] ?? '').trim().isEmpty)) {
+    add('description', 'missing or empty meta description');
+  }
+  final lang = page.named('html').firstOrNull?.attrs['lang'] ?? '';
+  if (lang.trim().isEmpty) add('lang', 'missing or empty <html lang>');
+  final links = page.named('link').toList();
+  for (final hreflang in ['en', 'de', 'x-default']) {
+    final ok = links.any(
+      (t) =>
+          t.attrs['rel'] == 'alternate' &&
+          t.attrs['hreflang'] == hreflang &&
+          (t.attrs['href'] ?? '').isNotEmpty,
+    );
+    if (!ok) add('hreflang', 'missing alternate hreflang="$hreflang"');
+  }
+  final canonical = links.any(
+    (t) => t.attrs['rel'] == 'canonical' && (t.attrs['href'] ?? '').isNotEmpty,
+  );
+  if (!canonical) add('canonical', 'missing or empty canonical link');
+}
+
+Iterable<String> _refs(_Tag tag) sync* {
+  for (final name in ['href', 'src', 'poster', 'action']) {
+    if (tag.attrs[name] case final v?) yield v;
+  }
+  if (tag.attrs['srcset'] case final set?) {
+    for (final part in set.split(',')) {
+      final url = part.trim().split(RegExp(r'\s+')).first;
+      if (url.isNotEmpty) yield url;
+    }
+  }
+}
+
+String _pagePath(String rel) => '/${rel.replaceAll(r'\', '/')}';
+
+void _checkLinks(
+  _Page page,
+  String root,
+  Map<String, _Page> pages,
+  List<Finding> out,
+) {
+  void add(String rule, String msg) => out.add(Finding(rule, page.path, msg));
+  final pageUri = Uri.parse('https://$siteHost${_pagePath(page.path)}');
+  final baseHref = page.named('base').firstOrNull?.attrs['href'];
+  final base = baseHref == null ? pageUri : pageUri.resolve(baseHref);
+
+  for (final tag in page.tags) {
+    for (final ref in _refs(tag)) {
+      final value = ref.trim();
+      if (value.isEmpty) continue;
+      final uri = Uri.tryParse(value);
+      if (uri == null) {
+        add('broken-link', 'unparseable URL "$value"');
+        continue;
+      }
+      if (uri.hasScheme && (uri.scheme == 'mailto' || uri.scheme == 'tel')) {
+        continue;
+      }
+      if (uri.hasScheme && uri.scheme != 'http' && uri.scheme != 'https') {
+        add('foreign-host', 'unsupported scheme in "$value"');
+        continue;
+      }
+      if ((uri.hasScheme || value.startsWith('//')) && uri.host != siteHost) {
+        add('foreign-host', '"$value" points at ${uri.host}, not $siteHost');
+        continue;
+      }
+      final target = base.resolve(value);
+      final file = _fileFor(root, target.path);
+      if (file == null) {
+        add('broken-link', '"$value" does not resolve to a built file');
+        continue;
+      }
+      if (target.fragment.isNotEmpty) {
+        final rel = p.relative(file.path, from: root);
+        final targetPage = pages[rel];
+        if (targetPage == null || !targetPage.ids.contains(target.fragment)) {
+          add('fragment', '"$value": no #${target.fragment} in $rel');
+        }
+      }
+    }
+  }
+}
+
+File? _fileFor(String root, String urlPath) {
+  final decoded = Uri.decodeComponent(urlPath);
+  final rel = decoded.startsWith('/') ? decoded.substring(1) : decoded;
+  final direct = File(p.join(root, rel));
+  if (!decoded.endsWith('/') && direct.existsSync()) return direct;
+  final index = File(p.join(root, rel, 'index.html'));
+  if (index.existsSync()) return index;
+  return null;
+}
+
+void _checkSitemap(String root, Map<String, _Page> pages, List<Finding> out) {
+  final sitemap = File(p.join(root, 'sitemap.xml'));
+  if (!sitemap.existsSync()) {
+    out.add(const Finding('sitemap', 'sitemap.xml', 'missing sitemap.xml'));
+    return;
+  }
+  final listed = {
+    for (final m in RegExp(
+      '<loc>(.*?)</loc>',
+    ).allMatches(sitemap.readAsStringSync()))
+      m[1]!.trim(),
+  };
+  for (final page in pages.values) {
+    // 404 pages are deliberately not indexed.
+    if (p.basename(page.path) == '404.html') continue;
+    final path = _pagePath(page.path).replaceFirst(RegExp(r'index\.html$'), '');
+    final url = 'https://$siteHost$path';
+    if (!listed.contains(url)) {
+      out.add(
+        Finding('sitemap', page.path, 'not listed in sitemap.xml ($url)'),
+      );
+    }
+  }
+}
