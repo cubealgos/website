@@ -50,6 +50,10 @@ main ol {
 h1,
 h2,
 h3 {
+  /* Headings never hyphenate (body text does); a long word may still break
+     as a last resort. */
+  hyphens: manual;
+  overflow-wrap: break-word;
   font-weight: var(--font-weight-display);
   margin: 0 0 var(--spacing-4);
 }
@@ -564,6 +568,13 @@ h3 {
   margin-block: var(--spacing-6);
 }
 
+.plans strong,
+.faq summary,
+.offer-name {
+  hyphens: manual;
+  overflow-wrap: break-word;
+}
+
 /* FAQ: native disclosure, one rule per entry. */
 .faq {
   max-width: 70ch;
@@ -760,35 +771,34 @@ h3 {
 /* The amber underline under the key phrase: drawn left to right once. */
 @keyframes draw {
   from {
-    transform: scaleX(0);
+    background-size: 0 0.12em;
   }
 
   to {
-    transform: scaleX(1);
+    background-size: 100% 0.12em;
   }
 }
 
 .mark {
-  position: relative;
-  display: inline-block;
-}
-
-.mark::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -0.08em;
-  height: 0.12em;
-  background: var(--color-accent-fill);
-  transform-origin: left center;
+  /* An inline underline: the phrase wraps with the headline and every wrapped
+     line gets its own segment (box-decoration-break: clone). */
+  background-image: linear-gradient(
+    var(--color-accent-fill),
+    var(--color-accent-fill)
+  );
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 100% 0.12em;
+  padding-bottom: 0.06em;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
   animation: draw var(--duration-draw) var(--ease-draw) both;
   animation-delay: var(--duration-base);
 }
 
 @media (prefers-reduced-motion: reduce) {
   .rise,
-  .mark::after {
+  .mark {
     animation: none;
   }
 
@@ -800,4 +810,35 @@ h3 {
   .btn:active {
     transform: none;
   }
+}
+
+/* Legal pages (Impressum, Datenschutz): plain running text with labelled
+   facts. */
+.legal h2 {
+  font-size: var(--font-scale-h3-size);
+  line-height: var(--font-scale-h3-line-height);
+  letter-spacing: var(--font-scale-h3-tracking);
+  margin-top: var(--spacing-8);
+}
+
+.legal .notice {
+  padding-inline-start: var(--spacing-4);
+  border-inline-start: 2px solid var(--color-accent-fill);
+  font-weight: var(--font-weight-display);
+}
+
+.facts {
+  max-width: 70ch;
+  margin: 0;
+}
+
+.facts dt {
+  margin-top: var(--spacing-4);
+  color: var(--color-muted);
+  font-size: var(--font-scale-small-size);
+  line-height: var(--font-scale-small-line-height);
+}
+
+.facts dd {
+  margin: 0;
 }
