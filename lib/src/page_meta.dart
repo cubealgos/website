@@ -68,12 +68,16 @@ const Map<PageKey, Map<Lang, PageMeta>> pageMeta = {
   PageKey.impressum: {
     Lang.en: (
       title: 'Impressum | Cube Algos',
-      description: 'Legal notice of Cube Algos UG (haftungsbeschränkt).',
+      description:
+          'Legal notice under section 5 DDG for Cube Algos UG '
+          '(haftungsbeschränkt), operator of cubealgos.de.',
       h1: 'Impressum',
     ),
     Lang.de: (
       title: 'Impressum | Cube Algos',
-      description: 'Impressum der Cube Algos UG (haftungsbeschränkt).',
+      description:
+          'Angaben gemäß § 5 DDG für die Cube Algos UG (haftungsbeschränkt), '
+          'Betreiberin von cubealgos.de.',
       h1: 'Impressum',
     ),
   },

@@ -127,6 +127,88 @@ void main() {
     expect((manifest['icons'] as List).length, 4);
   });
 
+  group('Impressum', () {
+    // The facts, as in the company's facts file (typed here independently of
+    // lib/src/legal_facts.dart so a drift in either fails the test).
+    const facts = [
+      'Cube Algos UG (haftungsbeschränkt)',
+      'An der Maar 19',
+      '52525 Heinsberg',
+      'Kevin Scheeren',
+      'Amtsgericht Aachen',
+      'HRB 27008',
+      'DE363092217',
+      '+49 1525 7107984',
+    ];
+    const mail = '<a href="mailto:hello@cubealgos.de">hello@cubealgos.de</a>';
+    const tel = '<a href="tel:+4915257107984">+49 1525 7107984</a>';
+
+    for (final lang in Lang.values) {
+      test('${lang.code} page carries every fact and both links', () {
+        final html = read(pathFor(PageKey.impressum, lang));
+        for (final f in facts) {
+          expect(html, contains(f));
+        }
+        expect(html, contains(mail));
+        expect(html, contains(tel));
+        // The VAT ID is text, not a link.
+        expect(html, isNot(contains('href="DE363092217')));
+        expect(RegExp('<h1[^>]*>Impressum</h1>').hasMatch(html), isTrue);
+      });
+    }
+
+    test('only the English page says the German text is authoritative', () {
+      const line = 'The German version of this page is legally authoritative.';
+      expect(read('/impressum/'), contains(line));
+      expect(read('/de/impressum/'), isNot(contains(line)));
+    });
+
+    test('the German page has § 5 DDG and both liability sections', () {
+      final html = read('/de/impressum/');
+      for (final h in [
+        'Angaben gemäß § 5 DDG',
+        'Haftung für Inhalte',
+        'Haftung für Links',
+      ]) {
+        expect(html, contains('<h2>$h</h2>'));
+      }
+    });
+
+    test('title and description are as specified; indexable; in sitemap', () {
+      const desc = {
+        Lang.en:
+            'Legal notice under section 5 DDG for Cube Algos UG '
+            '(haftungsbeschränkt), operator of cubealgos.de.',
+        Lang.de:
+            'Angaben gemäß § 5 DDG für die Cube Algos UG (haftungsbeschränkt), '
+            'Betreiberin von cubealgos.de.',
+      };
+      final sitemap = File('$_buildDir/sitemap.xml').readAsStringSync();
+      for (final lang in Lang.values) {
+        final html = read(pathFor(PageKey.impressum, lang));
+        expect(html, contains('<title>Impressum | Cube Algos</title>'));
+        expect(html, contains('content="${desc[lang]}"'));
+        expect(html, isNot(contains('noindex')));
+        expect(sitemap, contains(urlFor(PageKey.impressum, lang)));
+      }
+    });
+
+    test('every page links the Impressum in the footer', () {
+      for (final entry in paths.values) {
+        for (final path in entry.values) {
+          final lang = resolve(path)!.lang;
+          final footerHtml = read(path)
+              .substring(read(path).indexOf('<footer'));
+          expect(
+            footerHtml,
+            contains('href="${pathFor(PageKey.impressum, lang)}"'),
+            reason: path,
+          );
+        }
+      }
+    });
+  });
+
   test('fonts: only the display face is preloaded, all faces are built', () {
     for (final entry in paths.values) {
       for (final path in entry.values) {

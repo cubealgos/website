@@ -410,3 +410,34 @@ nav a[aria-current="page"] {
     transform: none;
   }
 }
+
+/* Legal pages (Impressum, Datenschutz): plain running text with labelled
+   facts. */
+.legal h2 {
+  font-size: var(--font-scale-h3-size);
+  line-height: var(--font-scale-h3-line-height);
+  letter-spacing: var(--font-scale-h3-tracking);
+  margin-top: var(--spacing-8);
+}
+
+.legal .notice {
+  padding-inline-start: var(--spacing-4);
+  border-inline-start: 2px solid var(--color-accent-fill);
+  font-weight: var(--font-weight-display);
+}
+
+.facts {
+  max-width: 70ch;
+  margin: 0;
+}
+
+.facts dt {
+  margin-top: var(--spacing-4);
+  color: var(--color-muted);
+  font-size: var(--font-scale-small-size);
+  line-height: var(--font-scale-small-line-height);
+}
+
+.facts dd {
+  margin: 0;
+}
