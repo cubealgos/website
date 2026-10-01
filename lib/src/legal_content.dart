@@ -165,7 +165,256 @@ const _impressumEn = LegalDoc(
   ],
 );
 
+const _controllerDe = Facts([
+  (
+    label: 'Verantwortlicher',
+    lines: [
+      [companyName],
+      [addressStreet],
+      [addressCity],
+      ['Deutschland'],
+      ['E-Mail: ', _mail],
+      ['Telefon: ', _tel],
+    ],
+  ),
+]);
+
+const _datenschutzDe = LegalDoc(
+  sections: [
+    Section('1. Verantwortlicher', [
+      Para([
+        'Verantwortlich für die Datenverarbeitung auf dieser Website im Sinne '
+            'der Datenschutz-Grundverordnung (DSGVO) ist:',
+      ]),
+      _controllerDe,
+    ]),
+    Section('2. Hosting', [
+      Para([
+        'Diese Website wird von einem Server in Deutschland ausgeliefert. '
+            'Den Server mietet Cube Algos bei der STRATO AG (Berlin) und '
+            'betreibt ihn selbst.',
+      ]),
+    ]),
+    Section('3. Keine Zugriffsprotokolle, keine Speicherung von IP-Adressen', [
+      Para([
+        'Der Webserver und der vorgeschaltete Reverse Proxy sind so '
+            'konfiguriert, dass sie für diese Website keine Zugriffsprotokolle '
+            '(Access Logs) schreiben. Es werden deshalb keine IP-Adressen '
+            'der Besucherinnen und Besucher gespeichert.',
+      ]),
+      Para([
+        'Damit der Server Ihnen die Seite senden kann, verarbeitet er Ihre '
+            'IP-Adresse technisch notwendig für die Dauer der Verbindung. Sie '
+            'wird nicht gespeichert. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f '
+            'DSGVO (berechtigtes Interesse an der Bereitstellung der Website).',
+      ]),
+    ]),
+    Section('4. Keine Cookies, kein Tracking, keine Analyse', [
+      Para([
+        'Diese Website setzt keine Cookies, verwendet kein Tracking und keine '
+            'Analysedienste. Sie lädt keine Inhalte von Dritten und bindet '
+            'keine externen Inhalte ein; es gibt deshalb keinen '
+            'Cookie-Banner. Die Website hat kein Formular.',
+      ]),
+      Para([
+        'Eine Ausnahme ohne Personenbezug: Auf der Startseite speichert Ihr '
+            'Browser im Session Storage den Eintrag „sting-seen“, damit die '
+            'Logo-Animation in einer Sitzung nur einmal abgespielt wird. Der '
+            'Eintrag enthält keine personenbezogenen Daten, wird nicht an '
+            'einen Server übertragen und endet mit dem Schließen des '
+            'Browser-Tabs.',
+      ]),
+    ]),
+    Section('5. Schriftarten', [
+      Para([
+        'Die Schriftarten dieser Website sind selbst gehostet und werden '
+            'von diesem Server ausgeliefert. Ihr Browser stellt dafür keine '
+            'Verbindung zu Google Fonts oder einem anderen Dritten her.',
+      ]),
+    ]),
+    Section('6. Kontakt per E-Mail', [
+      Para([
+        'Die Website bietet kein Kontaktformular, sondern nur die Adresse ',
+        _mail,
+        ' als „mailto:“-Link. Beim Anklicken überträgt die Website selbst '
+            'keine Daten; Ihr E-Mail-Programm versendet die Nachricht.',
+      ]),
+      Para([
+        'Wenn Sie uns schreiben, verarbeiten wir Ihre Nachricht und Ihre '
+            'E-Mail-Adresse, um Ihre Anfrage zu beantworten. Rechtsgrundlage '
+            'ist Art. 6 Abs. 1 lit. b DSGVO, wenn Ihre Anfrage auf einen '
+            'Vertrag zielt, sonst Art. 6 Abs. 1 lit. f DSGVO (berechtigtes '
+            'Interesse an der Beantwortung von Anfragen).',
+      ]),
+      Para([
+        'Das Postfach stellt Proton AG (Schweiz) bereit, die dabei als '
+            'Auftragsverarbeiterin für uns tätig ist. Für die Schweiz besteht '
+            'ein Angemessenheitsbeschluss der Europäischen Kommission. Wir '
+            'speichern die Nachrichten so lange, wie es für Ihre Anfrage '
+            'erforderlich ist und gesetzliche Aufbewahrungspflichten es '
+            'verlangen.',
+      ]),
+    ]),
+    Section('7. Keine automatisierte Entscheidungsfindung', [
+      Para([
+        'Wir setzen im Zusammenhang mit dieser Website keine automatisierte '
+            'Entscheidungsfindung und kein Profiling ein.',
+      ]),
+    ]),
+    Section('8. Datenschutzbeauftragter', [
+      Para([
+        'Wir haben keinen Datenschutzbeauftragten bestellt. Das ist nach '
+            '§ 38 BDSG nicht erforderlich, da in der Regel weniger als 20 '
+            'Personen ständig mit der automatisierten Verarbeitung '
+            'personenbezogener Daten beschäftigt sind.',
+      ]),
+    ]),
+    Section('9. Ihre Rechte', [
+      Para([
+        'Sie haben das Recht auf Auskunft (Art. 15 DSGVO), Berichtigung '
+            '(Art. 16), Löschung (Art. 17), Einschränkung der Verarbeitung '
+            '(Art. 18), Datenübertragbarkeit (Art. 20) und Widerspruch '
+            '(Art. 21) sowie, wo eine Verarbeitung auf einer Einwilligung '
+            'beruht, das Recht, diese jederzeit zu widerrufen (Art. 7 '
+            'Abs. 3). Wenden Sie sich dafür an die Kontaktdaten in Abschnitt '
+            '1.',
+      ]),
+      Para([
+        'Sie haben außerdem das Recht, sich bei einer '
+            'Datenschutzaufsichtsbehörde zu beschweren. Für uns zuständig ist '
+            'die Landesbeauftragte für Datenschutz und Informationsfreiheit '
+            'Nordrhein-Westfalen (LDI NRW).',
+      ]),
+    ]),
+    Section('Stand', [
+      Para(['1. Oktober 2026']),
+    ]),
+  ],
+);
+
+const _datenschutzEn = LegalDoc(
+  notice: authoritativeNotice,
+  sections: [
+    Section('1. Controller', [
+      Para([
+        'The controller responsible for data processing on this website '
+            'within the meaning of the General Data Protection Regulation '
+            '(GDPR) is:',
+      ]),
+      Facts([
+        (
+          label: 'Controller',
+          lines: [
+            [companyName],
+            [addressStreet],
+            [addressCity],
+            ['Germany'],
+            ['Email: ', _mail],
+            ['Phone: ', _tel],
+          ],
+        ),
+      ]),
+    ]),
+    Section('2. Hosting', [
+      Para([
+        'This website is served from a server in Germany. Cube Algos rents '
+            'the server from STRATO AG (Berlin) and operates it itself.',
+      ]),
+    ]),
+    Section('3. No access logs, no storage of IP addresses', [
+      Para([
+        'The web server and the reverse proxy in front of it are configured '
+            "to write no access logs for this website. Visitors' IP "
+            'addresses are therefore not stored.',
+      ]),
+      Para([
+        'To send you the page, the server processes your IP address as '
+            'technically necessary for the duration of the connection. It is '
+            'not stored. The legal basis is Art. 6(1)(f) GDPR (legitimate '
+            'interest in providing the website).',
+      ]),
+    ]),
+    Section('4. No cookies, no tracking, no analytics', [
+      Para([
+        'This website sets no cookies and uses no tracking or analytics. It '
+            'loads no content from third parties and embeds no external '
+            'content, so there is no cookie banner. The website has no form.',
+      ]),
+      Para([
+        'One exception, with no personal data: on the home page your browser '
+            'keeps an entry called "sting-seen" in its session storage so '
+            'that the logo animation plays only once per session. The entry '
+            'contains no personal data, is not sent to any server and ends '
+            'when you close the browser tab.',
+      ]),
+    ]),
+    Section('5. Fonts', [
+      Para([
+        'The fonts of this website are self-hosted and served from this '
+            'server. Your browser makes no request to Google Fonts or to any '
+            'other third party for them.',
+      ]),
+    ]),
+    Section('6. Contact by email', [
+      Para([
+        'The website has no contact form, only the address ',
+        _mail,
+        ' as a "mailto:" link. Clicking it transmits no data from the '
+            'website itself; your email program sends the message.',
+      ]),
+      Para([
+        'If you write to us, we process your message and your email address '
+            'to answer your request. The legal basis is Art. 6(1)(b) GDPR if '
+            'your request aims at a contract, otherwise Art. 6(1)(f) GDPR '
+            '(legitimate interest in answering enquiries).',
+      ]),
+      Para([
+        'The mailbox is provided by Proton AG (Switzerland), which acts for '
+            'us as a processor. The European Commission has issued an '
+            'adequacy decision for Switzerland. We keep messages as long as '
+            'your request requires and statutory retention obligations '
+            'demand.',
+      ]),
+    ]),
+    Section('7. No automated decision-making', [
+      Para([
+        'We use no automated decision-making and no profiling in connection '
+            'with this website.',
+      ]),
+    ]),
+    Section('8. Data protection officer', [
+      Para([
+        'We have not appointed a data protection officer. Under § 38 BDSG '
+            'this is not required, because as a rule fewer than 20 people are '
+            'constantly engaged in the automated processing of personal data.',
+      ]),
+    ]),
+    Section('9. Your rights', [
+      Para([
+        'You have the right of access (Art. 15 GDPR), rectification '
+            '(Art. 16), erasure (Art. 17), restriction of processing '
+            '(Art. 18), data portability (Art. 20) and objection (Art. 21) '
+            'and, where processing is based on consent, the right to withdraw '
+            'it at any time (Art. 7(3)). Contact us using the details in '
+            'section 1.',
+      ]),
+      Para([
+        'You also have the right to lodge a complaint with a data '
+            'protection supervisory authority. The authority responsible for '
+            'us is the North Rhine-Westphalia State Commissioner for Data '
+            'Protection and Freedom of Information (Landesbeauftragte für '
+            'Datenschutz und Informationsfreiheit Nordrhein-Westfalen, LDI '
+            'NRW).',
+      ]),
+    ]),
+    Section('Last updated', [
+      Para(['1 October 2026']),
+    ]),
+  ],
+);
+
 /// The legal pages' text per page and language.
 const Map<PageKey, Map<Lang, LegalDoc>> legalDocs = {
   PageKey.impressum: {Lang.en: _impressumEn, Lang.de: _impressumDe},
+  PageKey.datenschutz: {Lang.en: _datenschutzEn, Lang.de: _datenschutzDe},
 };
