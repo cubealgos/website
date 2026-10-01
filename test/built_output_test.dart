@@ -140,4 +140,83 @@ void main() {
     ].fold<int>(0, (a, b) => a + b);
     expect(total, lessThan(120 * 1000));
   });
+
+  group('page frame', () {
+    // The footer is the brand copy (home.md "Footer"), character for character.
+    const footer = {
+      Lang.en: (
+        tagline: 'Cube Algos, Heinsberg. Websites and apps, fixed prices.',
+        links: ['Home', 'About', 'Contact'],
+        skip: 'Skip to content',
+      ),
+      Lang.de: (
+        tagline: 'Cube Algos, Heinsberg. Websites und Apps zum Festpreis.',
+        links: ['Start', 'Über mich', 'Kontakt'],
+        skip: 'Zum Inhalt springen',
+      ),
+    };
+    const bottom = '© 2026 Cube Algos UG (haftungsbeschränkt)';
+    final anchor = RegExp('<a ([^>]*)>(.*?)</a>');
+
+    for (final entry in paths.entries) {
+      for (final lang in Lang.values) {
+        final path = entry.value[lang]!;
+        test('$path renders through the shell', () {
+          final html = read(path);
+          final f = footer[lang]!;
+          // Skip link first, then landmarks in order.
+          final order = [
+            '<a class="skip" href="#main">${f.skip}</a>',
+            '<header',
+            '<nav',
+            '<main id="main" tabindex="-1">',
+            '<footer',
+          ].map(html.indexOf).toList();
+          expect(order, everyElement(isNonNegative), reason: path);
+          expect(order, orderedEquals([...order]..sort()), reason: path);
+          // Footer text.
+          final footerHtml = html.substring(html.indexOf('<footer'));
+          expect(footerHtml, contains('<p class="tagline">${f.tagline}</p>'));
+          expect(footerHtml, contains('<p>$bottom</p>'));
+          expect(
+            footerHtml,
+            contains(
+              '<a href="mailto:hello@cubealgos.de">hello@cubealgos.de</a>',
+            ),
+          );
+          final labels = [
+            for (final m in anchor.allMatches(
+              footerHtml.split('class="bottom"')[0],
+            ))
+              m[2]!,
+          ];
+          expect(labels, [
+            ...f.links,
+            'Impressum',
+            'Datenschutz',
+            'hello@cubealgos.de',
+          ]);
+          // Header nav and the language switch (header and footer).
+          final switchLinks = [
+            for (final m in anchor.allMatches(html))
+              if (m[1]!.contains('hreflang=')) m,
+          ];
+          expect(switchLinks, hasLength(4), reason: path);
+          for (final m in switchLinks) {
+            final target = Lang.values.firstWhere(
+              (l) => m[2] == l.code.toUpperCase(),
+            );
+            expect(m[1], contains('href="${pathFor(entry.key, target)}"'));
+            expect(m[1], contains('lang="${target.code}"'));
+            expect(m[1], contains('hreflang="${target.code}"'));
+            expect(
+              m[1]!.contains('aria-current="true"'),
+              target == lang,
+              reason: '$path ${m[2]}',
+            );
+          }
+        });
+      }
+    }
+  });
 }

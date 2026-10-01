@@ -10,3 +10,4 @@
 - Release workflow: a `vX.Y.Z` tag builds the site and attaches a reproducible `site-vX.Y.Z.tar.gz` with its `.sha256` to a GitHub release (`tool/package_release.dart`, `docs/releasing.md`) (#18).
 - Branch rule accepts `release/<N>-<X.Y.Z>` for the release family, as `docs/releasing.md` prescribes (#26).
 - Brand sync: `tool/brand_sync.dart` vendors the pinned `cubealgos/branding` v1.0.0 release (tokens, logos, favicons, fish, sting) into `web/brand/`, verified against `SHA256SUMS` and recorded in `brand.lock.json`; `--check` and the new `brand-check` workflow fail on any hand edit (#6).
+- Layout shell: skip link, header with the theme-aware logo lockup, nav and EN/DE switch, footer, visible focus rings, light/dark via the vendored tokens, responsive from 320 px; `browser_check` (headless Chrome: no horizontal scroll, keyboard walkthrough, language switch) and a hard-coded-colour check in `html-check` (#8).

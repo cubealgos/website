@@ -2,11 +2,13 @@
 
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/server.dart';
+import 'package:website/src/chrome.dart';
 import 'package:website/src/page_meta.dart';
 import 'package:website/src/routes.dart';
 
-/// An empty page shell: `<html lang>`, title, description, canonical and
-/// hreflang links derived from the route table, and an H1 placeholder.
+/// The page shell: `<html lang>`, title, description, canonical and hreflang
+/// links derived from the route table, the skip link, header and footer, and
+/// an H1 placeholder in `<main>`.
 class PageShell extends StatelessComponent {
   /// Creates the shell of [pageKey] in [lang].
   const new({required this.pageKey, required this.lang, super.key});
@@ -38,6 +40,8 @@ class PageShell extends StatelessComponent {
             attributes: {'as': 'font', 'type': 'font/woff2', 'crossorigin': ''},
           ),
           const link(href: '/fonts/fonts.css', rel: 'stylesheet'),
+          const link(href: '/brand/tokens.css', rel: 'stylesheet'),
+          const link(href: '/site.css', rel: 'stylesheet'),
           link(href: canonical, rel: 'canonical'),
           for (final alt in Lang.values)
             link(
@@ -52,9 +56,18 @@ class PageShell extends StatelessComponent {
           ),
         ],
       ),
-      main_([
-        h1([Component.text(meta.h1)]),
-      ]),
+      SkipLink(lang: lang),
+      SiteHeader(pageKey: pageKey, lang: lang),
+      main_(
+        id: mainId,
+        attributes: const {'tabindex': '-1'},
+        [
+          div(classes: 'wrap', [
+            h1([Component.text(meta.h1)]),
+          ]),
+        ],
+      ),
+      SiteFooter(pageKey: pageKey, lang: lang),
     ]);
   }
 }

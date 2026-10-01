@@ -8,6 +8,8 @@ import 'dart:io';
 
 import 'package:path/path.dart' as p;
 
+import 'css_rules.dart';
+
 /// The only host the built pages may point at.
 const siteHost = 'cubealgos.de';
 
@@ -86,6 +88,7 @@ List<Finding> checkSite(Directory buildDir) {
   }
   _checkSitemap(root, pages, findings);
   _checkThirdParty(buildDir, findings);
+  _checkSiteStyles(buildDir, findings);
   return findings;
 }
 
@@ -255,6 +258,38 @@ void _checkThirdParty(Directory buildDir, List<Finding> out) {
             '"$value" does not resolve to a built file',
           ),
         );
+      }
+    }
+  }
+}
+
+final _styleBlock = RegExp('<style[^>]*>(.*?)</style>', dotAll: true);
+final _styleAttr = RegExp(r'''\sstyle\s*=\s*(?:"([^"]*)"|'([^']*)')''');
+
+/// The site's own CSS (every built stylesheet outside the vendored `brand/`
+/// directory, plus `<style>` blocks and `style` attributes in pages) takes its
+/// colours from the tokens: no hex, colour function or named colour.
+void _checkSiteStyles(Directory buildDir, List<Finding> out) {
+  final root = buildDir.path;
+  for (final f in buildDir.listSync(recursive: true)) {
+    if (f is! File) continue;
+    final rel = p.relative(f.path, from: root).replaceAll(r'\', '/');
+    if (rel.startsWith('brand/')) continue;
+    final css = <String>[];
+    if (f.path.endsWith('.css')) {
+      css.add(f.readAsStringSync());
+    } else if (f.path.endsWith('.html')) {
+      final html = f.readAsStringSync();
+      for (final m in _styleBlock.allMatches(html)) {
+        css.add(m[1]!);
+      }
+      for (final m in _styleAttr.allMatches(html)) {
+        css.add(m[1] ?? m[2] ?? '');
+      }
+    }
+    for (final text in css) {
+      for (final hit in hardCodedColours(text)) {
+        out.add(Finding('hard-coded-colour', rel, hit));
       }
     }
   }

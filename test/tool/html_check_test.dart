@@ -243,4 +243,29 @@ void main() {
       expect(_rules(dir), ['sitemap']);
     });
   });
+
+  group('hard-coded colours', () {
+    test('tokens pass, brand files are exempt', () {
+      final dir = _site({
+        'site.css': 'a { color: var(--color-fg); background: transparent; }',
+        'brand/tokens.css': ':root { --color-bg: #EDEEF1; }',
+      });
+      expect(_rules(dir), isEmpty);
+    });
+    test('fails on a hex, a colour function, a name or an inline style', () {
+      for (final css in [
+        'a { color: #fff; }',
+        'a { background: rgba(0, 0, 0, .5); }',
+        'a { border: 1px solid red; }',
+      ]) {
+        expect(_rules(_site({'site.css': css})), [
+          'hard-coded-colour',
+        ], reason: css);
+      }
+      final dir = _site({
+        'index.html': _page(body: '<h1 id="top" style="color:#123">Home</h1>'),
+      });
+      expect(_rules(dir), ['hard-coded-colour']);
+    });
+  });
 }

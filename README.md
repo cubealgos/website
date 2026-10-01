@@ -44,7 +44,7 @@ Dart of Flutter 3.47.5).
 | `test` | unit tests plus tests over a fresh build | `fvm dart test` |
 | `build` | the static build succeeds | `fvm dart run tool/build.dart` |
 | `licence-check` | pub (and npm lockfile) licences against the org policy; needs network (pub.dev) | `fvm dart run tool/licence_check.dart` |
-| `html-check` | head metadata, internal links, fragments, foreign hosts (HTML and CSS, Google Fonts included), sitemap, over the built site (build first); the workflow also runs the font coverage check | `fvm dart run tool/html_check.dart`, `fvm dart run tool/fonts/check_coverage.dart build/jaspr` |
+| `html-check` | head metadata, internal links, fragments, foreign hosts (HTML and CSS, Google Fonts included), sitemap, no hard-coded colours outside the tokens, over the built site (build first); the workflow also runs the font coverage check and `browser_check` (headless Chrome over the built site: no horizontal scroll at 320/375/768/1280 px on every page, keyboard walkthrough with focus rings, language switch; needs Chrome, `$CHROME` overrides the binary) | `fvm dart run tool/html_check.dart`, `fvm dart run tool/fonts/check_coverage.dart build/jaspr`, `fvm dart run tool/browser_check.dart [--screenshots <dir>]` |
 | `brand-check` | `web/brand/` matches `brand.lock.json`: no modified, missing or unexpected file; offline | `fvm dart run tool/brand_sync.dart --check` |
 | `branch-lint` | the branch is `<family>/<N>-<slug>` (no argument: audits all local branches) | `fvm dart run tool/branch_lint.dart [branch]` |
 | `lint-history` | every commit is `type(scope): description (#N)`; exempt by SHA only via `tool/commit-baseline.txt` | `fvm dart run tool/lint_history.dart` |
@@ -94,9 +94,10 @@ releases exclude.
 | `lib/app.dart` | Root component: reports all routes to the build, renders the page shell for the request path. |
 | `lib/src/routes.dart` | The route table (page keys, both paths, switch target). |
 | `lib/src/page_meta.dart` | Title, description and H1 per page and language. |
-| `lib/src/page.dart` | The page shell (`lang`, title, description, canonical, hreflang). |
+| `lib/src/page.dart` | The page shell (`lang`, title, description, canonical, hreflang, skip link, header, `<main>`, footer). |
+| `lib/src/chrome.dart`, `lib/src/chrome_text.dart` | Skip link, header (logo lockup, nav, EN/DE switch), footer, and their text per language (footer copy per the brand copy). |
 | `brand.lock.json` | The vendored brand release tag and the sha256 of every file in `web/brand/`. |
-| `web/` | Static files copied into the build as is: `robots.txt`, `brand/` (vendored branding release), `fonts/` (self-hosted Onest and DM Mono woff2 subsets, `fonts.css`, OFL licences in `fonts/licenses/`). |
+| `web/` | Static files copied into the build as is: `robots.txt`, `site.css` (the page frame; colours only from the tokens), `brand/` (vendored branding release), `fonts/` (self-hosted Onest and DM Mono woff2 subsets, `fonts.css`, OFL licences in `fonts/licenses/`). |
 | `test/` | Route-table unit tests and tests over the built output. |
 | `tool/` | One script per check (`licence_check.dart`, `html_check.dart`, ...) with shared code in `tool/src/`, `build.dart`, `hooks.dart`, the `hooks/commit-msg` git hook (POSIX `sh`), `commit-baseline.txt` and `licence-exceptions.yaml`. |
 | `.github/` | The setup action and one workflow per check. |
