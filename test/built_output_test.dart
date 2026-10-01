@@ -90,12 +90,16 @@ void main() {
             );
           }
         }
-        // Scripts: only the sting loader, same-origin, on the home pages.
+        // Scripts: only the sting loader (same-origin) and the FAQ JSON-LD
+        // data block, on the home pages.
         final scripts = RegExp('<script[^>]*>').allMatches(read(path));
         expect(
           scripts.map((m) => m[0]),
           resolve(path)?.key == PageKey.home
-              ? [contains('src="/sting.js"')]
+              ? [
+                  contains('src="/sting.js"'),
+                  contains('type="application/ld+json"'),
+                ]
               : isEmpty,
           reason: path,
         );

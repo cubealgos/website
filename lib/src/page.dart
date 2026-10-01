@@ -4,6 +4,7 @@ import 'package:jaspr/dom.dart';
 import 'package:jaspr/server.dart';
 import 'package:website/src/chrome.dart';
 import 'package:website/src/page_meta.dart';
+import 'package:website/src/pages/home_page.dart';
 import 'package:website/src/routes.dart';
 
 /// The page shell: `<html lang>`, title, description, canonical and hreflang
@@ -64,12 +65,12 @@ class PageShell extends StatelessComponent {
         id: mainId,
         attributes: const {'tabindex': '-1'},
         [
-          div(classes: 'wrap', [
-            if (pageKey == PageKey.home)
-              Hero(headline: meta.h1)
-            else
+          if (pageKey == PageKey.home)
+            HomePage(lang: lang)
+          else
+            div(classes: 'wrap', [
               h1(classes: 'rise', [Component.text(meta.h1)]),
-          ]),
+            ]),
         ],
       ),
       SiteFooter(pageKey: pageKey, lang: lang),
