@@ -1,0 +1,28 @@
+#!/bin/sh
+# SPDX-License-Identifier: Apache-2.0
+#
+# Rejects a commit whose subject is not `type(scope): description (#N)`.
+# Install with `fvm dart run tool/hooks.dart` (sets core.hooksPath).
+
+file="$1"
+subject=$(grep -v '^#' "$file" | sed -n '1p')
+
+pattern='^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert|merge|release)\([a-z0-9._/-]+\)!?: .+ \(#[0-9]+\)$'
+
+if printf '%s\n' "$subject" | grep -Eq "$pattern"; then
+  exit 0
+fi
+
+cat >&2 <<MSG
+commit-msg: subject does not match the required format.
+
+  got:      $subject
+  expected: type(scope): description (#N)
+
+  type  one of: feat fix docs style refactor perf test build ci chore revert merge release
+  scope required, e.g. repo, site, ci
+  (#N)  the GitHub issue number, required on every commit (merges and releases too)
+
+  example:  chore(repo): add the commit hook (#3)
+MSG
+exit 1
