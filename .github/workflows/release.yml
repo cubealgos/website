@@ -1,0 +1,47 @@
+# Release, not verification: runs only when a `vX.Y.Z` tag is pushed, never on
+# pull_request, and gates nothing (a failure is a new bug issue, not a blocked
+# merge). It deploys nothing and holds no secret beyond the default
+# GITHUB_TOKEN: cubealgos_server pulls the archive on demand. GitHub-hosted
+# `ubuntu-24.04` only. Toolchain: `.github/actions/setup`.
+
+name: release
+
+on:
+  push:
+    tags: ['v*.*.*']
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    runs-on: ubuntu-24.04
+    # Only this job writes: it creates the GitHub release.
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: ./.github/actions/setup
+      - name: Build the static site
+        run: dart run tool/build.dart
+      # Refuses a tag that does not match pubspec.yaml or has no CHANGELOG
+      # section; the mtime is the tagged commit's time.
+      - name: Package the archive
+        env:
+          TAG: ${{ github.ref_name }}
+        run: dart run tool/package_release.dart --tag "$TAG"
+      - name: Verify the checksum
+        working-directory: dist
+        run: sha256sum -c "site-${GITHUB_REF_NAME}.tar.gz.sha256"
+      - name: Create the GitHub release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          set -e
+          flags=()
+          case "$TAG" in *-*) flags+=(--prerelease) ;; esac
+          gh release create "$TAG" \
+            "dist/site-${TAG}.tar.gz" "dist/site-${TAG}.tar.gz.sha256" \
+            --title "$TAG" --notes-file dist/release-notes.md \
+            --verify-tag "${flags[@]}"

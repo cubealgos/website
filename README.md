@@ -20,6 +20,7 @@ Dart tooling only: no `just`, no shell scripts beyond the git hook stub in `tool
 | `fvm dart run tool/build.dart` | Static build into `build/jaspr/` (runs `jaspr build`, then prunes the build tooling's leftovers so only the deployable files remain, and adds `sitemap.xml` from the route table). |
 | `fvm dart analyze` / `fvm dart format .` | Static analysis (very_good_analysis) and formatting. |
 | `fvm dart test` | Unit tests plus tests over the freshly built output (builds first, takes a few seconds). |
+| `fvm dart run tool/package_release.dart --tag vX.Y.Z` | Packs `build/jaspr/` into the reproducible release archive plus `.sha256` in `dist/` (what `release.yml` runs; see `docs/releasing.md`). |
 | `fvm dart run tool/hooks.dart` | Installs the git hooks (`git config core.hooksPath tool/hooks`). Run once per clone: the `commit-msg` hook then rejects any subject not shaped `type(scope): description (#N)`. |
 
 The static build starts a temporary server on port 8080 to crawl the routes, so stop `jaspr serve` before building or running the tests.
