@@ -214,15 +214,8 @@ const _datenschutzDe = LegalDoc(
         'Diese Website setzt keine Cookies, verwendet kein Tracking und keine '
             'Analysedienste. Sie lädt keine Inhalte von Dritten und bindet '
             'keine externen Inhalte ein; es gibt deshalb keinen '
-            'Cookie-Banner. Die Website hat kein Formular.',
-      ]),
-      Para([
-        'Eine Ausnahme ohne Personenbezug: Auf der Startseite speichert Ihr '
-            'Browser im Session Storage den Eintrag „sting-seen“, damit die '
-            'Logo-Animation in einer Sitzung nur einmal abgespielt wird. Der '
-            'Eintrag enthält keine personenbezogenen Daten, wird nicht an '
-            'einen Server übertragen und endet mit dem Schließen des '
-            'Browser-Tabs.',
+            'Cookie-Banner. Die Website hat kein Formular. Sie speichert '
+            'nichts auf Ihrem Gerät.',
       ]),
     ]),
     Section('5. Schriftarten', [
@@ -338,14 +331,9 @@ const _datenschutzEn = LegalDoc(
       Para([
         'This website sets no cookies and uses no tracking or analytics. It '
             'loads no content from third parties and embeds no external '
-            'content, so there is no cookie banner. The website has no form.',
-      ]),
-      Para([
-        'One exception, with no personal data: on the home page your browser '
-            'keeps an entry called "sting-seen" in its session storage so '
-            'that the logo animation plays only once per session. The entry '
-            'contains no personal data, is not sent to any server and ends '
-            'when you close the browser tab.',
+            'content, so there is no cookie banner. The website has no form.'
+            ' It '
+            'stores nothing on your device.',
       ]),
     ]),
     Section('5. Fonts', [

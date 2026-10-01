@@ -92,6 +92,7 @@ List<Finding> checkSite(Directory buildDir) {
   _checkManifest(root, findings);
   _checkThirdParty(buildDir, findings);
   _checkSiteStyles(buildDir, findings);
+  _checkNoStorage(buildDir, findings);
   return findings;
 }
 
@@ -357,6 +358,25 @@ void _checkSiteStyles(Directory buildDir, List<Finding> out) {
       for (final hit in layoutMotion(text)) {
         out.add(Finding('layout-motion', rel, hit));
       }
+    }
+  }
+}
+
+final _storageApi = RegExp(
+  r'sessionStorage|localStorage|indexedDB|document\.cookie',
+);
+
+/// The site stores nothing on the visitor's device (decision 9, § 25 TDDDG):
+/// no built page, script or stylesheet (the vendored `brand/` files and
+/// fonts aside) references a storage API or `document.cookie`.
+void _checkNoStorage(Directory buildDir, List<Finding> out) {
+  final root = buildDir.path;
+  for (final f in buildDir.listSync(recursive: true)) {
+    if (f is! File || !RegExp(r'\.(html|js|css)$').hasMatch(f.path)) continue;
+    final rel = p.relative(f.path, from: root).replaceAll(r'\', '/');
+    if (rel.startsWith('brand/')) continue;
+    for (final m in _storageApi.allMatches(f.readAsStringSync()).take(1)) {
+      out.add(Finding('storage', rel, 'references ${m[0]}'));
     }
   }
 }

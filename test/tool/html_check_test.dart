@@ -273,6 +273,20 @@ void main() {
     });
   });
 
+  group('storage', () {
+    test('fails on any storage API in a built script', () {
+      for (final js in [
+        'sessionStorage.getItem("a")',
+        'localStorage.x',
+        'indexedDB.open("a")',
+        'document.cookie = "a=b"',
+      ]) {
+        expect(_rules(_site({'sting.js': js})), ['storage'], reason: js);
+      }
+      expect(_rules(_site({'sting.js': 'document.referrer'})), isEmpty);
+    });
+  });
+
   group('hard-coded colours', () {
     test('tokens pass, brand files are exempt', () {
       final dir = _site({

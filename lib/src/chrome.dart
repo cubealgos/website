@@ -195,7 +195,7 @@ class Hero extends StatelessComponent {
   @override
   Component build(BuildContext context) => div(classes: 'hero', [
     // The still, per theme (paper in light, ink in dark). `sting.js` hides it
-    // and inserts the animated SVG the first time a session sees the page.
+    // and inserts the animated SVG on arrival (no same-origin referrer).
     const div(
       classes: 'sting',
       attributes: {'data-sting': ''},

@@ -1,19 +1,20 @@
 /* SPDX-License-Identifier: Apache-2.0 */
-/* Plays the logo sting once per session on the home page hero. Loaded only on
-   the home pages, in <head>. Without JavaScript, or with reduced motion, or on
-   a return to home in the same session, the hero shows the still. */
+/* Plays the logo sting on the home page hero when a visitor arrives: a direct
+   load, an external link or an empty referrer. Loaded only on the home pages,
+   in <head>. Without JavaScript, with reduced motion, or when the referrer is
+   a page of this site, the hero shows the still. Stores nothing. */
 (function () {
   'use strict';
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-  var seen = false;
-  try {
-    seen = window.sessionStorage.getItem('sting-seen') === '1';
-    window.sessionStorage.setItem('sting-seen', '1');
-  } catch (e) {
-    // Storage is blocked: play once per page load.
+  // Arriving from another page of this site: the still, no replay.
+  if (document.referrer) {
+    try {
+      if (new URL(document.referrer).origin === window.location.origin) return;
+    } catch (e) {
+      // An unparseable referrer counts as none: play.
+    }
   }
-  if (seen) return;
 
   var root = document.documentElement;
   root.classList.add('sting-play');
