@@ -38,7 +38,7 @@ PATH=/tmp/fonts-venv/bin:$PATH python3 tool/fonts/subset.py /tmp/gf
 The script runs `fonttools varLib.instancer 'Onest[wght].ttf' wght=<w> --update-name-table`
 and `pyftsubset --flavor=woff2 --no-hinting --desubroutinize
 --layout-features=kern,liga,calt,ccmp,locl,mark,mkmk` with these unicodes (see `UNICODES` in
-the script): U+0020-007E, U+00A0, U+00A9, U+00B7, Ä Ö Ü ä ö ü ß, × (U+00D7), – —, ‘ ’ ‚ “ ” „,
+the script): U+0020-007E, U+00A0, § (U+00A7), U+00A9, U+00B7, Ä Ö Ü ä ö ü ß, × (U+00D7), – —, ‘ ’ ‚ “ ” „,
 … and €. It then rewrites `tool/fonts/coverage.json`.
 
 ## Coverage check

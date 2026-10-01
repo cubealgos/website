@@ -218,7 +218,15 @@ final _keyframes = RegExp(
   r'@keyframes\s+([\w-]+)\s*\{((?:[^{}]*\{[^{}]*\})*)\s*\}',
 );
 final _frameBody = RegExp(r'\{([^{}]*)\}');
-const _animatable = {'transform', 'opacity', 'animation-timing-function'};
+// `background-size` is the one deliberate exception: it is paint-only (no
+// layout), and it is how the headline underline follows a phrase that wraps
+// over several lines, one segment per line.
+const _animatable = {
+  'transform',
+  'opacity',
+  'animation-timing-function',
+  'background-size',
+};
 
 /// Properties other than `transform` and `opacity` that [css] animates:
 /// declared in `@keyframes`, or named in `transition-property` / the
