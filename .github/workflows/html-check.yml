@@ -3,7 +3,10 @@
 # the org's own infrastructure). Toolchain: `.github/actions/setup`.
 #
 # Builds the site first, then checks the built output offline, including that
-# every character of the built pages has a glyph in the self-hosted fonts.
+# every character of the built pages has a glyph in the self-hosted fonts, and
+# drives the system Chrome (preinstalled on the runner) headless over the built
+# site: no horizontal scroll at 320/375/768/1280 px, the keyboard walkthrough
+# and the language switch.
 name: html-check
 
 on:
@@ -23,3 +26,4 @@ jobs:
       - run: dart run tool/build.dart
       - run: dart run tool/html_check.dart
       - run: dart run tool/fonts/check_coverage.dart build/jaspr
+      - run: dart run tool/browser_check.dart

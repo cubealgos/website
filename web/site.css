@@ -1,0 +1,295 @@
+/* SPDX-License-Identifier: Apache-2.0 */
+/* The page frame. Colours, sizes, durations and easings come from the vendored
+   tokens (/brand/tokens.css) and nowhere else: no colour literals here. */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-bg);
+  color: var(--color-fg);
+  font-family: var(--font-family-sans);
+  font-weight: var(--font-weight-text);
+  font-size: var(--font-scale-body-size);
+  line-height: var(--font-scale-body-line-height);
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+
+main {
+  flex: 1 0 auto;
+  padding-block: var(--spacing-12);
+}
+
+/* Layout: one container, a generous but bounded width. Running text stays
+   near 70 characters. */
+.wrap {
+  width: 100%;
+  max-width: 72rem;
+  margin-inline: auto;
+  padding-inline: var(--spacing-4);
+}
+
+main p,
+main ul,
+main ol {
+  max-width: 70ch;
+}
+
+h1,
+h2,
+h3 {
+  font-weight: var(--font-weight-display);
+  margin: 0 0 var(--spacing-4);
+}
+
+h1 {
+  font-size: var(--font-scale-h1-size);
+  line-height: var(--font-scale-h1-line-height);
+  letter-spacing: var(--font-scale-h1-tracking);
+}
+
+a {
+  color: var(--color-accent-text);
+  text-underline-offset: 0.2em;
+}
+
+/* Focus: a 2px ring in the focus token on every interactive element. */
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+main:focus {
+  outline: none;
+}
+
+/* Skip link: first tab stop, off-screen until focused. */
+.skip {
+  position: absolute;
+  top: var(--spacing-2);
+  left: var(--spacing-4);
+  z-index: 10;
+  padding: var(--spacing-2) var(--spacing-4);
+  background: var(--color-card);
+  color: var(--color-fg);
+  font-weight: var(--font-weight-display);
+  transform: translateY(-250%);
+}
+
+.skip:focus-visible {
+  transform: none;
+}
+
+/* Header: logo row, then nav and language switch; one row from 48rem. */
+.site-header {
+  border-bottom: 1px solid var(--color-rule);
+}
+
+.bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: var(--spacing-6);
+  padding-block: var(--spacing-2);
+}
+
+.brand {
+  flex: 0 0 100%;
+  display: inline-block;
+  line-height: 0;
+  padding-block: var(--spacing-2);
+}
+
+.logo {
+  display: block;
+  height: 2rem;
+  width: auto;
+}
+
+/* Theme-aware lockup: ink on light, paper on dark; all three theme states
+   (OS preference, data-theme="light", data-theme="dark"). */
+.logo-dark {
+  display: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .logo-light {
+    display: none;
+  }
+
+  :root:not([data-theme="light"]) .logo-dark {
+    display: block;
+  }
+}
+
+:root[data-theme="dark"] .logo-light {
+  display: none;
+}
+
+:root[data-theme="dark"] .logo-dark {
+  display: block;
+}
+
+:root[data-theme="light"] .logo-light {
+  display: block;
+}
+
+:root[data-theme="light"] .logo-dark {
+  display: none;
+}
+
+nav ul {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: var(--spacing-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+nav a {
+  display: inline-block;
+  padding-block: var(--spacing-3);
+  color: var(--color-fg);
+  text-decoration: none;
+}
+
+nav a:hover {
+  text-decoration: underline;
+  text-decoration-color: var(--color-accent-fill);
+  text-decoration-thickness: 2px;
+}
+
+nav a[aria-current="page"] {
+  font-weight: var(--font-weight-display);
+  text-decoration: underline;
+  text-decoration-color: var(--color-accent-fill);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.35em;
+}
+
+.primary {
+  flex: 1 1 auto;
+}
+
+.lang-switch a {
+  font-family: var(--font-family-mono);
+  font-size: var(--font-scale-small-size);
+  letter-spacing: var(--font-scale-label-tracking);
+  color: var(--color-muted);
+}
+
+.lang-switch a[aria-current="true"] {
+  color: var(--color-fg);
+  text-decoration: underline;
+  text-decoration-color: var(--color-accent-fill);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.35em;
+}
+
+@media (min-width: 48rem) {
+  .wrap {
+    padding-inline: var(--spacing-8);
+  }
+
+  .brand {
+    flex: 0 0 auto;
+  }
+
+  .primary {
+    margin-inline-start: auto;
+    flex: 0 1 auto;
+  }
+}
+
+/* Footer */
+.site-footer {
+  border-top: 1px solid var(--color-rule);
+  padding-block: var(--spacing-8);
+  font-size: var(--font-scale-small-size);
+  line-height: var(--font-scale-small-line-height);
+}
+
+.tagline {
+  margin: 0 0 var(--spacing-4);
+  font-weight: var(--font-weight-display);
+  font-size: var(--font-scale-body-size);
+}
+
+.footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: var(--spacing-8);
+  row-gap: var(--spacing-2);
+}
+
+.footer-contact {
+  margin: 0;
+  padding-block: var(--spacing-3);
+}
+
+.bottom {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  column-gap: var(--spacing-6);
+  margin-top: var(--spacing-4);
+  padding-top: var(--spacing-2);
+  border-top: 1px solid var(--color-rule);
+  color: var(--color-muted);
+}
+
+.bottom p {
+  margin: 0;
+}
+
+/* Chamfered button (a mailto link styled as a button). The focus ring lives on
+   the wrapper as a drop-shadow, because clip-path would clip an outline. */
+.btn-wrap {
+  display: inline-block;
+}
+
+.btn {
+  --c: var(--chamfer-md);
+
+  display: inline-block;
+  padding: var(--spacing-3) var(--spacing-6);
+  background: var(--color-accent-fill);
+  color: var(--color-on-accent);
+  font-weight: var(--font-weight-display);
+  text-decoration: none;
+  clip-path: polygon(
+    0 0,
+    calc(100% - var(--c)) 0,
+    100% var(--c),
+    100% 100%,
+    var(--c) 100%,
+    0 calc(100% - var(--c))
+  );
+}
+
+.btn-wrap :focus-visible {
+  outline: none;
+}
+
+.btn-wrap:has(:focus-visible) {
+  filter: drop-shadow(2px 0 0 var(--color-bg)) drop-shadow(-2px 0 0 var(--color-bg))
+    drop-shadow(0 2px 0 var(--color-bg)) drop-shadow(0 -2px 0 var(--color-bg))
+    drop-shadow(3px 0 0 var(--color-focus)) drop-shadow(-3px 0 0 var(--color-focus))
+    drop-shadow(0 3px 0 var(--color-focus)) drop-shadow(0 -3px 0 var(--color-focus));
+}
