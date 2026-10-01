@@ -3,10 +3,12 @@
 @Timeout(Duration(minutes: 5))
 library;
 
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:path/path.dart' as p;
 import 'package:test/test.dart';
+import 'package:website/src/icons.dart';
 import 'package:website/src/page_meta.dart';
 import 'package:website/src/routes.dart';
 
@@ -101,6 +103,28 @@ void main() {
         );
       }
     }
+  });
+
+  test('every page links the icon set and the manifest; the files exist', () {
+    for (final entry in paths.values) {
+      for (final path in entry.values) {
+        final html = read(path);
+        for (final href in [faviconSvg, faviconIco, appleTouchIcon]) {
+          expect(html, contains('href="$href"'), reason: path);
+        }
+        expect(html, contains('<link href="$manifestPath" rel="manifest"/>'));
+      }
+    }
+    for (final f in iconFiles) {
+      expect(File('$_buildDir$f').existsSync(), isTrue, reason: f);
+    }
+    final manifest = jsonDecode(
+      File('$_buildDir$manifestPath').readAsStringSync(),
+    ) as Map<String, dynamic>;
+    expect(manifest['name'], 'Cube Algos');
+    expect(manifest['theme_color'], '#EDEEF1');
+    expect(manifest['background_color'], '#EDEEF1');
+    expect((manifest['icons'] as List).length, 4);
   });
 
   test('fonts: only the display face is preloaded, all faces are built', () {

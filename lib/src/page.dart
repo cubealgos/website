@@ -3,6 +3,7 @@
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/server.dart';
 import 'package:website/src/chrome.dart';
+import 'package:website/src/icons.dart';
 import 'package:website/src/page_meta.dart';
 import 'package:website/src/routes.dart';
 
@@ -39,6 +40,18 @@ class PageShell extends StatelessComponent {
             rel: 'preload',
             attributes: {'as': 'font', 'type': 'font/woff2', 'crossorigin': ''},
           ),
+          const link(
+            href: faviconSvg,
+            rel: 'icon',
+            attributes: {'type': 'image/svg+xml'},
+          ),
+          const link(
+            href: faviconIco,
+            rel: 'icon',
+            attributes: {'sizes': 'any'},
+          ),
+          const link(href: appleTouchIcon, rel: 'apple-touch-icon'),
+          const link(href: manifestPath, rel: 'manifest'),
           const link(href: '/fonts/fonts.css', rel: 'stylesheet'),
           const link(href: '/brand/tokens.css', rel: 'stylesheet'),
           const link(href: '/site.css', rel: 'stylesheet'),
