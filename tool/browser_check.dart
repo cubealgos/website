@@ -31,7 +31,7 @@ const _widths = [320, 375, 768, 1280];
 
 /// The pages `--screenshots` writes (EN and DE, 375 and 1280 px, light and
 /// dark).
-const List<PageKey> _shotPages = [PageKey.home];
+const List<PageKey> _shotPages = [PageKey.home, PageKey.about];
 
 const _overflowProbe = '''
 (() => {

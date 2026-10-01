@@ -668,6 +668,66 @@ h3 {
   background: var(--color-primitive-paper);
 }
 
+/* About: lede, portrait slot, checklist. */
+.lede {
+  font-size: var(--font-scale-h3-size);
+  line-height: var(--font-scale-h3-line-height);
+}
+
+.portrait {
+  --c: var(--chamfer-lg);
+
+  display: grid;
+  place-items: center;
+  width: min(100%, 16rem);
+  aspect-ratio: 4 / 5;
+  margin: 0;
+  padding: var(--spacing-6);
+  background: var(--color-card);
+  clip-path: polygon(
+    0 0,
+    calc(100% - var(--c)) 0,
+    100% var(--c),
+    100% 100%,
+    var(--c) 100%,
+    0 calc(100% - var(--c))
+  );
+}
+
+/* A photo fills the slot edge to edge. */
+.portrait > img:not(.fish-img) {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+@media (min-width: 48rem) {
+  .portrait {
+    justify-self: end;
+  }
+}
+
+.checks {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.checks li {
+  position: relative;
+  padding: var(--spacing-2) 0 var(--spacing-2) var(--spacing-6);
+}
+
+.checks li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 1.05em;
+  width: var(--spacing-3);
+  height: var(--spacing-1);
+  background: var(--color-accent-fill);
+}
+
 /* Motion: transform and opacity only; durations and easings from the tokens.
    Final states are the base styles, so removing the animation (reduced
    motion) leaves everything in place. */

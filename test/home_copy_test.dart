@@ -61,7 +61,8 @@ void main() {
 
   for (final lang in Lang.values) {
     group('home ${lang.code}', () {
-      final html = builtHtml(PageKey.home, lang);
+      late String html;
+      setUp(() => html = builtHtml(PageKey.home, lang));
 
       test('the page shows exactly the copy, in order', () {
         expect(mainBlocks(html), expectedBlocks(lang));
