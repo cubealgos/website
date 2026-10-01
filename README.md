@@ -21,6 +21,7 @@ Dart tooling only: no `just`, no shell scripts beyond the git hook stub in `tool
 | `fvm dart analyze` / `fvm dart format .` | Static analysis (very_good_analysis) and formatting. |
 | `fvm dart test` | Unit tests plus tests over the freshly built output (builds first, takes a few seconds). |
 | `fvm dart run tool/package_release.dart --tag vX.Y.Z` | Packs `build/jaspr/` into the reproducible release archive plus `.sha256` in `dist/` (what `release.yml` runs; see `docs/releasing.md`). |
+| `fvm dart run tool/brand_sync.dart [--version vX.Y.Z]` | Vendors a pinned `cubealgos/branding` release into `web/brand/` (downloads over HTTPS, verifies every asset against the release's `SHA256SUMS`, writes nothing on a mismatch) and records the tag and per-file sha256 in `brand.lock.json`. `--check` re-hashes `web/brand/` offline. |
 | `fvm dart run tool/hooks.dart` | Installs the git hooks (`git config core.hooksPath tool/hooks`). Run once per clone: the `commit-msg` hook then rejects any subject not shaped `type(scope): description (#N)`. |
 
 The static build starts a temporary server on port 8080 to crawl the routes, so stop `jaspr serve` before building or running the tests.
@@ -44,6 +45,7 @@ Dart of Flutter 3.47.5).
 | `build` | the static build succeeds | `fvm dart run tool/build.dart` |
 | `licence-check` | pub (and npm lockfile) licences against the org policy; needs network (pub.dev) | `fvm dart run tool/licence_check.dart` |
 | `html-check` | head metadata, internal links, fragments, foreign hosts (HTML and CSS, Google Fonts included), sitemap, over the built site (build first); the workflow also runs the font coverage check | `fvm dart run tool/html_check.dart`, `fvm dart run tool/fonts/check_coverage.dart build/jaspr` |
+| `brand-check` | `web/brand/` matches `brand.lock.json`: no modified, missing or unexpected file; offline | `fvm dart run tool/brand_sync.dart --check` |
 | `branch-lint` | the branch is `<family>/<N>-<slug>` (no argument: audits all local branches) | `fvm dart run tool/branch_lint.dart [branch]` |
 | `lint-history` | every commit is `type(scope): description (#N)`; exempt by SHA only via `tool/commit-baseline.txt` | `fvm dart run tool/lint_history.dart` |
 | `changelog-check` | `CHANGELOG.md` exists with an `Unreleased` section | `fvm dart run tool/changelog_check.dart` |
@@ -70,6 +72,10 @@ language switch, hreflang alternates and canonical URLs all derive from it.
 The pages are empty shells for now (title, description, H1); content arrives in later issues.
 The built HTML references only same-origin resources.
 
+## Brand assets
+
+`web/brand/` is vendored, never edited by hand: design tokens (`tokens.css`), logo SVGs, the favicon set, the fish SVGs and `fish.css`, and the animated sting SVGs with their stills, from a pinned release of `cubealgos/branding` (all rights reserved, see `web/brand/README.md`). To bump the brand version: run `fvm dart run tool/brand_sync.dart --version vX.Y.Z`, review the diff of `web/brand/` and `brand.lock.json`, run the checks, commit both together. A failed download or sha256 mismatch exits non-zero and leaves the tree untouched.
+
 ## Fonts
 
 Onest (800 display, 400 text) and DM Mono (400) are self-hosted from `web/fonts/` (SIL OFL 1.1, licences in `web/fonts/licenses/`); the built site makes no request to Google Fonts or any other third party, and `html-check` fails if a built page or stylesheet points at one. Source, subsetting recipe and coverage check: `tool/fonts/README.md`.
@@ -89,7 +95,8 @@ releases exclude.
 | `lib/src/routes.dart` | The route table (page keys, both paths, switch target). |
 | `lib/src/page_meta.dart` | Title, description and H1 per page and language. |
 | `lib/src/page.dart` | The page shell (`lang`, title, description, canonical, hreflang). |
-| `web/` | Static files copied into the build as is: `robots.txt`, `fonts/` (self-hosted Onest and DM Mono woff2 subsets, `fonts.css`, OFL licences in `fonts/licenses/`). |
+| `brand.lock.json` | The vendored brand release tag and the sha256 of every file in `web/brand/`. |
+| `web/` | Static files copied into the build as is: `robots.txt`, `brand/` (vendored branding release), `fonts/` (self-hosted Onest and DM Mono woff2 subsets, `fonts.css`, OFL licences in `fonts/licenses/`). |
 | `test/` | Route-table unit tests and tests over the built output. |
 | `tool/` | One script per check (`licence_check.dart`, `html_check.dart`, ...) with shared code in `tool/src/`, `build.dart`, `hooks.dart`, the `hooks/commit-msg` git hook (POSIX `sh`), `commit-baseline.txt` and `licence-exceptions.yaml`. |
 | `.github/` | The setup action and one workflow per check. |
