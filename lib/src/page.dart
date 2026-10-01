@@ -31,6 +31,13 @@ class PageShell extends StatelessComponent {
             tag: 'meta',
             attributes: {'name': 'description', 'content': meta.description},
           ),
+          // Only the display face is preloaded; the others load on first use.
+          const link(
+            href: '/fonts/onest-800.woff2',
+            rel: 'preload',
+            attributes: {'as': 'font', 'type': 'font/woff2', 'crossorigin': ''},
+          ),
+          const link(href: '/fonts/fonts.css', rel: 'stylesheet'),
           link(href: canonical, rel: 'canonical'),
           for (final alt in Lang.values)
             link(

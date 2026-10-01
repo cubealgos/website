@@ -1,0 +1,26 @@
+/* Self-hosted, Latin + German subsets (see tool/fonts/README.md). Onest 800 is
+   the display face, Onest 400 the text face, DM Mono 400 labels and code.
+   One subset file per face, so no unicode-range split is needed. */
+@font-face {
+  font-family: "Onest";
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("/fonts/onest-800.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Onest";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/onest-400.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "DM Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/dm-mono-400.woff2") format("woff2");
+}

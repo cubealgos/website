@@ -2,7 +2,8 @@
 # `ubuntu-24.04` only (this repo is public: a fork PR must never run code on
 # the org's own infrastructure). Toolchain: `.github/actions/setup`.
 #
-# Builds the site first, then checks the built output offline.
+# Builds the site first, then checks the built output offline, including that
+# every character of the built pages has a glyph in the self-hosted fonts.
 name: html-check
 
 on:
@@ -21,3 +22,4 @@ jobs:
       - uses: ./.github/actions/setup
       - run: dart run tool/build.dart
       - run: dart run tool/html_check.dart
+      - run: dart run tool/fonts/check_coverage.dart build/jaspr
