@@ -37,9 +37,10 @@ const Map<Lang, AboutCopy> aboutCopy = {
           'a Mathematisch-technischer Softwareentwickler (MATSE), a '
           'German IT qualification built on mathematics and software '
           'engineering.'),
-      ('He founded Cube Algos in 2023 because he loves building '
-          'software and wants to do it on his own terms: carefully, '
-          'creatively, and for people who will actually use it.'),
+      ('He founded Cube Algos in 2023 to build apps, SaaS and internal '
+          'tools. He loves building software and wants to do it on his own '
+          'terms: carefully, creatively, and for people who will actually '
+          'use it.'),
     ],
     oneTitle: 'One person, on purpose',
     one:
@@ -52,7 +53,8 @@ const Map<Lang, AboutCopy> aboutCopy = {
       'Fixed prices, in writing, before the build.',
       'You see progress as it happens.',
       'Every build is accessible from the start.',
-      "When it's live, Cube Algos can keep looking after it.",
+      ('A free first call, then a written scope in about 3 working '
+          "days. If you don't go ahead, it costs nothing."),
       ('AI tools are used every day, because they make the work '
           'faster. Kevin is also a trained developer, so he reads and '
           'understands every line before it ships. AI helps write the '
@@ -78,10 +80,10 @@ const Map<Lang, AboutCopy> aboutCopy = {
           'ausgebildeter Entwickler: Seine Ausbildung zum '
           'Mathematisch-technischen Softwareentwickler (MATSE) hat er '
           'abgeschlossen.'),
-      ('Cube Algos hat er 2023 gegründet, weil er Software zu bauen '
-          'liebt und das zu seinen eigenen Bedingungen tun möchte: '
-          'sorgfältig, kreativ und für Menschen, die sie wirklich '
-          'benutzen.'),
+      ('Cube Algos hat er 2023 gegründet, um Apps, SaaS und interne '
+          'Werkzeuge zu bauen. Er liebt es, Software zu bauen, und möchte '
+          'das zu seinen eigenen Bedingungen tun: sorgfältig, kreativ und '
+          'für Menschen, die sie wirklich benutzen.'),
     ],
     oneTitle: 'Eine Person, mit Absicht',
     one:
@@ -95,7 +97,9 @@ const Map<Lang, AboutCopy> aboutCopy = {
       'Feste Preise, schriftlich, bevor gebaut wird.',
       'Sie sehen den Fortschritt, während er entsteht.',
       'Jedes Projekt wird von Anfang an barrierearm gebaut.',
-      'Wenn es online ist, kann Cube Algos sich weiter darum kümmern.',
+      ('Ein kostenloses Erstgespräch, dann in etwa 3 Werktagen ein '
+          'schriftlicher Umfang. Entscheiden Sie sich dagegen, kostet es '
+          'nichts.'),
       ('KI-Werkzeuge kommen jeden Tag zum Einsatz, weil sie die Arbeit '
           'schneller machen. Als ausgebildeter Entwickler liest und '
           'versteht Kevin jede Zeile, bevor sie live geht. KI hilft beim '
