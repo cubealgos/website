@@ -57,7 +57,7 @@ class ContactPage extends StatelessComponent {
         attrs: const {'aria-label': 'Details'},
         [
           el('div', classes: 'wrap prose', [
-            p(classes: 'details', [
+            p(classes: 'details reveal', [
               t(c.details.substring(0, at)),
               a([t(contactEmail)], href: 'mailto:$contactEmail'),
               t(c.details.substring(at + contactEmail.length)),
@@ -68,14 +68,16 @@ class ContactPage extends StatelessComponent {
     ]);
   }
 
+  Component _reveal(Component block) => el('div', classes: 'reveal', [block]);
+
   Component _section(String id, String title, List<Component> body) => el(
     'section',
     classes: 'section',
     attrs: {'aria-labelledby': '$id-title'},
     [
       el('div', classes: 'wrap prose', [
-        h2(id: '$id-title', [t(title)]),
-        ...body,
+        h2(id: '$id-title', classes: 'reveal', [t(title)]),
+        for (final block in body) _reveal(block),
       ]),
     ],
   );

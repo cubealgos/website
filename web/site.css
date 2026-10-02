@@ -828,10 +828,42 @@ h3 {
   animation-delay: var(--duration-base);
 }
 
+/* Reveal on scroll: only when reveal.js runs and motion is allowed does it add
+   .reveal-on to <html>, and only then are .reveal elements hidden; it adds
+   .is-in once as each enters view. Without JavaScript they are plain content. */
+:root.reveal-on .reveal {
+  opacity: 0;
+  transform: translateY(var(--spacing-2));
+}
+
+:root.reveal-on .reveal.is-in {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity var(--duration-base) var(--ease-settle),
+    transform var(--duration-base) var(--ease-settle);
+  /* About 60 ms between siblings: 0.6 x the instant token. */
+  transition-delay: calc(var(--i, 0) * var(--duration-instant) * 0.6);
+}
+
+@media print {
+  :root.reveal-on .reveal {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .rise,
   .mark {
     animation: none;
+  }
+
+  :root.reveal-on .reveal,
+  :root.reveal-on .reveal.is-in {
+    opacity: 1;
+    transform: none;
+    transition: none;
   }
 
   .btn,

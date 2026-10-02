@@ -22,3 +22,4 @@
 - 404 pages, EN and DE: the confused fish with the microcopy, emitted as `404.html` and `de/404.html`, noindex, root-absolute URLs only; `html-check` exempts them from canonical and hreflang explicitly (and requires noindex), and the local static server answers `/de/` paths with the German page (#13).
 - The headline underline is an inline background that follows the wrapped phrase, one segment per line; headings no longer hyphenate (#10).
 - The 404 headline steps down the type scale on narrow screens instead of hyphenating its long German word (#13).
+- Reveal on scroll: headings and content blocks on Home, About and Contact fade in with an 8 px rise once as they enter view (`base` duration, `settle` easing, 60 ms stagger within a group, 15% threshold) via `web/reveal.js`; content stays fully visible without JavaScript or under reduced motion, and `browser_check` scrolls each page to the bottom, then checks reduced motion and JS-off (#41).

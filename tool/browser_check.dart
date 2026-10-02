@@ -18,7 +18,11 @@
 //    Chrome started with
 //    `--force-prefers-reduced-motion`); durations and easings are the tokens;
 //    only transform, opacity and the underline's background-size animate;
-//    button press and hover.
+//    button press and hover;
+//  * reveal on scroll: scrolling each content page to the bottom leaves every
+//    `.reveal` element at opacity 1; with reduced motion or JavaScript off
+//    (`--blink-settings=scriptEnabled=false`) they are visible without
+//    scrolling.
 //
 // `--screenshots <dir>` also writes the content pages EN/DE at 375 and 1280,
 // light and dark.
@@ -220,6 +224,27 @@ Future<void> main(List<String> args) async {
       await calm.close();
     }
 
+    // 4a. Reveal on scroll: scrolled through, with reduced motion, JS off.
+    failures.addAll(await _revealChecks(chrome, base, mode: _Reveal.scroll));
+    final calmReveal = await Chrome.launch(
+      args: ['--force-prefers-reduced-motion'],
+    );
+    try {
+      failures.addAll(
+        await _revealChecks(calmReveal, base, mode: _Reveal.reduced),
+      );
+    } finally {
+      await calmReveal.close();
+    }
+    final noJs = await Chrome.launch(
+      args: ['--blink-settings=scriptEnabled=false'],
+    );
+    try {
+      failures.addAll(await _revealChecks(noJs, base, mode: _Reveal.noScript));
+    } finally {
+      await noJs.close();
+    }
+
     // 4b. Unknown paths: the server falls back to the 404 page of the path's
     // language (English, or German below /de/), from any depth, and the page
     // renders with its styles and fish.
@@ -293,6 +318,82 @@ Future<void> main(List<String> args) async {
     'browser_check: ${all.length} pages x ${_widths.length} widths, '
     'keyboard walkthrough, language switch ok.',
   );
+}
+
+// --- Reveal on scroll --------------------------------------------------------
+
+enum _Reveal { scroll, reduced, noScript }
+
+const _revealState = '''
+(() => {
+  const els = [...document.querySelectorAll('.reveal')];
+  return {
+    count: els.length,
+    on: document.documentElement.classList.contains('reveal-on'),
+    hidden: els.filter(e => getComputedStyle(e).opacity !== '1').length,
+    moved: els.filter(e => getComputedStyle(e).transform !== 'none').length,
+    storage: sessionStorage.length + localStorage.length,
+  };
+})()
+''';
+
+Future<List<String>> _revealChecks(
+  Chrome chrome,
+  String base, {
+  required _Reveal mode,
+}) async {
+  final out = <String>[];
+  for (final key in [PageKey.home, PageKey.about, PageKey.contact]) {
+    for (final lang in Lang.values) {
+      for (final width in [375, 1280]) {
+        final where = '${pathFor(key, lang)} @$width (${mode.name})';
+        final page = await chrome.newPage();
+        await page.setViewport(width, 800);
+        await page.setMedia(
+          reducedMotion: mode == _Reveal.scroll ? false : null,
+        );
+        await page.goto('$base${pathFor(key, lang)}');
+        await Future<void>.delayed(const Duration(milliseconds: 600));
+        final first = await page.evalMap(_revealState);
+        if ((first['count']! as int) == 0) {
+          out.add('$where: no .reveal elements');
+          continue;
+        }
+        if (mode != _Reveal.scroll) {
+          if (first['on'] == true || first['hidden'] != 0) {
+            out.add('$where: not visible without scrolling: $first');
+          }
+          continue;
+        }
+        if (first['on'] != true) out.add('$where: reveal-on missing: $first');
+        // Content below the fold waits for its first view.
+        if ((first['hidden']! as int) == 0) {
+          out.add('$where: nothing waits below the fold: $first');
+        }
+        // Scroll through in steps, as a visitor does.
+        final height =
+            (await page.eval('document.documentElement.scrollHeight'))! as num;
+        for (var y = 0; y < height; y += 300) {
+          await page.eval('scrollTo(0, $y)');
+          await Future<void>.delayed(const Duration(milliseconds: 60));
+        }
+        await page.eval('scrollTo(0, document.documentElement.scrollHeight)');
+        await Future<void>.delayed(const Duration(milliseconds: 900));
+        final end = await page.evalMap(_revealState);
+        if (end['hidden'] != 0 || end['moved'] != 0) {
+          out.add('$where: not all revealed at the bottom: $end');
+        }
+        // Once: scrolling back up leaves everything shown.
+        await page.eval('scrollTo(0, 0)');
+        await Future<void>.delayed(const Duration(milliseconds: 300));
+        final back = await page.evalMap(_revealState);
+        if (back['hidden'] != 0 || back['storage'] != 0) {
+          out.add('$where: re-hidden or stored on the way back: $back');
+        }
+      }
+    }
+  }
+  return out;
 }
 
 // --- Icons -------------------------------------------------------------------
@@ -510,10 +611,9 @@ Future<List<String>> _motionChecks(
       final about = await page.evalMap(_stingState);
       if (about['box'] == true ||
           about['anim'] == true ||
-          about['scripts'] != 0) {
+          about['scripts'] != 1) {
         out.add(
-          '${pathFor(PageKey.about, lang)}: sting or script on another '
-          'page: $about',
+          '${pathFor(PageKey.about, lang)}: sting on another page: $about',
         );
       }
       await _clickTo(page, pathFor(PageKey.home, lang));
@@ -541,7 +641,9 @@ Future<List<String>> _motionChecks(
       final page = await session();
       await page.goto('$base${pathFor(key, lang)}');
       final s = await page.evalMap(_stingState);
-      if (s['box'] == true || s['anim'] == true || s['scripts'] != 0) {
+      // The content pages carry reveal.js (one script), the rest none.
+      final scripts = {PageKey.about, PageKey.contact}.contains(key) ? 1 : 0;
+      if (s['box'] == true || s['anim'] == true || s['scripts'] != scripts) {
         out.add('${pathFor(key, lang)} ($mode): sting on a non-home page: $s');
       }
     }

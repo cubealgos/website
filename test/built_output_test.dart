@@ -102,19 +102,19 @@ void main() {
             );
           }
         }
-        // Scripts: only the sting loader (same-origin) and the FAQ JSON-LD
-        // data block, on the home pages.
+        // Scripts: only the same-origin loaders (sting on home, reveal on
+        // the content pages) and the FAQ JSON-LD data block on home.
+        final key = resolve(path)?.key;
         final scripts = RegExp('<script[^>]*>').allMatches(read(path));
-        expect(
-          scripts.map((m) => m[0]),
-          resolve(path)?.key == PageKey.home
-              ? [
-                  contains('src="/sting.js"'),
-                  contains('type="application/ld+json"'),
-                ]
-              : isEmpty,
-          reason: path,
-        );
+        expect(scripts.map((m) => m[0]), switch (key) {
+          PageKey.home => [
+            contains('src="/sting.js"'),
+            contains('src="/reveal.js"'),
+            contains('type="application/ld+json"'),
+          ],
+          PageKey.about || PageKey.contact => [contains('src="/reveal.js"')],
+          _ => isEmpty,
+        }, reason: path);
       }
     }
   });

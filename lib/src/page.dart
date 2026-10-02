@@ -13,6 +13,9 @@ import 'package:website/src/pages/home_page.dart';
 import 'package:website/src/pages/not_found_page.dart';
 import 'package:website/src/routes.dart';
 
+/// The pages whose sections rise in on scroll (`reveal.js`).
+const Set<PageKey> revealPages = {PageKey.home, PageKey.about, PageKey.contact};
+
 /// The page shell: `<html lang>`, title, description, canonical and hreflang
 /// links derived from the route table, the skip link, header and footer, and
 /// an H1 placeholder in `<main>`.
@@ -63,6 +66,8 @@ class PageShell extends StatelessComponent {
           const link(href: '/site.css', rel: 'stylesheet'),
           // The sting plays on arrival, not from a page of this site.
           if (pageKey == PageKey.home) const script(src: '/sting.js'),
+          // Sections rise in as they scroll into view; content pages only.
+          if (revealPages.contains(pageKey)) const script(src: '/reveal.js'),
           // The 404 pages are not indexed and are no equivalents of each other:
           // noindex, and neither a canonical nor hreflang alternates.
           if (pageKey == PageKey.notFound)

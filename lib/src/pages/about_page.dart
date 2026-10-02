@@ -53,7 +53,7 @@ class AboutPage extends StatelessComponent {
         classes: 'wrap section-cta',
         attrs: const {'aria-labelledby': 'cta-title'},
         [
-          el('div', classes: 'cta-panel', [
+          el('div', classes: 'cta-panel reveal', [
             el('div', classes: 'cta-text', [
               h2(id: 'cta-title', [t(c.ctaTitle)]),
               MailButton(label: writeEmail[lang]!, inverse: true),
@@ -64,14 +64,16 @@ class AboutPage extends StatelessComponent {
     ]);
   }
 
+  Component _reveal(Component block) => el('div', classes: 'reveal', [block]);
+
   Component _section(String id, String title, List<Component> body) => el(
     'section',
     classes: 'section',
     attrs: {'aria-labelledby': '$id-title'},
     [
       el('div', classes: 'wrap prose', [
-        h2(id: '$id-title', [t(title)]),
-        ...body,
+        h2(id: '$id-title', classes: 'reveal', [t(title)]),
+        for (final block in body) _reveal(block),
       ]),
     ],
   );

@@ -112,10 +112,10 @@ class HomePage extends StatelessComponent {
     attrs: const {'aria-labelledby': 'lanes-title'},
     [
       el('div', classes: 'wrap', [
-        h2(id: 'lanes-title', [t(c.lanesTitle)]),
+        h2(id: 'lanes-title', classes: 'reveal', [t(c.lanesTitle)]),
         el('div', classes: 'lanes', [
           for (final lane in c.lanes)
-            el('div', classes: 'card lane', [
+            el('div', classes: 'card lane reveal', [
               h3([t(lane.title)]),
               p([t(lane.text)]),
               ul(classes: 'lane-links', [
@@ -139,11 +139,11 @@ class HomePage extends StatelessComponent {
     attrs: const {'aria-labelledby': 'offers-title'},
     [
       el('div', classes: 'wrap', [
-        h2(id: 'offers-title', [t(c.offersTitle)]),
-        p(classes: 'intro', [t(c.offersIntro)]),
+        h2(id: 'offers-title', classes: 'reveal', [t(c.offersTitle)]),
+        p(classes: 'intro reveal', [t(c.offersIntro)]),
         ul(classes: 'offers', [
           for (final o in c.offers)
-            li(id: 'offer-${o.id}', classes: 'card offer', [
+            li(id: 'offer-${o.id}', classes: 'card offer reveal', [
               h3([
                 span(classes: 'offer-name', [t('${o.name},')]),
                 t(' '),
@@ -165,10 +165,10 @@ class HomePage extends StatelessComponent {
     [
       el('div', classes: 'wrap split', [
         el('div', [
-          h2(id: 'workflow-title', [t(c.workflowTitle)]),
+          h2(id: 'workflow-title', classes: 'reveal', [t(c.workflowTitle)]),
           ol(classes: 'steps', [
             for (final s in c.steps)
-              li([
+              li(classes: 'reveal', [
                 strong([t(s.title)]),
                 t(' ${s.text}'),
               ]),
@@ -185,11 +185,11 @@ class HomePage extends StatelessComponent {
     attrs: const {'aria-labelledby': 'care-title'},
     [
       el('div', classes: 'wrap', [
-        h2(id: 'care-title', [t(c.careTitle)]),
+        h2(id: 'care-title', classes: 'reveal', [t(c.careTitle)]),
         p([t(c.careText)]),
         ul(classes: 'plans', [
           for (final plan in c.carePlans)
-            li(classes: 'card', [
+            li(classes: 'card reveal', [
               strong([t(plan)]),
             ]),
         ]),
@@ -205,10 +205,10 @@ class HomePage extends StatelessComponent {
     attrs: const {'aria-labelledby': 'faq-title'},
     [
       el('div', classes: 'wrap', [
-        h2(id: 'faq-title', [t(c.faqTitle)]),
+        h2(id: 'faq-title', classes: 'reveal', [t(c.faqTitle)]),
         el('div', classes: 'faq', [
           for (final q in c.faq)
-            details([
+            details(classes: 'reveal', [
               summary([t(q.question)]),
               p([t(q.answer)]),
             ]),
@@ -230,7 +230,7 @@ class HomePage extends StatelessComponent {
     classes: 'wrap section-cta',
     attrs: const {'aria-labelledby': 'cta-title'},
     [
-      el('div', classes: 'cta-panel', [
+      el('div', classes: 'cta-panel reveal', [
         el('div', classes: 'cta-text', [
           h2(id: 'cta-title', [t(c.ctaTitle)]),
           p([t(c.ctaText)]),
