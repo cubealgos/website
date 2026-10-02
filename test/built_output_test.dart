@@ -102,7 +102,7 @@ void main() {
             );
           }
         }
-        // Scripts: only the same-origin loaders (sting on home, reveal on
+        // Scripts: only the same-origin loaders (card sting on home, reveal on
         // the content pages) and the FAQ JSON-LD data block on home.
         final key = resolve(path)?.key;
         final scripts = RegExp('<script[^>]*>').allMatches(read(path));

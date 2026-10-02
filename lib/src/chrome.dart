@@ -72,8 +72,7 @@ Component _link(
   ),
 ]);
 
-/// The site header: horizontal logo lockup (on the home page the sting slot),
-/// navigation, language switch.
+/// The site header: horizontal logo lockup, navigation, language switch.
 class SiteHeader extends StatelessComponent {
   /// Creates the header of [pageKey] in [lang].
   const new({required this.pageKey, required this.lang, super.key});
@@ -91,52 +90,25 @@ class SiteHeader extends StatelessComponent {
       div(classes: 'wrap bar', [
         a(
           href: pathFor(PageKey.home, lang),
-          classes: pageKey == PageKey.home ? 'brand brand--sting' : 'brand',
+          classes: 'brand',
           attributes: {'aria-label': t.homeLabel},
-          [
-            if (pageKey == PageKey.home)
-              // Home: the sting box is the header logo. The stills, per theme
-              // (paper in light, ink in dark); `sting.js` hides them and
-              // inserts the animated SVG on arrival (no same-origin referrer).
-              // The slot keeps its height, so nothing shifts when it ends.
-              const div(
-                classes: 'sting',
-                attributes: {'data-sting': ''},
-                [
-                  img(
-                    src: '/brand/sting/sting-paper-still.svg',
-                    alt: '',
-                    classes: 'sting-still for-light',
-                    width: 325,
-                    height: 120,
-                  ),
-                  img(
-                    src: '/brand/sting/sting-ink-still.svg',
-                    alt: '',
-                    classes: 'sting-still for-dark',
-                    width: 325,
-                    height: 120,
-                  ),
-                ],
-              )
-            else ...const [
-              // Two renderings of the lockup; CSS shows the one that matches
-              // the theme (ink on light, paper on dark), see web/site.css.
-              img(
-                src: '/brand/logo/svg/lockup-horizontal-ink.svg',
-                alt: '',
-                classes: 'logo for-light',
-                width: 269,
-                height: 64,
-              ),
-              img(
-                src: '/brand/logo/svg/lockup-horizontal-paper.svg',
-                alt: '',
-                classes: 'logo for-dark',
-                width: 269,
-                height: 64,
-              ),
-            ],
+          const [
+            // Two renderings of the lockup; CSS shows the one that matches
+            // the theme (ink on light, paper on dark), see web/site.css.
+            img(
+              src: '/brand/logo/svg/lockup-horizontal-ink.svg',
+              alt: '',
+              classes: 'logo for-light',
+              width: 269,
+              height: 64,
+            ),
+            img(
+              src: '/brand/logo/svg/lockup-horizontal-paper.svg',
+              alt: '',
+              classes: 'logo for-dark',
+              width: 269,
+              height: 64,
+            ),
           ],
         ),
         nav(

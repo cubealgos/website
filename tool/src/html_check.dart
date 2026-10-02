@@ -352,6 +352,15 @@ void _checkThirdParty(Directory buildDir, List<Finding> out) {
 }
 
 final _styleBlock = RegExp('<style[^>]*>(.*?)</style>', dotAll: true);
+
+/// The vendored mark sting is inlined into the home page with its own
+/// stylesheet (the brand's keyframes, `cas-` prefixed); like the vendored
+/// `brand/` files it is exempt from the token rules. Its colours are
+/// `currentColor` and the accent token.
+final _brandInlineSvg = RegExp(
+  '<svg[^>]*class="cas-mark".*?</svg>',
+  dotAll: true,
+);
 final _styleAttr = RegExp(r'''\sstyle\s*=\s*(?:"([^"]*)"|'([^']*)')''');
 
 /// The site's own CSS (every built stylesheet outside the vendored `brand/`
@@ -369,7 +378,7 @@ void _checkSiteStyles(Directory buildDir, List<Finding> out) {
     if (f.path.endsWith('.css')) {
       css.add(f.readAsStringSync());
     } else if (f.path.endsWith('.html')) {
-      final html = f.readAsStringSync();
+      final html = f.readAsStringSync().replaceAll(_brandInlineSvg, '');
       for (final m in _styleBlock.allMatches(html)) {
         css.add(m[1]!);
       }

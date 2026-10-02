@@ -11,11 +11,11 @@
 //    focus token on every stop) in light and dark;
 //  * the language switch on every page lands on the same page in the other
 //    language (on the 404 pages: on the home page of the other language);
-//  * UI motion: the sting plays in the header logo slot on the home pages only
-//    (it is the page's one logo; the header keeps its height), on a direct load
-//    and not when arriving from a page of this site (same-origin referrer),
-//    with nothing written to session or local storage; it uses the theme's
-//    background and is replaced by its still under reduced motion (a second
+//  * UI motion: the mark sting sits in the home offer card (not in the header,
+//    which has the same height on every page) and starts once the card is in
+//    view, on a direct load and not when arriving from a page of this site
+//    (same-origin referrer), with nothing written to session or local storage;
+//    it is the still mark under reduced motion (a second
 //    Chrome started with `--force-prefers-reduced-motion`); durations and
 //    easings are the tokens; only transform, opacity and the underline's
 //    background-size animate; button press and hover;
@@ -283,20 +283,37 @@ Future<void> main(List<String> args) async {
         for (final lang in Lang.values) {
           for (final width in [375, 1280]) {
             for (final dark in [false, true]) {
-              // A fresh tab has no referrer: the home sting plays; shoot once
-              // it ends.
+              // A fresh tab has no referrer: the home sting plays once the
+              // card is in view; shoot it frozen 1.3 s after it starts, then
+              // at rest.
               final shot = await chrome.newPage();
               await shot.setViewport(width, 800);
               await shot.setMedia(dark: dark);
               await shot.goto('$base${pathFor(key, lang)}');
               final mode = dark ? 'dark' : 'light';
               final name = '${key.name}-${lang.code}-$width-$mode';
-              if (key == PageKey.home && width == 1280 && !dark) {
-                await Future<void>.delayed(const Duration(milliseconds: 700));
+              if (key == PageKey.home) {
+                await shot.eval(
+                  "document.querySelector('.ledger').scrollIntoView()",
+                );
+                for (var i = 0; i < 40; i++) {
+                  final on = await shot.eval(
+                    "!!document.querySelector('.cas-mark.is-playing')",
+                  );
+                  if (on == true) break;
+                  await Future<void>.delayed(const Duration(milliseconds: 50));
+                }
+                await Future<void>.delayed(const Duration(milliseconds: 1300));
+                await shot.eval(
+                  'document.getAnimations().forEach(a => a.pause())',
+                );
                 await shot.screenshot('$shots/$name-sting-mid.png');
+                await shot.eval(
+                  'document.getAnimations().forEach(a => a.play())',
+                );
               }
               await Future<void>.delayed(
-                Duration(milliseconds: key == PageKey.home ? 2400 : 400),
+                Duration(milliseconds: key == PageKey.home ? 1500 : 400),
               );
               await shot.screenshot('$shots/$name.png');
             }
@@ -501,18 +518,21 @@ Future<void> _clickTo(ChromePage page, String path) async {
 
 const _stingState = '''
 (() => {
-  const anim = document.querySelector('.sting-anim');
-  const stills = [...document.querySelectorAll('.sting-still')];
+  const mark = document.querySelector('.cas-mark');
+  const outline = document.querySelector('.cas-outline');
+  const outlineStyle = outline ? getComputedStyle(outline) : null;
   return {
-    box: !!document.querySelector('[data-sting]'),
-    inHeader: !!document.querySelector('.site-header [data-sting]'),
-    logos: document.querySelectorAll('img.logo').length,
+    inCard: !!document.querySelector('.ledger-head .ledger-mark .cas-mark'),
+    inHeader: !!document.querySelector('.site-header .cas-mark'),
+    marks: document.querySelectorAll('.cas-mark').length,
+    logos: document.querySelectorAll('.site-header img.logo').length,
     headerHeight: document.querySelector('.site-header').getBoundingClientRect().height,
-    anim: !!anim,
-    animSrc: anim ? anim.getAttribute('src') : null,
-    animLoaded: anim ? anim.complete && anim.naturalWidth > 0 : null,
-    stillVisible: stills.some(i => i.offsetParent !== null && i.getClientRects().length > 0),
-    stillSrcs: stills.filter(i => getComputedStyle(i).display !== 'none').map(i => i.getAttribute('src')),
+    armed: document.documentElement.classList.contains('sting-play'),
+    playing: !!mark && mark.classList.contains('is-playing'),
+    animName: outlineStyle ? outlineStyle.animationName : null,
+    playState: outlineStyle ? outlineStyle.animationPlayState : null,
+    markWidth: document.querySelector('.ledger-mark')
+      ? document.querySelector('.ledger-mark').getBoundingClientRect().width : null,
     sessionLen: sessionStorage.length,
     localLen: localStorage.length,
     scripts: document.scripts.length,
@@ -572,24 +592,29 @@ Future<List<String>> _motionChecks(
   for (final lang in Lang.values) {
     final home = '$base${pathFor(PageKey.home, lang)}';
     final where = '${pathFor(PageKey.home, lang)} ($mode)';
+    // The header is the same height on every page: home against the others.
+    double? headerOf(Map<String, Object?> m) =>
+        (m['headerHeight'] as num?)?.toDouble();
     for (final dark in [false, true]) {
-      final theme = dark ? 'ink' : 'paper';
+      final theme = dark ? 'dark' : 'light';
+      // Phone width: the card is below the fold, so the sting waits for it.
       final page = await session(dark: dark);
+      await page.setViewport(375, 500);
       await page.goto(home);
       final first = await page.evalMap(_stingState);
       final probe = await page.evalMap(_motionProbe);
-      // One logo on the page: the sting box is the header logo.
-      if (first['inHeader'] != true || first['logos'] != 0) {
-        out.add('$where: the sting is not the only logo in the header: $first');
+      // The sting is in the card, once, and not in the header.
+      if (first['inCard'] != true ||
+          first['inHeader'] == true ||
+          first['marks'] != 1 ||
+          first['logos'] != 2) {
+        out.add('$where ($theme): the sting is not only in the card: $first');
       }
       if (reduced) {
-        if (first['anim'] == true || first['stillVisible'] != true) {
+        if (first['armed'] == true ||
+            first['playing'] == true ||
+            first['animName'] != 'none') {
           out.add('$where: sting is not the still: $first');
-        }
-        final stills = first['stillSrcs']! as List<dynamic>;
-        if (stills.length != 1 ||
-            !'${stills.first}'.contains('sting-$theme-still')) {
-          out.add('$where: wrong still $stills for $theme');
         }
         if (probe['animations'] != 0 ||
             probe['riseName'] != 'none' ||
@@ -600,57 +625,65 @@ Future<List<String>> _motionChecks(
         }
         continue;
       }
-      if (first['anim'] != true ||
-          first['stillVisible'] == true ||
-          !'${first['animSrc']}'.endsWith('sting-$theme.svg')) {
-        out.add(
-          '$where ($theme): a direct load does not play the sting: $first',
-        );
+      // A direct load: armed, but not started while the card is off screen.
+      if (first['armed'] != true || first['playing'] == true) {
+        out.add('$where ($theme): sting not waiting for the card: $first');
       }
-      await Future<void>.delayed(const Duration(milliseconds: 300));
-      if (await page.eval("document.querySelector('.sting-anim').complete") !=
-          true) {
-        out.add('$where: animated sting did not load');
+      await Future<void>.delayed(const Duration(milliseconds: 700));
+      if ((await page.evalMap(_stingState))['playing'] == true) {
+        out.add('$where ($theme): sting started while off screen');
       }
-      // The header keeps its height while the sting plays and after it ends.
-      await Future<void>.delayed(
-        Duration(
-          milliseconds:
-              int.parse(_token('--duration-sting').replaceAll('ms', '')) + 500,
-        ),
-      );
-      final settled = await page.evalMap(_stingState);
-      if (settled['headerHeight'] != first['headerHeight']) {
-        out.add(
-          '$where ($theme): header height ${first['headerHeight']} -> '
-          '${settled['headerHeight']} while the sting plays',
-        );
+      // Scrolled into view: it starts (after the card has faded in).
+      await page.eval("document.querySelector('.ledger').scrollIntoView()");
+      await Future<void>.delayed(const Duration(milliseconds: 900));
+      final started = await page.evalMap(_stingState);
+      if (started['playing'] != true || started['playState'] != 'running') {
+        out.add('$where ($theme): sting did not start in view: $started');
+      }
+      final width = (started['markWidth'] as num?)?.toDouble() ?? 0;
+      if ((width - 40).abs() > 1) {
+        out.add('$where ($theme): mark is $width px wide, expected 40');
       }
       // Home -> About -> Home through the site's own links: the second home
       // load has a same-origin referrer, so the still, no replay.
+      await page.setViewport(1280, 800);
+      final homeHeader = headerOf(await page.evalMap(_stingState));
       await _clickTo(page, pathFor(PageKey.about, lang));
       final about = await page.evalMap(_stingState);
-      if (about['box'] == true ||
-          about['anim'] == true ||
-          about['scripts'] != 1) {
+      if (about['marks'] != 0 || about['scripts'] != 1) {
         out.add(
           '${pathFor(PageKey.about, lang)}: sting on another page: $about',
         );
       }
+      if (headerOf(about) != homeHeader) {
+        out.add(
+          '$where ($theme): header height $homeHeader on home, '
+          '${headerOf(about)} on About',
+        );
+      }
       await _clickTo(page, pathFor(PageKey.home, lang));
       final back = await page.evalMap(_stingState);
-      if (back['anim'] == true || back['stillVisible'] != true) {
+      if (back['armed'] == true ||
+          back['playing'] == true ||
+          back['animName'] != 'none') {
         out.add('$where ($theme): sting replays on return to home: $back');
+      }
+      await page.eval("document.querySelector('.ledger').scrollIntoView()");
+      await Future<void>.delayed(const Duration(milliseconds: 900));
+      if ((await page.evalMap(_stingState))['playing'] == true) {
+        out.add('$where ($theme): sting plays after on-site navigation');
       }
       // Nothing is written to any storage over the whole walk.
       if (back['sessionLen'] != 0 || back['localLen'] != 0) {
         out.add('$where ($theme): storage written: $back');
       }
-      // A direct load in a fresh tab (no referrer) plays it again.
+      // A direct load in a fresh tab (no referrer) at desktop width: the card
+      // is in view, so it starts by itself.
       final fresh = await session(dark: dark);
       await fresh.goto(home);
+      await Future<void>.delayed(const Duration(milliseconds: 1200));
       final freshState = await fresh.evalMap(_stingState);
-      if (freshState['anim'] != true) {
+      if (freshState['playing'] != true) {
         out.add('$where ($theme): a direct load does not play the sting');
       }
       if (freshState['sessionLen'] != 0 || freshState['localLen'] != 0) {
@@ -664,7 +697,7 @@ Future<List<String>> _motionChecks(
       final s = await page.evalMap(_stingState);
       // The content pages carry reveal.js (one script), the rest none.
       final scripts = {PageKey.about, PageKey.contact}.contains(key) ? 1 : 0;
-      if (s['box'] == true || s['anim'] == true || s['scripts'] != scripts) {
+      if (s['marks'] != 0 || s['scripts'] != scripts) {
         out.add('${pathFor(key, lang)} ($mode): sting on a non-home page: $s');
       }
     }
@@ -704,7 +737,10 @@ Future<List<String>> _motionChecks(
     _seconds(_token('--duration-instant')),
   );
   expectEq('hover easing', p['hoverEasing'], _bezier(_token('--ease-out')));
-  if ('${p['animatedProps']}' != '[backgroundSize, opacity, transform]') {
+  // strokeDashoffset: the brand's mark sting draws its outline (the vendored
+  // SVG's own keyframes, exempt like the rest of brand/).
+  if ('${p['animatedProps']}' !=
+      '[backgroundSize, opacity, strokeDashoffset, transform]') {
     out.add('motion: animated properties ${p['animatedProps']}');
   }
   if (!(p['animations']! as int > 0)) out.add('motion: nothing animates');

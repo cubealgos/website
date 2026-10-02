@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/server.dart';
@@ -23,6 +24,18 @@ Map<String, Object> faqJsonLd(Lang lang) => {
       },
   ],
 };
+
+/// The mark-only sting, read from the vendored brand files at build time (so
+/// `brand_sync --check` covers it) and inlined: its mark is `currentColor` and
+/// its echo `var(--color-accent-fill)`, so it follows the theme. It sits in
+/// the offer card, which labels itself, so the SVG is decorative.
+final String _stingMark = File('web/brand/sting/sting-mark.svg')
+    .readAsStringSync()
+    .replaceFirst(RegExp(r'\s*<title>.*?</title>'), '')
+    .replaceFirst(
+      'role="img" aria-label="Cube Algos logo"',
+      'aria-hidden="true" focusable="false"',
+    );
 
 /// The heading of an offer: `name, price`.
 String offerHeading(Offer o) => '${o.name}, ${o.price}';
@@ -126,7 +139,7 @@ class HomePage extends StatelessComponent {
       [
         div(classes: 'ledger-head', [
           p(id: 'ledger-label', classes: 'eyebrow-muted', [t(c.offersTitle)]),
-          const div(classes: 'ledger-fish', [Fish(pose: 'idle')]),
+          div(classes: 'ledger-mark', [RawText(_stingMark)]),
         ]),
         ol(classes: 'route', [
           li(classes: 'route-step is-call', [row('call')]),

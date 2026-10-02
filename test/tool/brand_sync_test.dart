@@ -72,6 +72,8 @@ Map<String, List<int>> _release(String tag, {bool deflate = false}) {
     'sting-$tag.zip': _zip({
       'sting-$tag/sting/sting-paper.svg': '<svg/>',
       'sting-$tag/sting/sting-paper-still.png': 'png',
+      'sting-$tag/sting/sting-mark.svg': '<svg/>',
+      'sting-$tag/sting/sting-mark-still.svg': '<svg/>',
       'sting-$tag/sting/sting-paper.gif': 'gif',
       'sting-$tag/sting/sting-paper-16x9.mp4': 'mp4',
     }, deflate: deflate),
@@ -116,6 +118,8 @@ void main() {
       'fish/fish.css',
       'fish/idle.svg',
       'logo/mark.svg',
+      'sting/sting-mark-still.svg',
+      'sting/sting-mark.svg',
       'sting/sting-paper-still.png',
       'sting/sting-paper.svg',
       'tokens.css',
