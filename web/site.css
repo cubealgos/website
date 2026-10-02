@@ -524,7 +524,8 @@ nav a[aria-current="page"] {
 @media (min-width: 48rem) {
   .hero-h1 {
     font-size: var(--font-scale-display-size);
-    line-height: var(--font-scale-display-line-height);
+    /* h1, not display, line height: the underline needs room between lines. */
+    line-height: var(--font-scale-h1-line-height);
     letter-spacing: var(--font-scale-display-tracking);
   }
 }
@@ -1640,9 +1641,10 @@ article {
     var(--color-accent-fill)
   );
   background-repeat: no-repeat;
-  background-position: 0 100%;
+  /* The bar sits just under the baseline, not at the bottom of the font box
+     (which is below the descenders and runs into the next line). */
+  background-position: 0 calc(100% - 0.1em);
   background-size: 100% 0.12em;
-  padding-bottom: 0.06em;
   -webkit-box-decoration-break: clone;
   box-decoration-break: clone;
   animation: draw var(--duration-draw) var(--ease-draw) both;
