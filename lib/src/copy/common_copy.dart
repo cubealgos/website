@@ -5,8 +5,14 @@ library;
 
 import 'package:website/src/routes.dart';
 
-/// The label of the "write me an email" button.
-const Map<Lang, String> writeEmail = {
-  Lang.en: 'Write me an email',
-  Lang.de: 'Schreiben Sie mir eine E-Mail',
+/// The label of the hero's "start a project" button (a `mailto:` link).
+const Map<Lang, String> startProject = {
+  Lang.en: 'Start a project',
+  Lang.de: 'Projekt anfragen',
+};
+
+/// The label of the "write to Kevin" button on the about page.
+const Map<Lang, String> writeToKevin = {
+  Lang.en: 'Write to Kevin',
+  Lang.de: 'Schreiben Sie Kevin',
 };

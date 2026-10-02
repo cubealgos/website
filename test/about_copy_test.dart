@@ -27,7 +27,7 @@ List<String> expectedBlocks(Lang lang) {
     c.whereTitle,
     c.where,
     c.ctaTitle,
-    writeEmail[lang]!,
+    writeToKevin[lang]!,
   ];
 }
 

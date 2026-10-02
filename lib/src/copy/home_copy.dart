@@ -41,6 +41,8 @@ typedef HomeCopy = ({
   String careText,
   List<String> carePlans,
   String carePlansNote,
+  String studioTitle,
+  String studioText,
   String faqTitle,
   List<Faq> faq,
   String ctaTitle,
@@ -51,39 +53,43 @@ typedef HomeCopy = ({
 /// The home copy per language.
 const Map<Lang, HomeCopy> homeCopy = {
   Lang.en: (
-    eyebrow: 'AI-native software studio',
-    h1: "Websites and apps for people who'd rather run their business.",
-    h1Mark: 'run their business.',
+    eyebrow: 'AI-native software studio · Heinsberg',
+    h1:
+        'Websites and apps for businesses that would rather focus on '
+        'their work.',
+    h1Mark: 'focus on their work.',
     subline:
-        'Built at AI speed, signed off by a trained developer, at a price you '
-        'know before it starts.',
-    secondaryCta: 'See what it costs',
+        'Cube Algos designs and builds websites, internal tools and '
+        'MVPs for owner-led businesses and founders: AI-accelerated, '
+        'reviewed line by line by a trained developer, at a fixed price '
+        'agreed before work starts.',
+    secondaryCta: 'Services and prices',
     lanesTitle: 'Where do you start?',
     lanes: [
       (
         title: 'For your business',
         text:
-            'You run a business with a few people to a few dozen: a trade, a '
-            'practice, a studio, a restaurant, a shop. You need a website '
-            'that works, a way for customers to book, a customer portal or a '
-            'tool for your team. I build it around how your work already '
-            'flows, and you keep running the business.',
+            'You run a business with a few people to a few dozen: a trade, '
+            'a practice, a studio, a restaurant, a shop. You need a website '
+            'that works, a way for customers to book, a customer portal or '
+            'a tool for your team. Cube Algos builds it around how your '
+            'work already flows, so you can keep running the business.',
         offerIds: ['website', 'app'],
       ),
       (
         title: 'For your idea',
         text:
-            "You have an idea for an app or a product, and you're deciding on "
-            'your own what happens next. I help you find out what to build '
-            'first, then I build it. You start with an idea check, and you '
-            'know what it costs before anything is built.',
+            "You have an idea for an app or a product, and you're deciding "
+            'on your own what happens next. Cube Algos helps you find out '
+            'what to build first, then builds it. You start with an idea '
+            'check, and you know what it costs before anything is built.',
         offerIds: ['idea', 'mvp'],
       ),
     ],
     offersTitle: 'What it costs',
     offersIntro:
-        'Fixed prices, agreed before I start. If your project is bigger than '
-        'a "from" price, the quote says so.',
+        'Fixed prices, agreed before work starts. If your project is '
+        'bigger than a "from" price, the quote says so.',
     offers: [
       (
         id: 'idea',
@@ -91,7 +97,7 @@ const Map<Lang, HomeCopy> homeCopy = {
         price: '€490',
         text:
             'A workshop with you, a written scope and a fixed quote. If you '
-            'then hire me to build it, the €490 is credited against the '
+            'then commission the build, the €490 is credited against the '
             'price.',
       ),
       (
@@ -123,8 +129,8 @@ const Map<Lang, HomeCopy> homeCopy = {
         name: 'Extra work',
         price: '€95 an hour',
         text:
-            'For changes beyond what we agreed. I tell you before I start, '
-            'and nothing is billed without your yes.',
+            'For changes beyond what was agreed. You are told before work '
+            'starts, and nothing is billed without your yes.',
       ),
     ],
     vatNote: 'All prices plus 19% VAT.',
@@ -133,7 +139,9 @@ const Map<Lang, HomeCopy> homeCopy = {
     steps: [
       (
         title: 'Idea check.',
-        text: 'We talk, I write down what to build and what to leave out.',
+        text:
+            'You and Kevin talk; the result is a written note of what to '
+            'build and what to leave out.',
       ),
       (
         title: 'Fixed quote.',
@@ -142,106 +150,126 @@ const Map<Lang, HomeCopy> homeCopy = {
       (
         title: 'Build.',
         text:
-            'I build it. You see progress along the way, not only at the end.',
+            'Kevin builds it. You see progress along the way, not only at '
+            'the end.',
       ),
-      (title: 'Launch.', text: 'It goes live, and I make sure it works.'),
+      (
+        title: 'Launch.',
+        text: 'It goes live, and Cube Algos makes sure it works.',
+      ),
       (
         title: 'Care.',
-        text: "I keep it running, so you don't have to think about it.",
+        text:
+            "Cube Algos keeps it running, so you don't have to think about "
+            'it.',
       ),
     ],
     careTitle: 'Cared for after launch',
     careText:
-        'Software drifts out of date when nobody looks after it. Care means '
-        'updates, small fixes and a person to ask. Care is optional and '
-        "monthly. You can cancel it any time with 30 days' notice to the end "
-        'of a month.',
+        'Software drifts out of date when nobody looks after it. Care '
+        'means updates, small fixes and a person to ask. Care is '
+        "optional and monthly. You can cancel it any time with 30 days' "
+        'notice to the end of a month.',
     carePlans: [
       'Website care, from €49 a month',
       'App care, from €149 a month',
     ],
     carePlansNote:
-        'Both are fixed monthly prices. Larger changes are quoted separately '
-        'or billed at €95 an hour.',
+        'Both are fixed monthly prices. Larger changes are quoted '
+        'separately or billed at €95 an hour.',
+    studioTitle: 'A small studio, deliberately',
+    studioText:
+        'Cube Algos was founded in 2023 by Kevin Scheeren, a trained '
+        'software developer. He leads every project personally, from '
+        'the first conversation to launch and beyond. There is no '
+        'account manager and no hand-off to a junior team. Because '
+        'capacity is limited, you get an honest start date before you '
+        'sign.',
     faqTitle: 'Questions',
     faq: [
       (
         question: 'What does it cost, and is VAT included?',
         answer:
-            'The prices on this page are net. VAT of 19% is added on top. The '
-            'idea check, €490, gives you a fixed quote for the build, and '
-            "it's credited against the build price if you go ahead.",
+            'The prices on this page are net. VAT of 19% is added on top. '
+            'The idea check, €490, gives you a fixed quote for the build, '
+            "and it's credited against the build price if you go ahead.",
       ),
       (
-        question: 'Do you use AI, and what happens to my data?',
+        question: 'Does Cube Algos use AI, and what happens to your data?',
         answer:
-            'Yes. AI is part of my whole workflow: planning, writing and '
-            "checking code. I'm a trained developer, and I review every line "
-            'before it ships. Personal data from your customers never goes '
-            'into AI tools, and my AI tools are set not to train on your '
-            'project.',
+            'Yes. AI is part of the whole workflow: planning, writing and '
+            'checking code. Kevin is a trained developer and reviews every '
+            'line before it ships. Personal data from your customers never '
+            'goes into AI tools, and the AI tools in use are set not to '
+            'train on your project.',
       ),
       (
         question: 'How long does it take?',
         answer:
-            "It depends on the scope. I won't give you a number before I know "
-            'what you need. The idea check ends with a written scope, a fixed '
-            'price and a date.',
+            'It depends on the scope. Cube Algos gives no number before it '
+            'knows what you need. The idea check ends with a written scope, '
+            'a fixed price and a date.',
       ),
       (
         question: 'Who owns the code?',
         answer:
             'You do. Once the project is paid in full, the code and content '
-            'are yours. I keep the right to reuse my own general building '
-            "blocks, like templates and libraries, that aren't specific to "
-            'your project.',
+            'are yours. Cube Algos keeps the right to reuse its own general '
+            "building blocks, like templates and libraries, that aren't "
+            'specific to your project.',
       ),
       (
         question: 'What happens after launch?',
         answer:
-            'Your project is live and stays yours. If you want me to keep '
-            "looking after it, there's website care from €49 a month and app "
-            "care from €149 a month. If you don't, you can take it "
-            'elsewhere.',
+            'Your project is live and stays yours. If you want Cube Algos '
+            "to keep looking after it, there's website care from €49 a "
+            "month and app care from €149 a month. If you don't, you can "
+            'take it elsewhere.',
       ),
       (
-        question: "What if you're busy or away?",
+        question: 'What if Kevin is busy or away?',
         answer:
-            "I'm one person, and I'd rather say so than pretend to be an "
-            "agency. That's why I plan my calendar ahead. Before you sign, I "
-            'tell you when I can start, and I let you know about planned '
-            "time away in advance. There's no stand-in developer, and I "
-            "don't promise response times. If I'm ill, I tell you as soon as "
-            'I can.',
+            'Cube Algos is run by one person and says so. Projects are '
+            'scheduled in advance: you get a confirmed start date before '
+            'signing, and planned absences are announced early. There is no '
+            'stand-in developer and no guaranteed response time. If Kevin '
+            'falls ill, you hear about it as soon as possible.',
       ),
       (
         question: 'Is it accessible?',
         answer:
             'Every build is accessible from the start: it works with a '
             'keyboard and screen readers, text is readable and contrast is '
-            "checked. It's part of how I build, not an extra. I don't make "
-            'legal compliance promises for your business, and your own '
-            'content matters too.',
+            "checked. It's part of how Cube Algos builds, not an extra. "
+            'Cube Algos makes no legal compliance promises for your '
+            'business, and your own content matters too.',
       ),
       (
-        question: 'Do I need to know what I want before I write?',
+        question: 'Do you need to know what you want before you write?',
         answer:
             'No. A few sentences are enough. If the idea is still vague, '
             "that's what the idea check is for.",
       ),
     ],
-    ctaTitle: 'Tell me what you need.',
-    ctaText: 'One email is enough. I read it myself and write back.',
+    ctaTitle: 'Start with a short email.',
+    ctaText:
+        'A few lines about what you need are enough. Kevin reads every '
+        'enquiry himself and replies with a suggested next step.',
     ctaButton: 'Write to hello@cubealgos.de',
   ),
   Lang.de: (
-    eyebrow: 'KI-natives Softwarestudio',
-    h1: 'Websites und Apps für alle, die lieber ihr Geschäft führen.',
-    h1Mark: 'ihr Geschäft führen.',
+    eyebrow: 'KI-natives Softwarestudio · Heinsberg',
+    h1:
+        'Websites und Apps für Unternehmen, die sich lieber auf ihr '
+        'Geschäft konzentrieren.',
+    h1Mark: 'auf ihr Geschäft konzentrieren.',
     subline:
-        'Gebaut im KI-Tempo, abgenommen von einem ausgebildeten Entwickler, '
-        'zu einem Preis, den Sie vorher kennen.',
-    secondaryCta: 'Preise ansehen',
+        'Cube Algos konzipiert und entwickelt Websites, interne '
+        'Werkzeuge und MVPs für inhabergeführte Unternehmen und '
+        'Gründer:innen: KI-beschleunigt, Zeile für Zeile von einem '
+        'ausgebildeten Entwickler geprüft, zum Festpreis, der vor '
+        'Projektbeginn feststeht.',
+    secondaryCta: 'Leistungen und Preise',
     lanesTitle: 'Wo stehen Sie?',
     lanes: [
       (
@@ -251,16 +279,16 @@ const Map<Lang, HomeCopy> homeCopy = {
             'Dutzend Mitarbeitenden: Handwerk, Praxis, Studio, Restaurant, '
             'Laden. Sie brauchen eine Website, die funktioniert, eine '
             'Terminbuchung für Ihre Kund:innen, ein Kundenportal oder ein '
-            'Werkzeug für Ihr Team. Ich baue es passend zu Ihren Abläufen, '
-            'und Sie führen weiter Ihr Geschäft.',
+            'Werkzeug für Ihr Team. Cube Algos baut es passend zu Ihren '
+            'Abläufen, und Sie führen weiter Ihr Geschäft.',
         offerIds: ['website', 'app'],
       ),
       (
         title: 'Für Ihre Idee',
         text:
             'Sie haben die Idee für eine App oder ein Produkt und '
-            'entscheiden selbst, wie es weitergeht. Ich helfe Ihnen '
-            'herauszufinden, was zuerst gebaut werden sollte, und baue es '
+            'entscheiden selbst, wie es weitergeht. Cube Algos hilft Ihnen '
+            'herauszufinden, was zuerst gebaut werden sollte, und baut es '
             'dann. Sie beginnen mit einem Erstgespräch mit Konzept und '
             'wissen, was es kostet, bevor etwas gebaut wird.',
         offerIds: ['idea', 'mvp'],
@@ -268,8 +296,8 @@ const Map<Lang, HomeCopy> homeCopy = {
     ],
     offersTitle: 'Was es kostet',
     offersIntro:
-        'Feste Preise, vereinbart, bevor ich anfange. Ist Ihr Projekt '
-        'größer als ein „ab"-Preis, steht das im Angebot.',
+        'Feste Preise, vereinbart, bevor die Arbeit beginnt. Ist Ihr '
+        'Projekt größer als ein „ab"-Preis, steht das im Angebot.',
     offers: [
       (
         id: 'idea',
@@ -277,8 +305,8 @@ const Map<Lang, HomeCopy> homeCopy = {
         price: '490 €',
         text:
             'Ein Workshop mit Ihnen, ein schriftlicher Umfang und ein '
-            'Festpreisangebot. Beauftragen Sie mich danach mit dem Bau, '
-            'rechne ich die 490 € auf den Preis an.',
+            'Festpreisangebot. Beauftragen Sie danach den Bau, wird der '
+            'Betrag von 490 € auf den Preis angerechnet.',
       ),
       (
         id: 'website',
@@ -309,7 +337,7 @@ const Map<Lang, HomeCopy> homeCopy = {
         name: 'Zusatzarbeit',
         price: '95 € pro Stunde',
         text:
-            'Für Änderungen über das Vereinbarte hinaus. Ich sage es Ihnen '
+            'Für Änderungen über das Vereinbarte hinaus. Sie erfahren es '
             'vorher, und ohne Ihr Ja wird nichts berechnet.',
       ),
     ],
@@ -320,8 +348,8 @@ const Map<Lang, HomeCopy> homeCopy = {
       (
         title: 'Erstgespräch mit Konzept.',
         text:
-            'Wir sprechen miteinander, ich schreibe auf, was gebaut wird und '
-            'was nicht.',
+            'Sie sprechen mit Kevin; am Ende steht schriftlich, was gebaut '
+            'wird und was nicht.',
       ),
       (
         title: 'Festpreisangebot.',
@@ -330,105 +358,121 @@ const Map<Lang, HomeCopy> homeCopy = {
       (
         title: 'Bau.',
         text:
-            'Ich baue es. Sie sehen den Fortschritt unterwegs, nicht erst am '
-            'Ende.',
+            'Kevin baut es. Sie sehen den Fortschritt unterwegs, nicht erst '
+            'am Ende.',
       ),
       (
         title: 'Launch.',
-        text: 'Es geht online, und ich stelle sicher, dass es funktioniert.',
+        text:
+            'Es geht online, und Cube Algos stellt sicher, dass es '
+            'funktioniert.',
       ),
       (
         title: 'Betreuung.',
-        text: 'Ich halte es am Laufen, damit Sie nicht daran denken müssen.',
+        text:
+            'Cube Algos hält es am Laufen, damit Sie nicht daran denken '
+            'müssen.',
       ),
     ],
     careTitle: 'Betreut nach dem Launch',
     careText:
         'Damit alles im Fluss bleibt, braucht Software Pflege: Updates, '
         'kleine Korrekturen und jemand, den Sie fragen können. Die '
-        'Betreuung ist freiwillig und monatlich. Sie können sie jederzeit '
-        'mit 30 Tagen Frist zum Monatsende kündigen.',
+        'Betreuung ist freiwillig und monatlich. Sie können sie '
+        'jederzeit mit 30 Tagen Frist zum Monatsende kündigen.',
     carePlans: [
       'Website-Betreuung, ab 49 € im Monat',
       'App-Betreuung, ab 149 € im Monat',
     ],
     carePlansNote:
-        'Beides sind feste Monatspreise. Größere Änderungen biete ich '
-        'separat an oder rechne sie mit 95 € pro Stunde ab.',
+        'Beides sind feste Monatspreise. Größere Änderungen werden '
+        'separat angeboten oder mit 95 € pro Stunde abgerechnet.',
+    studioTitle: 'Ein kleines Studio, mit Absicht',
+    studioText:
+        'Cube Algos wurde 2023 von Kevin Scheeren gegründet, '
+        'ausgebildeter Softwareentwickler. Er führt jedes Projekt '
+        'persönlich, vom ersten Gespräch bis zum Launch und darüber '
+        'hinaus. Es gibt keinen Account-Manager und keine Übergabe an '
+        'ein Junior-Team. Weil die Kapazität begrenzt ist, erhalten Sie '
+        'vor Vertragsabschluss einen ehrlichen Starttermin.',
     faqTitle: 'Fragen',
     faq: [
       (
         question: 'Was kostet es, und ist die Umsatzsteuer enthalten?',
         answer:
-            'Die Preise auf dieser Seite sind Nettopreise. Die '
-            'Umsatzsteuer von 19 % kommt hinzu. Das Erstgespräch mit '
-            'Konzept für 490 € liefert Ihnen ein Festpreisangebot für den '
-            'Bau und wird bei Beauftragung auf den Preis angerechnet.',
+            'Die Preise auf dieser Seite sind Nettopreise. Die Umsatzsteuer '
+            'von 19 % kommt hinzu. Das Erstgespräch mit Konzept für 490 € '
+            'liefert Ihnen ein Festpreisangebot für den Bau und wird bei '
+            'Beauftragung auf den Preis angerechnet.',
       ),
       (
-        question: 'Arbeiten Sie mit KI, und was passiert mit meinen Daten?',
+        question:
+            'Arbeitet Cube Algos mit KI, und was passiert mit Ihren Daten?',
         answer:
-            'Ja. KI fließt in meine gesamte Arbeitsweise ein: Planung, '
-            'Schreiben und Prüfen von Code. Ich bin ausgebildeter '
-            'Entwickler und prüfe jede Zeile, bevor sie live geht. '
-            'Personenbezogene Daten Ihrer Kund:innen gebe ich nie in '
-            'KI-Werkzeuge, und meine KI-Werkzeuge sind so eingestellt, dass '
-            'sie nicht mit Ihrem Projekt trainiert werden.',
+            'Ja. KI fließt in die gesamte Arbeitsweise ein: Planung, '
+            'Schreiben und Prüfen von Code. Kevin ist ausgebildeter '
+            'Entwickler und prüft jede Zeile, bevor sie live geht. '
+            'Personenbezogene Daten Ihrer Kund:innen gelangen nie in '
+            'KI-Werkzeuge, und die eingesetzten KI-Werkzeuge sind so '
+            'eingestellt, dass sie nicht mit Ihrem Projekt trainiert '
+            'werden.',
       ),
       (
         question: 'Wie lange dauert es?',
         answer:
-            'Das hängt vom Umfang ab. Eine Zahl nenne ich erst, wenn ich '
-            'weiß, was Sie brauchen. Das Erstgespräch mit Konzept endet mit '
-            'einem schriftlichen Umfang, einem Festpreis und einem Termin.',
+            'Das hängt vom Umfang ab. Eine Zahl nennt Cube Algos erst, wenn '
+            'klar ist, was Sie brauchen. Das Erstgespräch mit Konzept endet '
+            'mit einem schriftlichen Umfang, einem Festpreis und einem '
+            'Termin.',
       ),
       (
         question: 'Wem gehört der Code?',
         answer:
             'Ihnen. Sobald das Projekt vollständig bezahlt ist, gehören '
-            'Ihnen Code und Inhalte. Meine eigenen allgemeinen Bausteine, '
-            'etwa Vorlagen und Bibliotheken, die nicht speziell für Ihr '
-            'Projekt entstehen, darf ich weiter verwenden.',
+            'Ihnen Code und Inhalte. Die eigenen allgemeinen Bausteine von '
+            'Cube Algos, etwa Vorlagen und Bibliotheken, die nicht speziell '
+            'für Ihr Projekt entstehen, darf das Studio weiter verwenden.',
       ),
       (
         question: 'Was passiert nach dem Launch?',
         answer:
-            'Ihr Projekt ist online und bleibt Ihres. Wenn ich mich weiter '
-            'darum kümmern soll, gibt es die Website-Betreuung ab 49 € im '
-            'Monat und die App-Betreuung ab 149 € im Monat. Wenn nicht, '
-            'können Sie damit auch woanders hingehen.',
+            'Ihr Projekt ist online und bleibt Ihres. Wenn Cube Algos sich '
+            'weiter darum kümmern soll, gibt es die Website-Betreuung ab 49 '
+            '€ im Monat und die App-Betreuung ab 149 € im Monat. Wenn '
+            'nicht, können Sie damit auch woanders hingehen.',
       ),
       (
-        question: 'Was ist, wenn Sie ausgelastet oder nicht da sind?',
+        question: 'Was ist, wenn Kevin ausgelastet oder nicht da ist?',
         answer:
-            'Ich bin eine Person und sage das lieber, als eine Agentur '
-            'vorzutäuschen. Deshalb plane ich meinen Kalender im Voraus. '
-            'Vor Vertragsabschluss nenne ich Ihnen, wann ich anfangen kann, '
-            'und geplante Abwesenheiten kündige ich rechtzeitig an. Eine '
-            'Vertretung gibt es nicht, und Reaktionszeiten sage ich nicht '
-            'zu. Bin ich krank, gebe ich Ihnen so schnell wie möglich '
-            'Bescheid.',
+            'Cube Algos wird von einer Person geführt und sagt das offen. '
+            'Projekte werden im Voraus eingeplant: Sie erhalten vor '
+            'Vertragsabschluss einen verbindlichen Starttermin, geplante '
+            'Abwesenheiten werden frühzeitig angekündigt. Eine Vertretung '
+            'gibt es nicht, ebenso wenig garantierte Reaktionszeiten. Wird '
+            'Kevin krank, erfahren Sie es so schnell wie möglich.',
       ),
       (
         question: 'Ist es barrierearm?',
         answer:
             'Jedes Projekt ist von Anfang an auf Barrierefreiheit '
             'ausgelegt: bedienbar mit der Tastatur und mit Screenreadern, '
-            'gut lesbare Texte, geprüfte Kontraste. Das gehört zu meiner '
-            'Arbeitsweise und ist kein Extra. Eine rechtliche Konformität '
-            'für Ihr Unternehmen sage ich nicht zu, und auch Ihre eigenen '
-            'Inhalte spielen eine Rolle.',
+            'gut lesbare Texte, geprüfte Kontraste. Das gehört zur '
+            'Arbeitsweise von Cube Algos und ist kein Extra. Eine '
+            'rechtliche Konformität für Ihr Unternehmen wird nicht '
+            'zugesagt, und auch Ihre eigenen Inhalte spielen eine Rolle.',
       ),
       (
-        question: 'Muss ich schon genau wissen, was ich will?',
+        question: 'Müssen Sie schon genau wissen, was Sie wollen?',
         answer:
             'Nein. Ein paar Sätze reichen. Ist die Idee noch unscharf, ist '
             'genau dafür das Erstgespräch mit Konzept da.',
       ),
     ],
-    ctaTitle: 'Erzählen Sie mir, was Sie brauchen.',
+    ctaTitle: 'Am Anfang steht eine kurze E-Mail.',
     ctaText:
-        'Eine E-Mail genügt. Ich lese sie selbst und schreibe Ihnen zurück.',
+        'Ein paar Zeilen dazu, was Sie brauchen, genügen. Kevin liest '
+        'jede Anfrage selbst und antwortet mit einem Vorschlag für den '
+        'nächsten Schritt.',
     ctaButton: 'Schreiben an hello@cubealgos.de',
   ),
 };

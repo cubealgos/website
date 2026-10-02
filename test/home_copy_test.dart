@@ -21,7 +21,7 @@ List<String> expectedBlocks(Lang lang) {
     c.eyebrow,
     c.h1,
     c.subline,
-    writeEmail[lang]!,
+    startProject[lang]!,
     c.secondaryCta,
     c.lanesTitle,
     for (final lane in c.lanes) ...[
@@ -42,6 +42,8 @@ List<String> expectedBlocks(Lang lang) {
     ...c.carePlans,
     c.carePlansNote,
     c.vatNote,
+    c.studioTitle,
+    c.studioText,
     c.faqTitle,
     for (final q in c.faq) ...[q.question, q.answer],
     c.ctaTitle,

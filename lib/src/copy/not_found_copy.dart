@@ -18,16 +18,18 @@ typedef NotFoundCopy = ({
 const Map<Lang, NotFoundCopy> notFoundCopy = {
   Lang.en: (
     headline: 'This page swam off.',
-    body: "The link may be old or mistyped. Let's get you back.",
+    body:
+        'The link may be old or mistyped. Back to the home page is one '
+        'click away.',
     homeAction: 'Back to the home page',
-    mailAction: 'Write me an email',
+    mailAction: 'Write to Kevin',
   ),
   Lang.de: (
     headline: 'Diese Seite ist davongeschwommen.',
     body:
-        'Vielleicht ist der Link alt oder falsch eingetippt. Wir bringen '
-        'Sie zurück.',
+        'Vielleicht ist der Link alt oder falsch eingetippt. Zur Startseite '
+        'geht es mit einem Klick.',
     homeAction: 'Zur Startseite',
-    mailAction: 'Schreiben Sie mir eine E-Mail',
+    mailAction: 'Schreiben Sie Kevin',
   ),
 };

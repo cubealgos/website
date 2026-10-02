@@ -27,8 +27,8 @@ Map<String, Object> faqJsonLd(Lang lang) => {
 /// The heading of an offer card: `name, price`.
 String offerHeading(Offer o) => '${o.name}, ${o.price}';
 
-/// The home page body: hero, two lanes, offers, workflow, care, FAQ, final
-/// call to action.
+/// The home page body: hero, two lanes, offers, workflow, care, studio, FAQ,
+/// final call to action.
 class HomePage extends StatelessComponent {
   /// Creates the home page in [lang].
   const new({required this.lang, super.key});
@@ -45,6 +45,7 @@ class HomePage extends StatelessComponent {
       _offers(c),
       _workflow(c),
       _care(c),
+      _studio(c),
       _faq(c),
       _cta(c),
     ]);
@@ -97,7 +98,7 @@ class HomePage extends StatelessComponent {
           classes: 'actions rise',
           attrs: const {'style': '--i:3'},
           [
-            MailButton(label: writeEmail[lang]!),
+            MailButton(label: startProject[lang]!),
             a([t(c.secondaryCta)], href: '#offers', classes: 'text-link'),
           ],
         ),
@@ -195,6 +196,18 @@ class HomePage extends StatelessComponent {
         ]),
         p([t(c.carePlansNote)]),
         p(classes: 'note', [t(c.vatNote)]),
+      ]),
+    ],
+  );
+
+  Component _studio(HomeCopy c) => el(
+    'section',
+    classes: 'section',
+    attrs: const {'aria-labelledby': 'studio-title'},
+    [
+      el('div', classes: 'wrap', [
+        h2(id: 'studio-title', classes: 'reveal', [t(c.studioTitle)]),
+        p(classes: 'reveal', [t(c.studioText)]),
       ]),
     ],
   );
