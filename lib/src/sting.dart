@@ -6,22 +6,13 @@ import 'dart:io';
 /// `<style>` block carries the brand's keyframes (`cas-` prefixed).
 const stingMarkSource = 'web/brand/sting/sting-mark.svg';
 
-/// Where the build writes the sting's stylesheet, linked from the home pages
+/// The stylesheet derived from it by `brand_sync`, linked from the home pages
 /// (the site sends no inline CSS, so `style-src 'self'` needs no hashes).
-const stingCssPath = '/brand/sting-mark.css';
+const stingCssPath = '/brand/sting/sting-mark.css';
 
 final _styleBlock = RegExp(r'\s*<style[^>]*>(.*?)</style>', dotAll: true);
 
 String _source() => File(stingMarkSource).readAsStringSync();
-
-/// The mark's CSS: the content of the `<style>` block in the vendored SVG.
-String stingCss() {
-  final m = _styleBlock.firstMatch(_source());
-  if (m == null) {
-    throw StateError('$stingMarkSource has no <style> block');
-  }
-  return '${m[1]!.trim().replaceAll(RegExp('^ {4}', multiLine: true), '')}\n';
-}
 
 /// The mark as inline SVG without its `<style>` block (the CSS is the
 /// external [stingCssPath]) and without its title; decorative.

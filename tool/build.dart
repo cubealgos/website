@@ -10,7 +10,6 @@ import 'dart:io';
 
 import 'package:website/src/icons.dart';
 import 'package:website/src/seo.dart';
-import 'package:website/src/sting.dart';
 
 const _outDir = 'build/jaspr';
 // The sitemap with hreflang alternates, from the route table.
@@ -24,11 +23,6 @@ void _writeManifest() {
   );
   File('$_outDir$manifestPath').writeAsStringSync(webManifest(paper: paper));
 }
-
-// The sting's keyframes, taken from the vendored SVG's <style> block (which
-// the page no longer inlines) into an external file.
-void _writeStingCss() =>
-    File('$_outDir$stingCssPath').writeAsStringSync(stingCss());
 
 const _leftovers = ['packages', '.dart_tool', '.build.manifest'];
 
@@ -50,6 +44,5 @@ Future<void> main() async {
   }
   _writeSitemap();
   _writeManifest();
-  _writeStingCss();
   stdout.writeln('static site written to $_outDir');
 }

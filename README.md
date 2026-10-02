@@ -72,7 +72,7 @@ language switch, hreflang alternates and canonical URLs all derive from it.
 | 404 | `/404.html` | `/en/404.html` |
 
 Home, About, Contact and the 404 pages carry their content (copy as data in `lib/src/copy/`, tested against the built pages); Impressum and Datenschutz are still shells. The 404 pages are `noindex`, outside the sitemap and use root-absolute URLs only, so the server can answer any unknown path with them (English below `/en/`).
-The built HTML references only same-origin resources and carries no inline CSS: the reveal stagger is `data-i="N"` (rules in `web/site.css`), and the sting's keyframes, which the vendored `sting-mark.svg` ships in a `<style>` block, are extracted by `tool/build.dart` into `build/jaspr/brand/sting-mark.css` (linked on the home pages; `jaspr serve` does not write it, so the sting does not animate there).
+The built HTML references only same-origin resources and carries no inline CSS: the reveal stagger is `data-i="N"` (rules in `web/site.css`), and the sting's keyframes, which the vendored `sting-mark.svg` ships in a `<style>` block, are extracted by `tool/brand_sync.dart` into the vendored `web/brand/sting/sting-mark.css` (linked on the home pages, covered by `brand.lock.json` and `brand_sync --check`).
 
 ## Brand assets
 
