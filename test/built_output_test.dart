@@ -406,12 +406,14 @@ void main() {
     // The footer is the brand copy (home.md "Footer"), character for character.
     const footer = {
       Lang.en: (
-        tagline: 'Cube Algos, Heinsberg. Websites and apps, fixed prices.',
+        tagline:
+            'Cube Algos, Heinsberg. Apps and internal tools, fixed prices.',
         links: ['Home', 'About', 'Contact'],
         skip: 'Skip to content',
       ),
       Lang.de: (
-        tagline: 'Cube Algos, Heinsberg. Websites und Apps zum Festpreis.',
+        tagline:
+            'Cube Algos, Heinsberg. Apps und interne Werkzeuge zum Festpreis.',
         links: ['Start', 'Über Cube Algos', 'Kontakt'],
         skip: 'Zum Inhalt springen',
       ),
@@ -430,10 +432,11 @@ void main() {
             '<a class="skip" href="#main">${f.skip}</a>',
             '<header',
             '<nav',
-            '<main id="main" tabindex="-1">',
+            '<main ',
             '<footer',
           ].map(html.indexOf).toList();
           expect(order, everyElement(isNonNegative), reason: path);
+          expect(html, matches(RegExp('<main [^>]*id="main"')), reason: path);
           expect(order, orderedEquals([...order]..sort()), reason: path);
           // Footer text.
           final footerHtml = html.substring(html.indexOf('<footer'));

@@ -20,61 +20,99 @@ class AboutPage extends StatelessComponent {
   Component build(BuildContext context) {
     final c = aboutCopy[lang]!;
     return Component.fragment([
-      el('section', classes: 'wrap hero', [
-        el('div', classes: 'hero-text', [
-          h1(classes: 'rise', [t(c.h1)]),
-          p(
-            classes: 'lede rise',
-            attributes: const {'style': '--i:1'},
-            [t(c.lede)],
+      el('section', classes: 'hero hero--page', [
+        el('div', classes: 'wrap hero-grid gridlines', [
+          el('div', classes: 'hero-text', [
+            h1(classes: 'hero-h1 rise', [t(c.h1)]),
+            p(
+              classes: 'hero-sub rise',
+              attributes: const {'style': '--i:1'},
+              [t(c.lede)],
+            ),
+          ]),
+          // The portrait slot: a fixed-ratio frame. Until a photo exists the
+          // idle fish stands in; a photo replaces the `img` inside the figure
+          // (object-fit: cover) without any layout change.
+          el(
+            'figure',
+            classes: 'portrait rise',
+            attrs: const {'style': '--i:2'},
+            [const Fish(pose: 'idle')],
           ),
         ]),
-        // The portrait slot: a fixed-ratio frame. Until a photo exists the
-        // idle fish stands in; a photo replaces the `img` inside the figure
-        // (object-fit: cover) without any layout change.
-        el('figure', classes: 'portrait', [const Fish(pose: 'idle')]),
-      ]),
-      _section('who', c.whoTitle, [
-        for (final para in c.who) p([t(para)]),
-      ]),
-      _section('one', c.oneTitle, [
-        p([t(c.one)]),
-      ]),
-      _section('how', c.howTitle, [
-        ul(classes: 'checks', [
-          for (final item in c.how) li([t(item)]),
-        ]),
-      ]),
-      _section('where', c.whereTitle, [
-        p([t(c.where)]),
       ]),
       el(
         'section',
-        classes: 'wrap section-cta',
+        classes: 'sec sec--first',
+        attrs: const {'aria-labelledby': 'who-title'},
+        [
+          el('div', classes: 'wrap split', [
+            h2(id: 'who-title', classes: 'split-h2 reveal', [t(c.whoTitle)]),
+            el('div', classes: 'split-body reveal', [
+              for (var i = 0; i < c.who.length; i++)
+                p(classes: i == 0 ? 'split-lede' : null, [t(c.who[i])]),
+            ]),
+          ]),
+        ],
+      ),
+      el(
+        'section',
+        classes: 'band',
+        attrs: const {'aria-labelledby': 'one-title'},
+        [
+          el('div', classes: 'wrap band-grid', [
+            h2(id: 'one-title', classes: 'band-title reveal', [t(c.oneTitle)]),
+            p(
+              classes: 'band-text reveal',
+              attributes: const {'style': '--i:1'},
+              [t(c.one)],
+            ),
+          ]),
+        ],
+      ),
+      el(
+        'section',
+        classes: 'sec',
+        attrs: const {'aria-labelledby': 'how-title'},
+        [
+          el('div', classes: 'wrap', [
+            h2(id: 'how-title', classes: 'sec-h2 reveal', [t(c.howTitle)]),
+            ul(classes: 'ticks reveal', [
+              for (final item in c.how) li([t(item)]),
+            ]),
+          ]),
+        ],
+      ),
+      el(
+        'section',
+        classes: 'sheet',
+        attrs: const {'aria-labelledby': 'where-title'},
+        [
+          el('div', classes: 'wrap sheet-grid', [
+            h2(id: 'where-title', classes: 'sheet-title reveal', [
+              t(c.whereTitle),
+            ]),
+            el('div', classes: 'sheet-body reveal', [
+              p(classes: 'sheet-lede', [t(c.where)]),
+            ]),
+          ]),
+        ],
+      ),
+      el(
+        'section',
+        classes: 'cta-sec cta-sec--gap',
         attrs: const {'aria-labelledby': 'cta-title'},
         [
-          el('div', classes: 'cta-panel reveal', [
-            el('div', classes: 'cta-text', [
-              h2(id: 'cta-title', [t(c.ctaTitle)]),
-              MailButton(label: writeToKevin[lang]!, inverse: true),
+          el('div', classes: 'wrap', [
+            el('div', classes: 'cta cta--slim reveal', [
+              el('div', classes: 'cta-text', [
+                h2(id: 'cta-title', [t(c.ctaTitle)]),
+                MailButton(label: writeToKevin[lang]!, inverse: true),
+              ]),
             ]),
           ]),
         ],
       ),
     ]);
   }
-
-  Component _reveal(Component block) => el('div', classes: 'reveal', [block]);
-
-  Component _section(String id, String title, List<Component> body) => el(
-    'section',
-    classes: 'section',
-    attrs: {'aria-labelledby': '$id-title'},
-    [
-      el('div', classes: 'wrap prose', [
-        h2(id: '$id-title', classes: 'reveal', [t(title)]),
-        for (final block in body) _reveal(block),
-      ]),
-    ],
-  );
 }

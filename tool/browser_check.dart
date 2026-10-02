@@ -11,14 +11,14 @@
 //    focus token on every stop) in light and dark;
 //  * the language switch on every page lands on the same page in the other
 //    language (on the 404 pages: on the home page of the other language);
-//  * UI motion: the sting plays on the home pages only, on a direct load and
-//    not when arriving from a page of this site (same-origin referrer), with
-//    nothing written to session or local storage; it uses the theme's
+//  * UI motion: the sting plays in the header logo slot on the home pages only
+//    (it is the page's one logo; the header keeps its height), on a direct load
+//    and not when arriving from a page of this site (same-origin referrer),
+//    with nothing written to session or local storage; it uses the theme's
 //    background and is replaced by its still under reduced motion (a second
-//    Chrome started with
-//    `--force-prefers-reduced-motion`); durations and easings are the tokens;
-//    only transform, opacity and the underline's background-size animate;
-//    button press and hover;
+//    Chrome started with `--force-prefers-reduced-motion`); durations and
+//    easings are the tokens; only transform, opacity and the underline's
+//    background-size animate; button press and hover;
 //  * reveal on scroll: scrolling each content page to the bottom leaves every
 //    `.reveal` element at opacity 1; with reduced motion or JavaScript off
 //    (`--blink-settings=scriptEnabled=false`) they are visible without
@@ -505,6 +505,9 @@ const _stingState = '''
   const stills = [...document.querySelectorAll('.sting-still')];
   return {
     box: !!document.querySelector('[data-sting]'),
+    inHeader: !!document.querySelector('.site-header [data-sting]'),
+    logos: document.querySelectorAll('img.logo').length,
+    headerHeight: document.querySelector('.site-header').getBoundingClientRect().height,
     anim: !!anim,
     animSrc: anim ? anim.getAttribute('src') : null,
     animLoaded: anim ? anim.complete && anim.naturalWidth > 0 : null,
@@ -575,6 +578,10 @@ Future<List<String>> _motionChecks(
       await page.goto(home);
       final first = await page.evalMap(_stingState);
       final probe = await page.evalMap(_motionProbe);
+      // One logo on the page: the sting box is the header logo.
+      if (first['inHeader'] != true || first['logos'] != 0) {
+        out.add('$where: the sting is not the only logo in the header: $first');
+      }
       if (reduced) {
         if (first['anim'] == true || first['stillVisible'] != true) {
           out.add('$where: sting is not the still: $first');
@@ -604,6 +611,20 @@ Future<List<String>> _motionChecks(
       if (await page.eval("document.querySelector('.sting-anim').complete") !=
           true) {
         out.add('$where: animated sting did not load');
+      }
+      // The header keeps its height while the sting plays and after it ends.
+      await Future<void>.delayed(
+        Duration(
+          milliseconds:
+              int.parse(_token('--duration-sting').replaceAll('ms', '')) + 500,
+        ),
+      );
+      final settled = await page.evalMap(_stingState);
+      if (settled['headerHeight'] != first['headerHeight']) {
+        out.add(
+          '$where ($theme): header height ${first['headerHeight']} -> '
+          '${settled['headerHeight']} while the sting plays',
+        );
       }
       // Home -> About -> Home through the site's own links: the second home
       // load has a same-origin referrer, so the still, no replay.
@@ -688,7 +709,7 @@ Future<List<String>> _motionChecks(
   }
   if (!(p['animations']! as int > 0)) out.add('motion: nothing animates');
   final delays = (p['staggerDelays']! as List<dynamic>).join(' ');
-  if (delays != '0s 0.06s 0.12s 0.18s') {
+  if (delays != '0s 0.06s 0.12s 0.18s 0.12s') {
     out.add('motion: stagger delays $delays');
   }
 
