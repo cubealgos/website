@@ -18,4 +18,5 @@
 - The home sting no longer stores a `sessionStorage` flag: it plays unless `document.referrer` is a page of this site; `html-check` fails on any `sessionStorage`, `localStorage`, `indexedDB` or `document.cookie` in the build, `browser_check` covers the referrer rule and empty storage, and the Datenschutz page drops its exception paragraph and says nothing is stored on the device (#35).
 - Home page, EN and DE: hero with the idle fish, two lanes, offers, workflow, care, FAQ with matching `FAQPage` JSON-LD and a closing call to action, all from one copy data file per page and tested against the built output (#10). The pages carry no `<base>` element, so in-page links (`#main`, `#offers`) stay on the page.
 - About page, EN and DE: who I am, why one person, how I work, where, with the idle fish in a figure slot a photo can replace (#11).
+- Contact page, EN and DE: mailto only with no form, script or tracking, what to put in the first email, what happens next and the company details (#12).
 - The headline underline is an inline background that follows the wrapped phrase, one segment per line; headings no longer hyphenate (#10).

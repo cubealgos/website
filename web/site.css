@@ -739,6 +739,14 @@ h3 {
   background: var(--color-accent-fill);
 }
 
+.after-steps {
+  margin-top: var(--spacing-6);
+}
+
+.details {
+  color: var(--color-muted);
+}
+
 /* Motion: transform and opacity only; durations and easings from the tokens.
    Final states are the base styles, so removing the animation (reduced
    motion) leaves everything in place. */

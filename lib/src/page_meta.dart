@@ -54,7 +54,7 @@ const Map<PageKey, Map<Lang, PageMeta>> pageMeta = {
       description:
           'Write to Cube Algos in Heinsberg at hello@cubealgos.de. Tell me '
           "what you need, and I'll write back and suggest the next step.",
-      h1: 'Contact',
+      h1: 'Write me an email.',
     ),
     Lang.de: (
       title: 'Kontakt | Cube Algos',
@@ -62,7 +62,7 @@ const Map<PageKey, Map<Lang, PageMeta>> pageMeta = {
           'Schreiben Sie Cube Algos in Heinsberg an hello@cubealgos.de. '
           'Erzählen Sie mir, was Sie brauchen, ich antworte und schlage den '
           'nächsten Schritt vor.',
-      h1: 'Kontakt',
+      h1: 'Schreiben Sie mir eine E-Mail.',
     ),
   },
   PageKey.impressum: {
