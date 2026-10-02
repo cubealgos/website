@@ -1315,10 +1315,12 @@ article {
   flex: none;
   font-family: var(--font-family-mono);
   color: var(--color-accent-text);
+  transition: transform var(--duration-quick) var(--ease-settle);
 }
 
+/* Open: the "+" turns into a "×" (a quarter turn, quick). */
 .faq details[open] > summary::after {
-  content: "\2212";
+  transform: rotate(45deg);
 }
 
 .faq summary:focus-visible {
@@ -1328,6 +1330,12 @@ article {
 
 .faq details p {
   margin: 0 0 var(--spacing-4);
+}
+
+/* Opening: the answer fades in and rises a few pixels (opacity and transform
+   only, no height animation); closing is instant. */
+.faq details[open] > p {
+  animation: rise var(--duration-base) var(--ease-settle) both;
 }
 
 /* About: the founder split, ticks and the portrait slot. */
@@ -1702,8 +1710,13 @@ article {
 @media (prefers-reduced-motion: reduce) {
   .rise,
   .mark,
-  .route::before {
+  .route::before,
+  .faq details[open] > p {
     animation: none;
+  }
+
+  .faq summary::after {
+    transition: none;
   }
 
   :root.reveal-on .rail.reveal::before,
