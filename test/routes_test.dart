@@ -20,7 +20,7 @@ void main() {
       ([
         '/',
         '/en/',
-        '/ueber-cube-algos/',
+        '/ueber/',
         '/en/about/',
         '/kontakt/',
         '/en/contact/',
@@ -44,7 +44,7 @@ void main() {
         expect(resolved.lang, lang.other);
       }
     }
-    expect(switchTarget(PageKey.about, Lang.en), '/ueber-cube-algos/');
+    expect(switchTarget(PageKey.about, Lang.en), '/ueber/');
     expect(switchTarget(PageKey.contact, Lang.de), '/en/contact/');
     expect(switchTarget(PageKey.home, Lang.en), '/');
   });
@@ -52,12 +52,12 @@ void main() {
   test('the 404 pages switch to the home page, not to each other', () {
     expect(switchPath(PageKey.notFound, Lang.en), '/en/');
     expect(switchPath(PageKey.notFound, Lang.de), '/');
-    expect(switchPath(PageKey.about, Lang.de), '/ueber-cube-algos/');
+    expect(switchPath(PageKey.about, Lang.de), '/ueber/');
   });
 
   test('resolve accepts paths with or without trailing slash', () {
     expect(resolve('/en/about')?.key, PageKey.about);
-    expect(resolve('/ueber-cube-algos/')?.lang, Lang.de);
+    expect(resolve('/ueber/')?.lang, Lang.de);
     expect(resolve('/nope'), isNull);
   });
 

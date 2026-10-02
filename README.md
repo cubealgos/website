@@ -63,7 +63,7 @@ language switch, hreflang alternates and canonical URLs all derive from it.
 | page | German | English |
 | --- | --- | --- |
 | Home | `/` | `/en/` |
-| About | `/ueber-cube-algos/` | `/en/about/` |
+| About | `/ueber/` | `/en/about/` |
 | Contact | `/kontakt/` | `/en/contact/` |
 | Impressum | `/impressum/` | `/en/impressum/` |
 | Datenschutz | `/datenschutz/` | `/en/datenschutz/` |
