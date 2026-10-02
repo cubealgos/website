@@ -15,41 +15,41 @@ typedef PageMeta = ({String title, String description, String h1});
 const Map<PageKey, Map<Lang, PageMeta>> pageMeta = {
   PageKey.home: {
     Lang.en: (
-      title: 'Cube Algos | Apps and tools, fixed prices',
+      title: 'Cube Algos | Software studio in Heinsberg',
       description:
-          'Apps and tools for businesses and founders from €1,000, at a fixed '
-          'price after a free first call. Plus automation and self-hosting. '
-          'From Heinsberg.',
+          'Cube Algos is a small software studio in Heinsberg: software of '
+          'its own, and apps, internal tools and automations for businesses '
+          'and founders.',
       h1:
-          'Apps and tools for businesses that would rather focus on their '
-          'work.',
+          'Cube Algos is a small studio that builds software of its own, and '
+          'yours.',
     ),
     Lang.de: (
-      title: 'Cube Algos | Apps und Tools zum Festpreis',
+      title: 'Cube Algos | Softwarestudio aus Heinsberg',
       description:
-          'Apps und Tools für Betriebe und Gründungsteams ab 1.000 €, zum '
-          'Festpreis nach kostenlosem Erstgespräch. Dazu Automatisierung und '
-          'Self-Hosting. Aus Heinsberg.',
+          'Cube Algos ist ein kleines Softwarestudio aus Heinsberg: eigene '
+          'Software und Apps, interne Tools und Automatisierungen für '
+          'Betriebe und Gründungsteams.',
       h1:
-          'Apps und Tools für Betriebe, die sich lieber um ihr Geschäft '
-          'kümmern.',
+          'Cube Algos ist ein kleines Studio, das eigene Software baut, und '
+          'Ihre.',
     ),
   },
   PageKey.about: {
     Lang.en: (
       title: 'About | Cube Algos',
       description:
-          'Cube Algos is a software studio in Heinsberg, founded in 2023 and '
-          'led by Kevin Scheeren. Apps and internal tools at fixed prices, '
-          'with a free first call.',
+          'Cube Algos is a software studio in Heinsberg, founded in 2023 by '
+          'Kevin Scheeren. Apps, internal tools, automation, and software of '
+          'its own.',
       h1: 'The studio and its founder',
     ),
     Lang.de: (
       title: 'Über Cube Algos | Cube Algos',
       description:
           'Cube Algos ist ein Softwarestudio aus Heinsberg, 2023 von Kevin '
-          'Scheeren gegründet. Apps, Tools und Automatisierung zum Festpreis, '
-          'mit kostenlosem Erstgespräch.',
+          'Scheeren gegründet. Apps, interne Tools, Automatisierung und '
+          'eigene Software.',
       h1: 'Das Studio und sein Gründer',
     ),
   },

@@ -33,7 +33,7 @@ const Map<Lang, ContactCopy> contactCopy = {
     include: [
       'What your business or project is, in a sentence.',
       ('What you want built: a booking tool, a customer portal, a '
-          'dashboard, an MVP, or "not sure yet".'),
+          'dashboard, an MVP, an automation, or "not sure yet".'),
       'Who will use it.',
       "Whether there's a date it needs to be ready by.",
       ('Roughly what you have already: nothing, a sketch, a '
@@ -50,8 +50,8 @@ const Map<Lang, ContactCopy> contactCopy = {
       ('If it fits, you have a free call of 30 to 45 minutes, by video '
           'or phone.'),
       ('Within about 3 working days after the call, you get a written '
-          'scope with a fixed price and a start date.'),
-      "You decide. If you don't go ahead, it costs nothing.",
+          'offer with the scope and a start date.'),
+      'You decide whether it gets built.',
     ],
     nextNote: 'Your email stays confidential. This page has no tracking.',
   ),
@@ -85,9 +85,8 @@ const Map<Lang, ContactCopy> contactCopy = {
       ('Passt es, folgt ein kostenloses Gespräch von 30 bis 45 Minuten, per '
           'Video oder Telefon.'),
       ('Innerhalb von etwa drei Werktagen danach erhalten Sie ein '
-          'schriftliches Angebot mit Festpreis und Starttermin.'),
-      ('Sie entscheiden. Wenn Sie nicht beauftragen, entstehen Ihnen keine '
-          'Kosten.'),
+          'schriftliches Angebot mit Umfang und Starttermin.'),
+      'Sie entscheiden, ob gebaut wird.',
     ],
     nextNote:
         'Ihre E-Mail bleibt vertraulich. Diese Seite verwendet kein '

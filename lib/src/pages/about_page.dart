@@ -7,8 +7,9 @@ import 'package:website/src/copy/common_copy.dart';
 import 'package:website/src/routes.dart';
 import 'package:website/src/widgets.dart';
 
-/// The about page body: hero with the portrait slot, the founder, one person,
-/// how the studio works, where, closing call to action.
+/// The about page body: hero, the founder with the portrait, one person, the
+/// studio's own software, how the studio works, where, closing call to
+/// action.
 class AboutPage extends StatelessComponent {
   /// Creates the about page in [lang].
   const new({required this.lang, super.key});
@@ -30,15 +31,6 @@ class AboutPage extends StatelessComponent {
               [t(c.lede)],
             ),
           ]),
-          // The portrait slot: a fixed-ratio frame. Until a photo exists the
-          // idle fish stands in; a photo replaces the `img` inside the figure
-          // (object-fit: cover) without any layout change.
-          el(
-            'figure',
-            classes: 'portrait rise',
-            attrs: const {'data-i': '2'},
-            [const Fish(pose: 'idle')],
-          ),
         ]),
       ]),
       el(
@@ -47,10 +39,21 @@ class AboutPage extends StatelessComponent {
         attrs: const {'aria-labelledby': 'who-title'},
         [
           el('div', classes: 'wrap split', [
-            h2(id: 'who-title', classes: 'split-h2 reveal', [t(c.whoTitle)]),
+            el('div', classes: 'split-head', [
+              h2(id: 'who-title', classes: 'split-h2 reveal', [t(c.whoTitle)]),
+              _portrait(c),
+            ]),
             el('div', classes: 'split-body reveal', [
               for (var i = 0; i < c.who.length; i++)
                 p(classes: i == 0 ? 'split-lede' : null, [t(c.who[i])]),
+              // Plain text: the built pages link to no other host.
+              p(classes: 'links-line', [
+                t('${c.linksIntro} '),
+                for (var i = 0; i < c.links.length; i++) ...[
+                  if (i > 0) t(' · '),
+                  span(classes: 'url', [t(c.links[i])]),
+                ],
+              ]),
             ]),
           ]),
         ],
@@ -72,12 +75,26 @@ class AboutPage extends StatelessComponent {
       ),
       el(
         'section',
+        classes: 'sheet sheet--after-band',
+        attrs: const {'aria-labelledby': 'own-title'},
+        [
+          el('div', classes: 'wrap sheet-grid', [
+            h2(id: 'own-title', classes: 'sheet-title reveal', [t(c.ownTitle)]),
+            el('div', classes: 'sheet-body reveal', [
+              p(classes: 'sheet-lede', [t(c.own)]),
+              p([t(c.ownCode)]),
+            ]),
+          ]),
+        ],
+      ),
+      el(
+        'section',
         classes: 'sec',
         attrs: const {'aria-labelledby': 'how-title'},
         [
           el('div', classes: 'wrap', [
             h2(id: 'how-title', classes: 'sec-h2 reveal', [t(c.howTitle)]),
-            ul(classes: 'ticks reveal', [
+            ul(classes: 'ticks ticks--even reveal', [
               for (final item in c.how) li([t(item)]),
             ]),
           ]),
@@ -115,4 +132,52 @@ class AboutPage extends StatelessComponent {
       ),
     ]);
   }
+
+  /// The founder's portrait: the web copy without metadata (JPEG and WebP at
+  /// 280, 420 and 560 px wide) in the frame that carries the chamfer.
+  Component _portrait(AboutCopy c) {
+    const sizes = '(min-width: 64rem) 280px, (min-width: 48rem) 240px, 192px';
+    String set(String ext) =>
+        [for (final w in portraitWidths) '/img/kevin-scheeren-$w.$ext ${w}w']
+            .join(', ');
+    return el(
+      'figure',
+      classes: 'founder-photo reveal',
+      attrs: const {'data-i': '1'},
+      [
+        el('picture', [
+          el(
+            'source',
+            const [],
+            attrs: {
+              'type': 'image/webp',
+              'srcset': set('webp'),
+              'sizes': sizes,
+            },
+          ),
+          img(
+            src: '/img/kevin-scheeren-$portraitWidth.jpg',
+            alt: c.photoAlt,
+            width: portraitWidth,
+            height: portraitHeight,
+            attributes: {
+              'srcset': set('jpg'),
+              'sizes': sizes,
+              'loading': 'lazy',
+              'decoding': 'async',
+            },
+          ),
+        ]),
+      ],
+    );
+  }
 }
+
+/// The widths of the portrait files in `web/img/`; the last is the largest.
+const portraitWidths = [280, 420, 560];
+
+/// The width of the largest portrait file.
+const portraitWidth = 560;
+
+/// The height of the largest portrait file (3:4).
+const portraitHeight = 747;
