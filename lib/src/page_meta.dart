@@ -20,7 +20,7 @@ const Map<PageKey, Map<Lang, PageMeta>> pageMeta = {
           'Websites, apps and MVPs for owner-led businesses and founders. '
           'Fixed prices, built in Heinsberg by one person, cared for after '
           'launch.',
-      h1: 'Home',
+      h1: "Websites and apps for people who'd rather run their business.",
     ),
     Lang.de: (
       title: 'Cube Algos | Websites und Apps zum Festpreis',
@@ -28,7 +28,7 @@ const Map<PageKey, Map<Lang, PageMeta>> pageMeta = {
           'Websites, Apps und MVPs für Inhaber:innen und Gründer:innen. '
           'Festpreise, gebaut in Heinsberg von einer Person, betreut nach '
           'dem Launch.',
-      h1: 'Startseite',
+      h1: 'Websites und Apps für alle, die lieber ihr Geschäft führen.',
     ),
   },
   PageKey.about: {

@@ -17,9 +17,11 @@
 //    background and is replaced by its still under reduced motion (a second
 //    Chrome started with
 //    `--force-prefers-reduced-motion`); durations and easings are the tokens;
-//    only transform and opacity animate; button press and hover.
+//    only transform, opacity and the underline's background-size animate;
+//    button press and hover.
 //
-// `--screenshots <dir>` also writes Home EN/DE at 375 and 1280, light and dark.
+// `--screenshots <dir>` also writes the content pages EN/DE at 375 and 1280,
+// light and dark.
 // Run: `fvm dart run tool/browser_check.dart [--screenshots <dir>]`.
 import 'dart:io';
 
@@ -29,6 +31,10 @@ import 'src/chrome.dart';
 import 'src/static_server.dart';
 
 const _widths = [320, 375, 768, 1280];
+
+/// The pages `--screenshots` writes (EN and DE, 375 and 1280 px, light and
+/// dark).
+const List<PageKey> _shotPages = [PageKey.home];
 
 const _overflowProbe = '''
 (() => {
@@ -60,7 +66,7 @@ const _focusToken = '''
 
 const _focusState = '''
 (() => {
-  const all = [...document.querySelectorAll('a[href],button')];
+  const all = [...document.querySelectorAll('a[href],button,summary')];
   const e = document.activeElement;
   const cs = getComputedStyle(e);
   const r = e.getBoundingClientRect();
@@ -131,7 +137,7 @@ Future<void> main(List<String> args) async {
         final focus = await page.eval(_focusToken);
         final count =
             (await page.eval(
-                  "document.querySelectorAll('a[href],button').length",
+                  "document.querySelectorAll('a[href],button,summary').length",
                 ))!
                 as int;
         for (var i = 0; i < count; i++) {
@@ -215,21 +221,27 @@ Future<void> main(List<String> args) async {
 
     // 5. Screenshots for review (optional).
     if (shots != null) {
-      for (final lang in Lang.values) {
-        for (final width in [375, 1280]) {
-          for (final dark in [false, true]) {
-            // A fresh tab has no referrer: the sting plays; shoot once it ends.
-            final shot = await chrome.newPage();
-            await shot.setViewport(width, 800);
-            await shot.setMedia(dark: dark);
-            await shot.goto('$base${pathFor(PageKey.home, lang)}');
-            final name = 'home-${lang.code}-$width-${dark ? 'dark' : 'light'}';
-            if (width == 1280 && !dark) {
-              await Future<void>.delayed(const Duration(milliseconds: 700));
-              await shot.screenshot('$shots/$name-sting-mid.png');
+      for (final key in _shotPages) {
+        for (final lang in Lang.values) {
+          for (final width in [375, 1280]) {
+            for (final dark in [false, true]) {
+              // A fresh tab has no referrer: the home sting plays; shoot once
+              // it ends.
+              final shot = await chrome.newPage();
+              await shot.setViewport(width, 800);
+              await shot.setMedia(dark: dark);
+              await shot.goto('$base${pathFor(key, lang)}');
+              final mode = dark ? 'dark' : 'light';
+              final name = '${key.name}-${lang.code}-$width-$mode';
+              if (key == PageKey.home && width == 1280 && !dark) {
+                await Future<void>.delayed(const Duration(milliseconds: 700));
+                await shot.screenshot('$shots/$name-sting-mid.png');
+              }
+              await Future<void>.delayed(
+                Duration(milliseconds: key == PageKey.home ? 2400 : 400),
+              );
+              await shot.screenshot('$shots/$name.png');
             }
-            await Future<void>.delayed(const Duration(milliseconds: 2400));
-            await shot.screenshot('$shots/$name.png');
           }
         }
       }
@@ -391,9 +403,9 @@ const _motionProbe = '''
     riseName: css(rise, 'animationName'),
     riseDuration: css(rise, 'animationDuration'),
     riseEasing: css(rise, 'animationTimingFunction'),
-    markName: css(mark, 'animationName', '::after'),
-    markDuration: css(mark, 'animationDuration', '::after'),
-    markEasing: css(mark, 'animationTimingFunction', '::after'),
+    markName: css(mark, 'animationName'),
+    markDuration: css(mark, 'animationDuration'),
+    markEasing: css(mark, 'animationTimingFunction'),
     pressDuration: css(btn, 'transitionDuration'),
     pressEasing: css(btn, 'transitionTimingFunction'),
     hoverDuration: css(btn, 'transitionDuration', '::before'),
@@ -504,7 +516,7 @@ Future<List<String>> _motionChecks(
 
   if (reduced) return out;
 
-  // Tokens on the real elements, transform/opacity only, stagger, press, hover.
+  // Tokens on the real elements, transform/opacity (and background-size), stagger, press, hover.
   final page = await session();
   await page.goto('$base${pathFor(PageKey.home, Lang.en)}');
   final p = await page.evalMap(_motionProbe);
@@ -536,12 +548,14 @@ Future<List<String>> _motionChecks(
     _seconds(_token('--duration-instant')),
   );
   expectEq('hover easing', p['hoverEasing'], _bezier(_token('--ease-out')));
-  if ('${p['animatedProps']}' != '[opacity, transform]') {
+  if ('${p['animatedProps']}' != '[backgroundSize, opacity, transform]') {
     out.add('motion: animated properties ${p['animatedProps']}');
   }
   if (!(p['animations']! as int > 0)) out.add('motion: nothing animates');
   final delays = (p['staggerDelays']! as List<dynamic>).join(' ');
-  if (delays != '0s 0.06s') out.add('motion: stagger delays $delays');
+  if (delays != '0s 0.06s 0.12s 0.18s') {
+    out.add('motion: stagger delays $delays');
+  }
 
   final [x, y] = (p['btnRect']! as List<dynamic>)
       .cast<num>()

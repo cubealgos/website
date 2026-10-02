@@ -50,6 +50,10 @@ main ol {
 h1,
 h2,
 h3 {
+  /* Headings never hyphenate (body text does); a long word may still break
+     as a last resort. */
+  hyphens: manual;
+  overflow-wrap: break-word;
   font-weight: var(--font-weight-display);
   margin: 0 0 var(--spacing-4);
 }
@@ -316,21 +320,68 @@ nav a[aria-current="page"] {
   transform: scale(var(--press-scale));
 }
 
-/* Hero (home) */
+/* Hero (home): text, then the idle fish; side by side from 48rem. */
 .hero {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+  display: grid;
+  gap: var(--spacing-8);
+  align-items: center;
 }
 
-.hero > * {
+.hero-text > * {
   margin-block: 0 var(--spacing-6);
+}
+
+.eyebrow {
+  font-family: var(--font-family-mono);
+  font-weight: var(--font-weight-mono);
+  font-size: var(--font-scale-label-size);
+  line-height: var(--font-scale-label-line-height);
+  letter-spacing: var(--font-scale-label-tracking);
+  text-transform: uppercase;
+  color: var(--color-accent-text);
+}
+
+.subline {
+  font-size: var(--font-scale-h3-size);
+  line-height: var(--font-scale-h3-line-height);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-4) var(--spacing-8);
+}
+
+.text-link {
+  font-weight: var(--font-weight-display);
+  padding-block: var(--spacing-3);
+}
+
+.hero-fish {
+  width: 10rem;
+}
+
+.fish-img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+@media (min-width: 48rem) {
+  .hero {
+    grid-template-columns: 1fr minmax(12rem, 20rem);
+  }
+
+  .hero-fish {
+    width: 100%;
+  }
 }
 
 /* The sting box keeps its aspect ratio whether it shows the still or the
    animated SVG, so nothing shifts when the animation is inserted. */
 .sting {
-  width: min(100%, 28rem);
+  width: min(100%, 20rem);
   aspect-ratio: 325 / 120;
 }
 
@@ -343,6 +394,289 @@ nav a[aria-current="page"] {
 /* sting.js adds this class to <html> when it will play the animation. */
 :root.sting-play .sting-still:is(.for-light, .for-dark) {
   display: none;
+}
+
+/* Sections */
+h2 {
+  font-size: var(--font-scale-h2-size);
+  line-height: var(--font-scale-h2-line-height);
+  letter-spacing: var(--font-scale-h2-tracking);
+}
+
+h3 {
+  font-size: var(--font-scale-h3-size);
+  line-height: var(--font-scale-h3-line-height);
+  letter-spacing: var(--font-scale-h3-tracking);
+}
+
+.section {
+  margin-top: var(--spacing-12);
+  padding-top: var(--spacing-12);
+  border-top: 1px solid var(--color-rule);
+}
+
+.intro {
+  margin-block: 0 var(--spacing-8);
+}
+
+.note {
+  margin-block: var(--spacing-4) 0;
+  color: var(--color-muted);
+  font-size: var(--font-scale-small-size);
+  line-height: var(--font-scale-small-line-height);
+}
+
+/* Chamfered card. */
+.card {
+  --c: var(--chamfer-lg);
+
+  background: var(--color-card);
+  padding: var(--spacing-6);
+  clip-path: polygon(
+    0 0,
+    calc(100% - var(--c)) 0,
+    100% var(--c),
+    100% 100%,
+    var(--c) 100%,
+    0 calc(100% - var(--c))
+  );
+}
+
+.card > :first-child {
+  margin-top: 0;
+}
+
+.card > :last-child {
+  margin-bottom: 0;
+}
+
+.lanes,
+.offers,
+.plans {
+  display: grid;
+  gap: var(--spacing-6);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  max-width: none;
+}
+
+.lane p {
+  margin-block: 0 var(--spacing-4);
+}
+
+.lane-links {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.lane-links a {
+  display: inline-block;
+  padding-block: var(--spacing-2);
+  font-weight: var(--font-weight-display);
+}
+
+.offer {
+  scroll-margin-top: var(--spacing-8);
+}
+
+.offer h3 {
+  margin-bottom: var(--spacing-3);
+}
+
+.offer-name,
+.offer-price {
+  display: inline-block;
+}
+
+.offer-price {
+  white-space: nowrap;
+  color: var(--color-accent-text);
+}
+
+.offer p {
+  margin: 0;
+}
+
+@media (min-width: 48rem) {
+  .lanes,
+  .plans {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .offers {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 64rem) {
+  .offers {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+#offers {
+  scroll-margin-top: var(--spacing-4);
+}
+
+/* Workflow */
+.split {
+  display: grid;
+  gap: var(--spacing-8);
+  align-items: center;
+}
+
+.split-fish {
+  width: 8rem;
+}
+
+@media (min-width: 48rem) {
+  .split {
+    grid-template-columns: 1fr minmax(10rem, 16rem);
+  }
+
+  .split-fish {
+    width: 100%;
+  }
+}
+
+.steps {
+  counter-reset: step;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.steps li {
+  counter-increment: step;
+  position: relative;
+  padding: var(--spacing-3) 0 var(--spacing-3) var(--spacing-12);
+  border-top: 1px solid var(--color-rule);
+}
+
+.steps li::before {
+  content: counter(step, decimal-leading-zero);
+  position: absolute;
+  left: 0;
+  top: var(--spacing-3);
+  font-family: var(--font-family-mono);
+  color: var(--color-accent-text);
+}
+
+.plans {
+  margin-block: var(--spacing-6);
+}
+
+.plans strong,
+.faq summary,
+.offer-name {
+  hyphens: manual;
+  overflow-wrap: break-word;
+}
+
+/* FAQ: native disclosure, one rule per entry. */
+.faq {
+  max-width: 70ch;
+}
+
+.faq details {
+  border-top: 1px solid var(--color-rule);
+}
+
+.faq details:last-child {
+  border-bottom: 1px solid var(--color-rule);
+}
+
+.faq summary {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--spacing-4);
+  padding-block: var(--spacing-4);
+  font-weight: var(--font-weight-display);
+  cursor: pointer;
+  list-style: none;
+}
+
+.faq summary::-webkit-details-marker {
+  display: none;
+}
+
+.faq summary::after {
+  content: "+";
+  flex: none;
+  font-family: var(--font-family-mono);
+  color: var(--color-accent-text);
+}
+
+.faq details[open] > summary::after {
+  content: "\2212";
+}
+
+.faq summary:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: -2px;
+}
+
+.faq details p {
+  margin: 0 0 var(--spacing-4);
+}
+
+/* Final call to action: an amber panel with the on-amber fish. */
+.section-cta {
+  margin-top: var(--spacing-12);
+}
+
+.cta-panel {
+  --c: var(--chamfer-lg);
+
+  display: grid;
+  gap: var(--spacing-6);
+  align-items: center;
+  padding: var(--spacing-8) var(--spacing-6);
+  background: var(--color-accent-fill);
+  color: var(--color-on-accent);
+  clip-path: polygon(
+    0 0,
+    calc(100% - var(--c)) 0,
+    100% var(--c),
+    100% 100%,
+    var(--c) 100%,
+    0 calc(100% - var(--c))
+  );
+}
+
+.cta-text > :first-child {
+  margin-top: 0;
+}
+
+.cta-text p {
+  margin-block: 0 var(--spacing-6);
+}
+
+.cta-fish {
+  width: 8rem;
+}
+
+@media (min-width: 48rem) {
+  .cta-panel {
+    grid-template-columns: 1fr minmax(10rem, 14rem);
+    padding: var(--spacing-12) var(--spacing-8);
+  }
+
+  .cta-fish {
+    width: 100%;
+  }
+}
+
+/* The inverse button sits on amber: ink fill, paper text. */
+.btn--inverse {
+  background: var(--color-on-accent);
+  color: var(--color-primitive-paper);
+}
+
+.btn--inverse::before {
+  background: var(--color-primitive-paper);
 }
 
 /* Motion: transform and opacity only; durations and easings from the tokens.
@@ -369,35 +703,34 @@ nav a[aria-current="page"] {
 /* The amber underline under the key phrase: drawn left to right once. */
 @keyframes draw {
   from {
-    transform: scaleX(0);
+    background-size: 0 0.12em;
   }
 
   to {
-    transform: scaleX(1);
+    background-size: 100% 0.12em;
   }
 }
 
 .mark {
-  position: relative;
-  display: inline-block;
-}
-
-.mark::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -0.08em;
-  height: 0.12em;
-  background: var(--color-accent-fill);
-  transform-origin: left center;
+  /* An inline underline: the phrase wraps with the headline and every wrapped
+     line gets its own segment (box-decoration-break: clone). */
+  background-image: linear-gradient(
+    var(--color-accent-fill),
+    var(--color-accent-fill)
+  );
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 100% 0.12em;
+  padding-bottom: 0.06em;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
   animation: draw var(--duration-draw) var(--ease-draw) both;
   animation-delay: var(--duration-base);
 }
 
 @media (prefers-reduced-motion: reduce) {
   .rise,
-  .mark::after {
+  .mark {
     animation: none;
   }
 

@@ -11,5 +11,7 @@ import 'package:website/main.server.options.dart';
 void main() {
   Jaspr.initializeApp(options: defaultServerOptions);
 
-  runApp(const Document(title: 'Cube Algos', body: App()));
+  // No <base>: it would turn every in-page link such as `#main` or `#offers`
+  // into a link to the home page. All other URLs are root-absolute.
+  runApp(const Document(title: 'Cube Algos', base: null, body: App()));
 }

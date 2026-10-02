@@ -349,5 +349,11 @@ void main() {
         expect(rules, everyElement('layout-motion'), reason: css);
       }
     });
+    test('allows background-size (paint-only: the inline underline)', () {
+      const css =
+          '@keyframes d { from { background-size: 0 0.1em; } '
+          'to { background-size: 100% 0.1em; } }';
+      expect(_rules(_site({'site.css': css})), isEmpty);
+    });
   });
 }

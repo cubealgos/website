@@ -1,0 +1,2 @@
+# Tests that build the site share one build directory and one crawl port: run files one at a time.
+concurrency: 1

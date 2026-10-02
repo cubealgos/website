@@ -7,6 +7,7 @@ import 'package:website/src/icons.dart';
 import 'package:website/src/legal_content.dart';
 import 'package:website/src/legal_view.dart';
 import 'package:website/src/page_meta.dart';
+import 'package:website/src/pages/home_page.dart';
 import 'package:website/src/routes.dart';
 
 /// The page shell: `<html lang>`, title, description, canonical and hreflang
@@ -81,12 +82,11 @@ class PageShell extends StatelessComponent {
         [
           if (legalDocs[pageKey]?[lang] case final doc?)
             LegalPage(heading: meta.h1, doc: doc)
+          else if (pageKey == PageKey.home)
+            HomePage(lang: lang)
           else
             div(classes: 'wrap', [
-              if (pageKey == PageKey.home)
-                Hero(headline: meta.h1)
-              else
-                h1(classes: 'rise', [Component.text(meta.h1)]),
+              h1(classes: 'rise', [Component.text(meta.h1)]),
             ]),
         ],
       ),
