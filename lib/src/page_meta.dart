@@ -37,7 +37,7 @@ const Map<PageKey, Map<Lang, PageMeta>> pageMeta = {
       description:
           "I'm Kevin Scheeren, and I build websites and apps at Cube Algos "
           'in Heinsberg. One person, fixed prices, and care after launch.',
-      h1: 'About',
+      h1: "Hi, I'm Kevin.",
     ),
     Lang.de: (
       title: 'Über mich | Cube Algos',
@@ -45,7 +45,7 @@ const Map<PageKey, Map<Lang, PageMeta>> pageMeta = {
           'Ich bin Kevin Scheeren und baue bei Cube Algos in Heinsberg '
           'Websites und Apps. Eine Person, feste Preise, Betreuung nach dem '
           'Launch.',
-      h1: 'Über mich',
+      h1: 'Hallo, ich bin Kevin.',
     ),
   },
   PageKey.contact: {
