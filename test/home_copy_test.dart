@@ -31,15 +31,14 @@ List<String> expectedBlocks(Lang lang) {
     c.studioTitle,
     c.studioText,
     c.lanesTitle,
-    for (final lane in c.lanes) ...[
-      lane.title,
-      lane.text,
-      for (final id in lane.offerIds)
-        c.offers.firstWhere((o) => o.id == id).name,
-    ],
+    for (final lane in c.lanes) ...[lane.title, lane.text, lane.link],
     c.offersTitle,
     c.offersIntro,
-    for (final o in c.offers) ...[offerHeading(o), o.text],
+    for (final o in c.offers) ...[
+      offerHeading(o),
+      o.text,
+      for (final e in o.examples) '${e.label} · ${e.price}',
+    ],
     '${c.vatNote} · ${c.accessibleNote}',
     c.workflowTitle,
     for (final s in c.steps) '${s.title} ${s.text}',
@@ -125,17 +124,16 @@ void main() {
       expect(html, contains('id="offer-after"'));
     });
 
-    test('home ${lang.code}: lane links name the offer without its price', () {
+    test('home ${lang.code}: lane links point at their offer', () {
       final html = builtHtml(PageKey.home, lang);
       final c = homeCopy[lang]!;
       for (final lane in c.lanes) {
-        for (final id in lane.offerIds) {
-          final o = c.offers.firstWhere((o) => o.id == id);
-          expect(
-            html,
-            contains('class="lane-link" href="#offer-$id">${o.name}</a>'),
-          );
-        }
+        expect(
+          html,
+          contains(
+            'class="lane-link" href="#offer-${lane.offerId}">${lane.link}</a>',
+          ),
+        );
       }
     });
 
@@ -149,11 +147,19 @@ void main() {
   test('prices are formatted per language', () {
     final en = homeCopy[Lang.en]!.offers.map((o) => o.price);
     final de = homeCopy[Lang.de]!.offers.map((o) => o.price);
-    expect(en, ['free', 'from €5,900', 'from €6,900', '€95 an hour']);
-    expect(de, ['kostenlos', 'ab 5.900 €', 'ab 6.900 €', '95 € pro Stunde']);
+    expect(en, ['free', 'from €1,000', 'from €3,000', '€95 an hour']);
+    expect(de, ['kostenlos', 'ab 1.000 €', 'ab 3.000 €', '95 € pro Stunde']);
   });
 
-  test('the offer is apps and tools only: no website offer, no care plans', () {
+  test('three lanes, the third for processes, each linking to an offer', () {
+    for (final lang in Lang.values) {
+      final c = homeCopy[lang]!;
+      expect(c.lanes, hasLength(3));
+      expect(c.lanes.last.offerId, 'automation');
+    }
+  });
+
+  test('no website offer, no care plans', () {
     for (final lang in Lang.values) {
       final html = builtHtml(PageKey.home, lang);
       expect(
@@ -167,7 +173,7 @@ void main() {
   for (final lang in Lang.values) {
     test('every ledger link on home ${lang.code} has a target', () {
       final html = builtHtml(PageKey.home, lang);
-      for (final id in ['call', 'tool', 'mvp', 'after']) {
+      for (final id in ['call', 'apps', 'automation', 'after']) {
         expect(html, contains('id="offer-$id"'));
         expect('href="#offer-$id"'.allMatches(html), isNotEmpty);
       }

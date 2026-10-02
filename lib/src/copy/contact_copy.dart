@@ -68,7 +68,7 @@ const Map<Lang, ContactCopy> contactCopy = {
     include: [
       ('Worum es bei Ihrem Unternehmen oder Projekt geht, in einem Satz.'),
       ('Was entstehen soll: Terminbuchung, Kundenportal, internes Dashboard, '
-          'MVP oder „noch unklar“.'),
+          'MVP, eine Automatisierung oder „noch unklar“.'),
       'Wer es nutzen wird.',
       'Ob es einen festen Termin gibt.',
       ('Was es schon gibt: nichts, eine Skizze, eine Tabelle, eine '

@@ -79,10 +79,10 @@ const Map<Lang, AboutCopy> aboutCopy = {
           'Freizeit, seit 2019 beruflich. Seine Ausbildung zum '
           'Mathematisch-technischen Softwareentwickler (MATSE) hat er '
           'abgeschlossen.'),
-      ('2023 hat er Cube Algos gegründet, um Apps, SaaS-Produkte und interne '
-          'Tools zu bauen, und zwar so, wie er Software am liebsten baut: '
-          'sorgfältig, mit eigenen Ideen und für Menschen, die sie wirklich '
-          'nutzen.'),
+      ('2023 hat er Cube Algos gegründet, um Apps, interne Tools und '
+          'Automatisierungen zu bauen, und zwar so, wie er Software am '
+          'liebsten baut: sorgfältig, mit eigenen Ideen und für Menschen, die '
+          'sie wirklich nutzen.'),
     ],
     oneTitle: 'Eine Person, mit Absicht',
     one:

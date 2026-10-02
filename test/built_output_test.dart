@@ -456,12 +456,15 @@ void main() {
     const footer = {
       Lang.en: (
         tagline:
-            'Cube Algos, Heinsberg. Apps and internal tools, fixed prices.',
+            'Cube Algos, Heinsberg. Apps, tools and automation at fixed '
+            'prices.',
         links: ['Home', 'About', 'Contact'],
         skip: 'Skip to content',
       ),
       Lang.de: (
-        tagline: 'Cube Algos, Heinsberg. Apps und interne Tools zum Festpreis.',
+        tagline:
+            'Cube Algos, Heinsberg. Apps, Tools und Automatisierung zum '
+            'Festpreis.',
         links: ['Start', 'Über', 'Kontakt'],
         skip: 'Zum Inhalt springen',
       ),
