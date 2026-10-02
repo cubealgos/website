@@ -344,7 +344,7 @@ void main() {
       });
       expect(_rules(dir), isEmpty);
     });
-    test('fails on a hex, a colour function, a name or an inline style', () {
+    test('fails on a hex, a colour function or a name', () {
       for (final css in [
         'a { color: #fff; }',
         'a { background: rgba(0, 0, 0, .5); }',
@@ -354,10 +354,41 @@ void main() {
           'hard-coded-colour',
         ], reason: css);
       }
+    });
+  });
+
+  group('inline style', () {
+    test('a clean page, SVG presentation attributes and JSON-LD pass', () {
       final dir = _site({
-        'index.html': _page(body: '<h1 id="top" style="color:#123">Home</h1>'),
+        'index.html': _page(
+          body: [
+            '<h1 id="top" data-i="1">Home</h1>',
+            '<svg><path fill="none" stroke="currentColor"/></svg>',
+            '<script type="application/ld+json">',
+            '{"text":"<style>a{}</style> style=x"}</script>',
+          ].join(),
+        ),
       });
-      expect(_rules(dir), ['hard-coded-colour']);
+      expect(_rules(dir), isEmpty);
+    });
+    test('fails on a style attribute', () {
+      for (final tag in [
+        '<h1 id="top" style="--i:1">Home</h1>',
+        "<h1 id=\"top\" style='--i:1'>Home</h1>",
+        '<h1 id="top" STYLE="--i:1">Home</h1>',
+      ]) {
+        final dir = _site({'index.html': _page(body: tag)});
+        expect(_rules(dir), ['inline-style'], reason: tag);
+      }
+    });
+    test('fails on a style element, also inside an inline SVG', () {
+      for (final body in [
+        '<h1 id="top">Home</h1><style>a{}</style>',
+        '<h1 id="top">Home</h1><svg><style>.a{fill:none}</style></svg>',
+      ]) {
+        final dir = _site({'index.html': _page(body: body)});
+        expect(_rules(dir), ['inline-style'], reason: body);
+      }
     });
   });
 
