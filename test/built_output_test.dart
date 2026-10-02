@@ -381,6 +381,12 @@ void main() {
         'The fonts of this website are self-hosted',
         'Your browser makes no request to Google Fonts or to any other '
             'third party for them.',
+        'This website contains links to pages of third parties, namely '
+            'kevinscheeren.de, GitHub and LinkedIn. They are plain links: '
+            'only when you click one does your browser leave this website '
+            'and request the linked page; before that, no data is sent to '
+            'these providers. What happens to your data there is governed by '
+            'their own privacy notices.',
         'The mailbox is provided by Proton AG (Switzerland)',
         'LDI NRW',
         'We use no automated decision-making',
@@ -401,6 +407,13 @@ void main() {
         'Die Schriftarten dieser Website sind selbst gehostet',
         'Ihr Browser stellt dafür keine Verbindung zu Google Fonts oder '
             'einem anderen Dritten her.',
+        'Diese Website enthält Links auf Seiten Dritter, namentlich auf '
+            'kevinscheeren.de, GitHub und LinkedIn. Es sind gewöhnliche '
+            'Links: Erst wenn Sie einen anklicken, verlässt Ihr Browser '
+            'diese Website und ruft die verlinkte Seite auf; vorher werden '
+            'keine Daten an diese Anbieter übertragen. Was dort mit Ihren '
+            'Daten geschieht, richtet sich nach deren eigenen '
+            'Datenschutzhinweisen.',
         'Das Postfach stellt Proton AG (Schweiz) bereit',
         'LDI NRW',
         'keine automatisierte Entscheidungsfindung',
@@ -433,6 +446,110 @@ void main() {
         expect(html, isNot(contains('Barrierefreiheitsstärkungsgesetz')));
       });
     }
+
+    test(
+      'the sections are numbered consecutively and cross-refer correctly',
+      () {
+        // Heading text and the sections the Art. 21 paragraph points at, per
+        // language: (heading of the section, phrase that cites its number).
+        const headings = {
+          Lang.en: [
+            'Controller',
+            'Hosting',
+            'No access logs, no storage of IP addresses',
+            'No cookies, no tracking, no analytics',
+            'Fonts',
+            'Links to other websites',
+            'Contact by email',
+            'No automated decision-making',
+            'Data protection officer',
+            'Your rights',
+          ],
+          Lang.de: [
+            'Verantwortlicher',
+            'Hosting',
+            'Keine Zugriffsprotokolle, keine Speicherung von IP-Adressen',
+            'Keine Cookies, kein Tracking, keine Analyse',
+            'Schriftarten',
+            'Links zu anderen Websites',
+            'Kontakt per E-Mail',
+            'Keine automatisierte Entscheidungsfindung',
+            'Datenschutzbeauftragter',
+            'Ihre Rechte',
+          ],
+        };
+        const crossRef = {
+          Lang.en: '(sections 3 and 7)',
+          Lang.de: '(Abschnitte 3 und 7)',
+        };
+        const updated = {Lang.en: '3 October 2026', Lang.de: '3. Oktober 2026'};
+        for (final lang in Lang.values) {
+          final html = read(pathFor(PageKey.datenschutz, lang));
+          final found = [
+            for (final m in RegExp(
+              r'<h2[^>]*>(\d+)\. ([^<]*)</h2>',
+            ).allMatches(html))
+              (int.parse(m[1]!), m[2]!),
+          ];
+          expect(found, [
+            for (var i = 0; i < headings[lang]!.length; i++)
+              (i + 1, headings[lang]![i]),
+          ], reason: lang.code);
+          // The cross-reference names the logs section (3) and the contact
+          // section (7), the two that rest on Art. 6(1)(f).
+          expect(html, contains(crossRef[lang]));
+          expect(html, contains(updated[lang]));
+          expect(html, isNot(contains('2 October 2026')));
+          expect(html, isNot(contains('2. Oktober 2026')));
+        }
+      },
+    );
+
+    test(
+      'the section on links names exactly the providers of the allow-list',
+      () {
+        // Provider as the section names it, per registrable domain of
+        // [outboundUrls]; a new link needs a new entry here and a new sentence
+        // in the section, or this test fails.
+        const named = {
+          'kevinscheeren.de': 'kevinscheeren.de',
+          'github.com': 'GitHub',
+          'linkedin.com': 'LinkedIn',
+        };
+        String registrable(String host) =>
+            host.split('.').reversed.take(2).toList().reversed.join('.');
+        final hosts = {
+          for (final u in outboundUrls) registrable(Uri.parse(u).host),
+        };
+        expect(hosts, named.keys.toSet());
+        for (final lang in Lang.values) {
+          final html = read(pathFor(PageKey.datenschutz, lang));
+          final start = html.indexOf(
+            lang == Lang.en
+                ? 'Links to other websites'
+                : 'Links zu anderen Websites',
+          );
+          final end = html.indexOf(
+            lang == Lang.en ? '7. Contact by email' : '7. Kontakt per E-Mail',
+          );
+          expect(start, greaterThan(-1));
+          expect(end, greaterThan(start));
+          final section = html.substring(start, end);
+          for (final name in named.values) {
+            expect(section, contains(name));
+          }
+          // Plain text: the section itself links nothing.
+          expect(section, isNot(contains('<a ')));
+          // No host of the allow-list may be named outside it by name, and no
+          // other host-like name may appear in it.
+          final domains = RegExp(r'\b[a-z0-9-]+\.(?:de|com|org|net|io)\b');
+          expect(
+            {for (final m in domains.allMatches(section)) m[0]},
+            {'kevinscheeren.de'},
+          );
+        }
+      },
+    );
 
     test('only the English page says the German text is authoritative', () {
       expect(read('/datenschutz/'), isNot(contains('legally authoritative')));
