@@ -100,7 +100,7 @@ releases exclude.
 | `lib/src/chrome.dart`, `lib/src/chrome_text.dart` | Skip link, header (logo lockup, nav, EN/DE switch), footer, and their text per language (footer copy per the brand copy). |
 | `brand.lock.json` | The vendored brand release tag and the sha256 of every file in `web/brand/`. |
 | `web/sting.js` | Loaded in `<head>` on the home pages only: plays the animated sting unless `document.referrer` is a page of this site (same origin), never under reduced motion; otherwise the hero keeps the still. Stores nothing. |
-| `web/` | Static files copied into the build as is: `robots.txt`, `site.css` (the page frame; colours only from the tokens), `brand/` (vendored branding release), `fonts/` (self-hosted Onest and DM Mono woff2 subsets, `fonts.css`, OFL licences in `fonts/licenses/`). |
+| `web/` | Static files copied into the build as is: `robots.txt`, `site.css` (the page frame; colours only from the tokens), `brand/` (vendored branding release), `img/` (the founder's portrait on About: JPEG and WebP at 280, 420 and 560 px wide, metadata-free web copies; a test fails if any carries EXIF, XMP or an ICC profile), `fonts/` (self-hosted Onest and DM Mono woff2 subsets, `fonts.css`, OFL licences in `fonts/licenses/`). |
 | `test/` | Route-table unit tests and tests over the built output. |
 | `tool/` | One script per check (`licence_check.dart`, `html_check.dart`, ...) with shared code in `tool/src/`, `build.dart`, `hooks.dart`, the `hooks/commit-msg` git hook (POSIX `sh`), `commit-baseline.txt` and `licence-exceptions.yaml`. |
 | `.github/` | The setup action and one workflow per check. |

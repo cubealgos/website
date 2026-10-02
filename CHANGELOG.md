@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Studio pivot of Home, About and Contact, EN and DE (brand decisions 38 to 48; not released until kevinscheeren.de goes live): "Cube Algos is a small studio that builds software of its own, and yours." with the tech-stack card ("What it's built with", the free first call last) and its note on client projects in the hero, a section on the studio's own software (anchor `#eigene-software` / `#own-software`, the hero's "Learn more" link), client projects as three lanes with examples, the five-step route and one "Start a project", the studio facts with "No cookies, no tracking.", nine FAQ questions, and layout direction A ("Ledger, re-ruled"). No prices anywhere: the price ledger and section, the offers data model, the VAT note and every pricing sentence are gone, only the "free first call" stays; the Impressum, Datenschutz and 404 pages are unchanged. No page names or marks the product in development (a test scans the whole build for it). About shows Kevin's portrait (web copy without metadata, JPEG and WebP at 280, 420 and 560 px wide, alt "Kevin Scheeren") and a card-grey "Software of its own" sheet; the addresses of kevinscheeren.de, GitHub and LinkedIn are plain text because the built pages link to no other host. Title, description, footer tagline and the two share images follow the new H1; the sitemap and JSON-LD derive from the same data (#62).
+
 ## 0.1.1
 
 - `licence-check` reads pub.dev's score for the locked version (`/versions/<v>/score`) and falls back to the latest version's tags, logged, only when the locked version has none; an unanalysed new upstream release no longer denies the version we lock (#71).
