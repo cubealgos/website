@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/server.dart';
@@ -9,6 +8,7 @@ import 'package:website/src/copy/common_copy.dart';
 import 'package:website/src/copy/home_copy.dart';
 import 'package:website/src/routes.dart';
 import 'package:website/src/seo.dart';
+import 'package:website/src/sting.dart';
 import 'package:website/src/widgets.dart';
 
 /// The `FAQPage` JSON-LD of [lang], generated from the same data as the
@@ -25,18 +25,6 @@ Map<String, Object> faqJsonLd(Lang lang) => {
       },
   ],
 };
-
-/// The mark-only sting, read from the vendored brand files at build time (so
-/// `brand_sync --check` covers it) and inlined: its mark is `currentColor` and
-/// its echo `var(--color-accent-fill)`, so it follows the theme. It sits in
-/// the offer card, which labels itself, so the SVG is decorative.
-final String _stingMark = File('web/brand/sting/sting-mark.svg')
-    .readAsStringSync()
-    .replaceFirst(RegExp(r'\s*<title>.*?</title>'), '')
-    .replaceFirst(
-      'role="img" aria-label="Cube Algos logo"',
-      'aria-hidden="true" focusable="false"',
-    );
 
 /// The heading of an offer: `name, price`.
 String offerHeading(Offer o) => '${o.name}, ${o.price}';
@@ -87,7 +75,7 @@ class HomePage extends StatelessComponent {
           p(classes: 'eyebrow rise', [t(c.eyebrow)]),
           h1(
             classes: 'rise hero-h1',
-            attributes: const {'style': '--i:1'},
+            attributes: const {'data-i': '1'},
             [
               t(c.h1.substring(0, at)),
               span(classes: 'mark', [t(c.h1Mark)]),
@@ -99,7 +87,7 @@ class HomePage extends StatelessComponent {
           // tech at a time.
           div(
             classes: 'hero-sublines rise',
-            attributes: const {'style': '--i:2'},
+            attributes: const {'data-i': '2'},
             [
               p(classes: 'hero-sub hero-sub--full', [t(c.subline)]),
               p(classes: 'hero-sub hero-sub--short', [t(c.sublineShort)]),
@@ -108,7 +96,7 @@ class HomePage extends StatelessComponent {
           el(
             'div',
             classes: 'actions rise',
-            attrs: const {'style': '--i:3'},
+            attrs: const {'data-i': '3'},
             [
               MailButton(label: startProject[lang]!),
               a([t(c.secondaryCta)], href: '#offers', classes: 'text-link'),
@@ -141,11 +129,11 @@ class HomePage extends StatelessComponent {
     return el(
       'aside',
       classes: 'ledger rise',
-      attrs: const {'style': '--i:2', 'aria-labelledby': 'ledger-label'},
+      attrs: const {'data-i': '2', 'aria-labelledby': 'ledger-label'},
       [
         div(classes: 'ledger-head', [
           p(id: 'ledger-label', classes: 'eyebrow-muted', [t(c.offersTitle)]),
-          div(classes: 'ledger-mark', [RawText(_stingMark)]),
+          div(classes: 'ledger-mark', [RawText(stingSvg())]),
         ]),
         ol(classes: 'route', [
           li(classes: 'route-step is-call', [row('call')]),
@@ -173,7 +161,7 @@ class HomePage extends StatelessComponent {
         ]),
         p(
           classes: 'band-text reveal',
-          attributes: const {'style': '--i:1'},
+          attributes: const {'data-i': '1'},
           [t(c.studioText)],
         ),
       ]),

@@ -25,20 +25,20 @@ class ContactPage extends StatelessComponent {
             h1(classes: 'hero-h1 rise', [t(c.h1)]),
             p(
               classes: 'hero-sub rise',
-              attributes: const {'style': '--i:1'},
+              attributes: const {'data-i': '1'},
               [t(c.lede)],
             ),
             el(
               'div',
               classes: 'actions rise',
-              attrs: const {'style': '--i:2'},
+              attrs: const {'data-i': '2'},
               [const MailButton(label: contactEmail)],
             ),
           ]),
           el(
             'section',
             classes: 'ledger rise',
-            attrs: const {'style': '--i:2', 'aria-labelledby': 'include-title'},
+            attrs: const {'data-i': '2', 'aria-labelledby': 'include-title'},
             [
               div(classes: 'ledger-head', [
                 h2(id: 'include-title', classes: 'ledger-label', [
