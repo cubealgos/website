@@ -192,15 +192,16 @@ const _datenschutzDe = LegalDoc(
       Para([
         'Diese Website wird von einem Server in Deutschland ausgeliefert. '
             'Den Server mietet Cube Algos bei der STRATO AG (Berlin) und '
-            'betreibt ihn selbst.',
+            'betreibt ihn selbst. Sie ist dabei als Auftragsverarbeiterin für '
+            'uns tätig; es gilt ihr Vertrag zur Auftragsverarbeitung.',
       ]),
     ]),
     Section('3. Keine Zugriffsprotokolle, keine Speicherung von IP-Adressen', [
       Para([
         'Der Webserver und der vorgeschaltete Reverse Proxy sind so '
             'konfiguriert, dass sie für diese Website keine Zugriffsprotokolle '
-            '(Access Logs) schreiben. Es werden deshalb keine IP-Adressen '
-            'der Besucherinnen und Besucher gespeichert.',
+            '(Access Logs) schreiben. Auf diesem Server werden deshalb keine '
+            'IP-Adressen der Besucherinnen und Besucher gespeichert.',
       ]),
       Para([
         'Damit der Server Ihnen die Seite senden kann, verarbeitet er Ihre '
@@ -214,8 +215,12 @@ const _datenschutzDe = LegalDoc(
         'Diese Website setzt keine Cookies, verwendet kein Tracking und keine '
             'Analysedienste. Sie lädt keine Inhalte von Dritten und bindet '
             'keine externen Inhalte ein; es gibt deshalb keinen '
-            'Cookie-Banner. Die Website hat kein Formular. Sie speichert '
-            'nichts auf Ihrem Gerät.',
+            'Cookie-Banner. Die Website hat kein Formular. Sie legt nichts '
+            'auf Ihrem Gerät ab, weder Cookies noch Einträge im lokalen '
+            'Speicher Ihres Browsers. Wie bei jeder Website kann Ihr Browser '
+            'die geladenen Dateien, etwa Schriftarten und Bilder, in seinem '
+            'Zwischenspeicher (Cache) behalten, damit Seiten schneller laden; '
+            'diesen können Sie jederzeit in Ihrem Browser leeren.',
       ]),
     ]),
     Section('5. Schriftarten', [
@@ -237,7 +242,9 @@ const _datenschutzDe = LegalDoc(
             'E-Mail-Adresse, um Ihre Anfrage zu beantworten. Rechtsgrundlage '
             'ist Art. 6 Abs. 1 lit. b DSGVO, wenn Ihre Anfrage auf einen '
             'Vertrag zielt, sonst Art. 6 Abs. 1 lit. f DSGVO (berechtigtes '
-            'Interesse an der Beantwortung von Anfragen).',
+            'Interesse an der Beantwortung von Anfragen). Ihre Angaben sind '
+            'freiwillig; ohne sie können wir Ihre Anfrage aber nicht '
+            'beantworten.',
       ]),
       Para([
         'Das Postfach stellt Proton AG (Schweiz) bereit, die dabei als '
@@ -273,14 +280,22 @@ const _datenschutzDe = LegalDoc(
             '1.',
       ]),
       Para([
+        'Widerspruchsrecht: Soweit wir Daten auf Grundlage von Art. 6 '
+            'Abs. 1 lit. f DSGVO verarbeiten (Abschnitte 3 und 6), können Sie '
+            'dieser Verarbeitung aus Gründen, die sich aus Ihrer besonderen '
+            'Situation ergeben, jederzeit widersprechen (Art. 21 Abs. 1 '
+            'DSGVO).',
+      ]),
+      Para([
         'Sie haben außerdem das Recht, sich bei einer '
-            'Datenschutzaufsichtsbehörde zu beschweren. Für uns zuständig ist '
+            'Datenschutzaufsichtsbehörde zu beschweren (Art. 77 DSGVO). Für '
+            'uns zuständig ist '
             'die Landesbeauftragte für Datenschutz und Informationsfreiheit '
             'Nordrhein-Westfalen (LDI NRW).',
       ]),
     ]),
     Section('Stand', [
-      Para(['1. Oktober 2026']),
+      Para(['2. Oktober 2026']),
     ]),
   ],
 );
@@ -311,14 +326,16 @@ const _datenschutzEn = LegalDoc(
     Section('2. Hosting', [
       Para([
         'This website is served from a server in Germany. Cube Algos rents '
-            'the server from STRATO AG (Berlin) and operates it itself.',
+            'the server from STRATO AG (Berlin) and operates it itself. '
+            'It acts for us as a processor under its data processing '
+            'agreement.',
       ]),
     ]),
     Section('3. No access logs, no storage of IP addresses', [
       Para([
         'The web server and the reverse proxy in front of it are configured '
             "to write no access logs for this website. Visitors' IP "
-            'addresses are therefore not stored.',
+            'addresses are therefore not stored on this server.',
       ]),
       Para([
         'To send you the page, the server processes your IP address as '
@@ -333,7 +350,11 @@ const _datenschutzEn = LegalDoc(
             'loads no content from third parties and embeds no external '
             'content, so there is no cookie banner. The website has no form.'
             ' It '
-            'stores nothing on your device.',
+            'puts nothing on your device: no cookies and no entries in your '
+            "browser's local storage. As with any website, your browser may "
+            'keep the files it loaded, such as fonts and images, in its cache '
+            'so pages load faster; you can clear it in your browser at any '
+            'time.',
       ]),
     ]),
     Section('5. Fonts', [
@@ -354,7 +375,9 @@ const _datenschutzEn = LegalDoc(
         'If you write to us, we process your message and your email address '
             'to answer your request. The legal basis is Art. 6(1)(b) GDPR if '
             'your request aims at a contract, otherwise Art. 6(1)(f) GDPR '
-            '(legitimate interest in answering enquiries).',
+            '(legitimate interest in answering enquiries). Providing your '
+            'details is voluntary, but without them we cannot answer your '
+            'request.',
       ]),
       Para([
         'The mailbox is provided by Proton AG (Switzerland), which acts for '
@@ -387,8 +410,15 @@ const _datenschutzEn = LegalDoc(
             'section 1.',
       ]),
       Para([
+        'Right to object: where we process data on the basis of Art. 6(1)(f) '
+            'GDPR (sections 3 and 6), you may object to this processing at '
+            'any time on grounds relating to your particular situation '
+            '(Art. 21(1) GDPR).',
+      ]),
+      Para([
         'You also have the right to lodge a complaint with a data '
-            'protection supervisory authority. The authority responsible for '
+            'protection supervisory authority (Art. 77 GDPR). The authority '
+            'responsible for '
             'us is the North Rhine-Westphalia State Commissioner for Data '
             'Protection and Freedom of Information (Landesbeauftragte für '
             'Datenschutz und Informationsfreiheit Nordrhein-Westfalen, LDI '
@@ -396,7 +426,7 @@ const _datenschutzEn = LegalDoc(
       ]),
     ]),
     Section('Last updated', [
-      Para(['1 October 2026']),
+      Para(['2 October 2026']),
     ]),
   ],
 );
