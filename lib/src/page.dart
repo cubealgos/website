@@ -12,6 +12,7 @@ import 'package:website/src/pages/contact_page.dart';
 import 'package:website/src/pages/home_page.dart';
 import 'package:website/src/pages/not_found_page.dart';
 import 'package:website/src/routes.dart';
+import 'package:website/src/seo.dart';
 
 /// The pages whose sections rise in on scroll (`reveal.js`).
 const Set<PageKey> revealPages = {PageKey.home, PageKey.about, PageKey.contact};
@@ -88,6 +89,7 @@ class PageShell extends StatelessComponent {
               rel: 'alternate',
               attributes: const {'hreflang': 'x-default'},
             ),
+            ..._shareTags(meta, canonical),
           ],
         ],
       ),
@@ -116,5 +118,35 @@ class PageShell extends StatelessComponent {
       ),
       SiteFooter(pageKey: pageKey, lang: lang),
     ]);
+  }
+
+  /// Open Graph and Twitter card tags: one share image per language.
+  List<Component> _shareTags(PageMeta meta, String canonical) {
+    final image = shareImageUrl(lang);
+    final alt = '${pageMeta[PageKey.home]![lang]!.h1} (Cube Algos)';
+    Component tag(String key, String value, {bool property = true}) =>
+        Component.element(
+          tag: 'meta',
+          attributes: {(property ? 'property' : 'name'): key, 'content': value},
+        );
+    return [
+      tag('og:type', 'website'),
+      tag('og:site_name', 'Cube Algos'),
+      tag('og:title', meta.title),
+      tag('og:description', meta.description),
+      tag('og:url', canonical),
+      tag('og:locale', ogLocale(lang)),
+      tag('og:locale:alternate', ogLocale(lang.other)),
+      tag('og:image', image),
+      tag('og:image:type', 'image/png'),
+      tag('og:image:width', '$shareImageWidth'),
+      tag('og:image:height', '$shareImageHeight'),
+      tag('og:image:alt', alt),
+      tag('twitter:card', 'summary_large_image', property: false),
+      tag('twitter:title', meta.title, property: false),
+      tag('twitter:description', meta.description, property: false),
+      tag('twitter:image', image, property: false),
+      tag('twitter:image:alt', alt, property: false),
+    ];
   }
 }

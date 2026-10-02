@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- SEO and sharing: `sitemap.xml` with hreflang alternates (German, English, `x-default` German), Open Graph and Twitter card tags on every indexable page, one 1200 x 630 share image per language rendered by `tool/og_images.dart` from the lockup, the fonts and the home H1 (a stale or wrong-sized image fails `html-check`), and `Organization` JSON-LD next to the FAQ data on both home pages; `html-check` asserts all of it from the route table; no third-party request (#14).
 - German About: navigation and footer say „Über", URL `/ueber/` instead of `/ueber-cube-algos/` (#55).
 - Licence and governance files (#2).
 - Repo conventions, README, CLAUDE.md, commit-msg hook (#3).

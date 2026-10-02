@@ -23,6 +23,7 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: ./.github/actions/setup
+      - run: dart run tool/og_images.dart --check
       - run: dart run tool/build.dart
       - run: dart run tool/html_check.dart
       - run: dart run tool/fonts/check_coverage.dart build/jaspr

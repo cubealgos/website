@@ -97,8 +97,9 @@ void main() {
           r'<script type="application/ld\+json">(.*?)</script>',
           dotAll: true,
         ).allMatches(html).toList();
-        expect(m, hasLength(1));
-        final ld = jsonDecode(m.single[1]!) as Map<String, dynamic>;
+        // The FAQ block, then the Organization block (see built_output_test).
+        expect(m, hasLength(2));
+        final ld = jsonDecode(m.first[1]!) as Map<String, dynamic>;
         expect(ld['@type'], 'FAQPage');
         final entities = ld['mainEntity'] as List<dynamic>;
         expect(entities, hasLength(8));
