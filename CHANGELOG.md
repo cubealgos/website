@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 0.1.0
+
 - The price-section intro no longer hyphenates short words on phones („Ar-beit"): `.measure` uses `hyphens: manual` like the other prose blocks (#64).
 - No inline CSS, so the server can send a strict `style-src 'self'` with no hashes: the sting's `<style>` block (shipped inside the vendored `sting-mark.svg`) is no longer inlined but extracted by `brand_sync` into the vendored, lock-checked `web/brand/sting/sting-mark.css` linked from the home pages (same `cas-` rules, `.is-playing` pause logic unchanged), the reveal stagger moves from `style="--i:N"` to `data-i="N"` with rules in `site.css`, and `html-check` gains an `inline-style` rule that fails on any `<style>` element or `style` attribute in built HTML (#61).
 - One front door and an automation lane (brand decision 35): "Apps and tools, from €1,000" with its three example prices as one compact inline list replaces Internal tool (€5,900) and MVP / SaaS v1 (€6,900); "Automation and self-hosting, from €3,000" (€110 an hour for ongoing work) joins it; After launch stays €95 an hour. The price section and the hero ledger read the same offers (`#offer-apps`, `#offer-automation`, `#offer-after`, `#offer-call`), the lanes gain a third, "For your processes" (three columns from 64rem, a stack below, no rules), and the SEO meta, the contact checklist, the About founder text and the footer tagline follow the new copy (#59).
