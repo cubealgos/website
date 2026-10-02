@@ -28,7 +28,12 @@ class SkipLink extends StatelessComponent {
 /// (from the route table), the current language is `aria-current="true"`.
 class LangSwitch extends StatelessComponent {
   /// Creates the switch for [pageKey] in [lang].
-  const new({required this.pageKey, required this.lang, super.key});
+  const new({
+    required this.pageKey,
+    required this.lang,
+    this.inFooter = false,
+    super.key,
+  });
 
   /// The current page.
   final PageKey pageKey;
@@ -36,10 +41,18 @@ class LangSwitch extends StatelessComponent {
   /// The current language.
   final Lang lang;
 
+  /// Whether this is the footer's copy of the switch: its landmark needs a
+  /// name of its own, since the header holds one too.
+  final bool inFooter;
+
   @override
   Component build(BuildContext context) => nav(
     classes: 'lang-switch',
-    attributes: {'aria-label': chromeText[lang]!.langLabel},
+    attributes: {
+      'aria-label': inFooter
+          ? chromeText[lang]!.langFooterLabel
+          : chromeText[lang]!.langLabel,
+    },
     [
       ul([
         for (final target in Lang.values)
@@ -176,7 +189,7 @@ class SiteFooter extends StatelessComponent {
         ]),
         div(classes: 'bottom', [
           p([Component.text(t.bottom)]),
-          LangSwitch(pageKey: pageKey, lang: lang),
+          LangSwitch(pageKey: pageKey, lang: lang, inFooter: true),
         ]),
       ]),
     ]);

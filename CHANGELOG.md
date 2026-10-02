@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Accessibility pass: a new `a11y` workflow runs Lighthouse's accessibility audits (dev-only `tool/a11y/`, lockfile, `axe-core` under the org's recorded MPL-2.0 dev exception, which the licence gate now reads from `tool/*/package-lock.json` too) and `tool/a11y_check.dart` (landmarks, one H1, heading order, names, `lang`, focus ring and order on every tab stop, rendered text contrast in both themes) over both languages and the 404 pages; the footer's language switch is a landmark of its own name ("Sprache wechseln" / "Switch language"); `docs/accessibility.md` holds the manual test matrix (#17).
 - SEO and sharing: `sitemap.xml` with hreflang alternates (German, English, `x-default` German), Open Graph and Twitter card tags on every indexable page, one 1200 x 630 share image per language rendered by `tool/og_images.dart` from the lockup, the fonts and the home H1 (a stale or wrong-sized image fails `html-check`), and `Organization` JSON-LD next to the FAQ data on both home pages; `html-check` asserts all of it from the route table; no third-party request (#14).
 - German About: navigation and footer say „Über", URL `/ueber/` instead of `/ueber-cube-algos/` (#55).
 - Licence and governance files (#2).
