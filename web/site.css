@@ -1,0 +1,1799 @@
+/* SPDX-License-Identifier: Apache-2.0 */
+/* The page frame. Colours, sizes, durations and easings come from the vendored
+   tokens (/brand/tokens.css) and nowhere else: no colour literals here. */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-bg);
+  color: var(--color-fg);
+  font-family: var(--font-family-sans);
+  font-weight: var(--font-weight-text);
+  font-size: var(--font-scale-body-size);
+  line-height: var(--font-scale-body-line-height);
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+
+main {
+  flex: 1 0 auto;
+  padding-block: var(--spacing-12);
+  /* The hero's grid lines sit at z-index -1 inside this stacking context. */
+  isolation: isolate;
+}
+
+/* The ledger pages (Home, About, Contact) run their sections edge to edge. */
+main.flush {
+  padding-block: 0;
+}
+
+/* Layout: one container, a generous but bounded width. Running text stays
+   near 70 characters. */
+.wrap {
+  width: 100%;
+  max-width: 72rem;
+  margin-inline: auto;
+  padding-inline: var(--spacing-4);
+}
+
+main p,
+main ul,
+main ol {
+  max-width: 70ch;
+}
+
+h1,
+h2,
+h3 {
+  /* Headings never hyphenate (body text does); a long word may still break
+     as a last resort. */
+  hyphens: manual;
+  overflow-wrap: break-word;
+  text-wrap: balance;
+  font-weight: var(--font-weight-display);
+  margin: 0 0 var(--spacing-4);
+}
+
+h1 {
+  font-size: var(--font-scale-h1-size);
+  line-height: var(--font-scale-h1-line-height);
+  letter-spacing: var(--font-scale-h1-tracking);
+}
+
+a {
+  color: var(--color-accent-text);
+  text-underline-offset: 0.2em;
+}
+
+/* Focus: a 2px ring in the focus token on every interactive element. */
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+main:focus {
+  outline: none;
+}
+
+/* Skip link: first tab stop, off-screen until focused. */
+.skip {
+  position: absolute;
+  top: var(--spacing-2);
+  left: var(--spacing-4);
+  z-index: 10;
+  padding: var(--spacing-2) var(--spacing-4);
+  background: var(--color-card);
+  color: var(--color-fg);
+  font-weight: var(--font-weight-display);
+  transform: translateY(-250%);
+}
+
+.skip:focus-visible {
+  transform: none;
+}
+
+/* Header: logo row, then nav and language switch; one row from 48rem. */
+.site-header {
+  border-bottom: 1px solid var(--color-rule);
+}
+
+.bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: var(--spacing-6);
+  padding-block: var(--spacing-2);
+}
+
+.brand {
+  flex: 0 0 100%;
+  display: inline-block;
+  line-height: 0;
+  padding-block: var(--spacing-2);
+}
+
+.logo {
+  display: block;
+  height: 2rem;
+  width: auto;
+}
+
+/* Theme-aware lockup: ink on light, paper on dark; all three theme states
+   (OS preference, data-theme="light", data-theme="dark"). */
+.for-dark {
+  display: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .for-light {
+    display: none;
+  }
+
+  :root:not([data-theme="light"]) .for-dark {
+    display: block;
+  }
+}
+
+:root[data-theme="dark"] .for-light {
+  display: none;
+}
+
+:root[data-theme="dark"] .for-dark {
+  display: block;
+}
+
+:root[data-theme="light"] .for-light {
+  display: block;
+}
+
+:root[data-theme="light"] .for-dark {
+  display: none;
+}
+
+nav ul {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: var(--spacing-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+nav a {
+  display: inline-block;
+  padding-block: var(--spacing-3);
+  color: var(--color-fg);
+  text-decoration: none;
+}
+
+nav a:hover {
+  text-decoration: underline;
+  text-decoration-color: var(--color-accent-fill);
+  text-decoration-thickness: 2px;
+}
+
+nav a[aria-current="page"] {
+  font-weight: var(--font-weight-display);
+  text-decoration: underline;
+  text-decoration-color: var(--color-accent-fill);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.35em;
+}
+
+.primary {
+  flex: 1 1 auto;
+}
+
+.lang-switch a {
+  font-family: var(--font-family-mono);
+  font-size: var(--font-scale-small-size);
+  letter-spacing: var(--font-scale-label-tracking);
+  color: var(--color-muted);
+}
+
+.lang-switch a[aria-current="true"] {
+  color: var(--color-fg);
+  text-decoration: underline;
+  text-decoration-color: var(--color-accent-fill);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.35em;
+}
+
+@media (min-width: 48rem) {
+  .wrap {
+    padding-inline: var(--spacing-8);
+  }
+
+  .brand {
+    flex: 0 0 auto;
+  }
+
+  .primary {
+    margin-inline-start: auto;
+    flex: 0 1 auto;
+  }
+}
+
+/* Footer */
+.site-footer {
+  border-top: 1px solid var(--color-rule);
+  padding-block: var(--spacing-8);
+  font-size: var(--font-scale-small-size);
+  line-height: var(--font-scale-small-line-height);
+}
+
+.tagline {
+  margin: 0 0 var(--spacing-4);
+  font-weight: var(--font-weight-display);
+  font-size: var(--font-scale-body-size);
+}
+
+.footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: var(--spacing-8);
+  row-gap: var(--spacing-2);
+}
+
+.footer-contact {
+  margin: 0;
+  padding-block: var(--spacing-3);
+}
+
+.bottom {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  column-gap: var(--spacing-6);
+  margin-top: var(--spacing-4);
+  padding-top: var(--spacing-2);
+  border-top: 1px solid var(--color-rule);
+  color: var(--color-muted);
+}
+
+.bottom p {
+  margin: 0;
+}
+
+/* Chamfered button (a mailto link styled as a button). The focus ring lives on
+   the wrapper as a drop-shadow, because clip-path would clip an outline. */
+.btn-wrap {
+  display: inline-block;
+}
+
+.btn {
+  --c: var(--chamfer-md);
+
+  position: relative;
+  display: inline-block;
+  padding: var(--spacing-3) var(--spacing-6);
+  background: var(--color-accent-fill);
+  color: var(--color-on-accent);
+  font-weight: var(--font-weight-display);
+  text-decoration: none;
+  transition: transform var(--duration-press) var(--ease-settle);
+  clip-path: polygon(
+    0 0,
+    calc(100% - var(--c)) 0,
+    100% var(--c),
+    100% 100%,
+    var(--c) 100%,
+    0 calc(100% - var(--c))
+  );
+}
+
+.btn-wrap :focus-visible {
+  outline: none;
+}
+
+.btn-wrap:has(:focus-visible) {
+  filter: drop-shadow(2px 0 0 var(--color-bg)) drop-shadow(-2px 0 0 var(--color-bg))
+    drop-shadow(0 2px 0 var(--color-bg)) drop-shadow(0 -2px 0 var(--color-bg))
+    drop-shadow(3px 0 0 var(--color-focus)) drop-shadow(-3px 0 0 var(--color-focus))
+    drop-shadow(0 3px 0 var(--color-focus)) drop-shadow(0 -3px 0 var(--color-focus));
+}
+
+/* Hover darkens the fill: an overlay fades in (opacity only), so no colour or
+   layout property is animated. */
+.btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--color-on-accent);
+  opacity: 0;
+  transition: opacity var(--duration-instant) var(--ease-out);
+}
+
+.btn:hover::before {
+  opacity: 0.15;
+}
+
+/* Press: scales to the press token while pressed and settles back. */
+.btn:active {
+  transform: scale(var(--press-scale));
+}
+
+/* Shared small pieces. */
+.vh {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.fish-img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.eyebrow,
+.eyebrow-muted {
+  font-family: var(--font-family-mono);
+  font-weight: var(--font-weight-mono);
+  font-size: var(--font-scale-label-size);
+  line-height: var(--font-scale-label-line-height);
+  letter-spacing: var(--font-scale-label-tracking);
+  text-transform: uppercase;
+}
+
+.eyebrow {
+  color: var(--color-accent-text);
+}
+
+.eyebrow-muted {
+  color: var(--color-muted);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-4) var(--spacing-8);
+}
+
+.text-link {
+  font-weight: var(--font-weight-display);
+  padding-block: var(--spacing-3);
+}
+
+.num {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* The 404 page keeps the plain hero: text, then the confused fish. */
+.notfound {
+  display: grid;
+  gap: var(--spacing-8);
+  align-items: center;
+  padding-block: var(--spacing-12);
+}
+
+.notfound-text > * {
+  margin-block: 0 var(--spacing-6);
+}
+
+.notfound-fish {
+  width: 10rem;
+}
+
+@media (min-width: 48rem) {
+  .notfound {
+    grid-template-columns: 1fr minmax(12rem, 20rem);
+  }
+
+  .notfound-fish {
+    width: 100%;
+  }
+}
+
+/* Chamfered surfaces: the ledger card, the portrait slot, the amber panel, the
+   free-call card. */
+.ledger,
+.pc-card,
+.portrait,
+.cta,
+.fish-stage {
+  --c: var(--chamfer-lg);
+
+  clip-path: polygon(
+    0 0,
+    calc(100% - var(--c)) 0,
+    100% var(--c),
+    100% 100%,
+    var(--c) 100%,
+    0 calc(100% - var(--c))
+  );
+}
+
+/* Single-column grids never grow past the viewport: long German words wrap
+   instead of widening the page. */
+.hero-grid,
+.band-grid,
+.lanes,
+.pc-grid,
+.sheet-grid,
+.faq-grid,
+.split,
+.ticks,
+.rail,
+.rail-wrap,
+.cta {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.route,
+.rail,
+.ticks,
+.note-list,
+.route-fork ul,
+.pc-list {
+  max-width: none;
+}
+
+/* The visible grid behind the page heroes: hairline columns (4 on phones, 12
+   from 48rem). Decoration only, about 1.3:1. */
+.gridlines {
+  position: relative;
+}
+
+.gridlines::before {
+  content: "";
+  position: absolute;
+  inset: 0 var(--spacing-4);
+  z-index: -1;
+  pointer-events: none;
+  background-image: repeating-linear-gradient(
+    to right,
+    var(--color-rule) 0 1px,
+    transparent 1px calc(100% / 4)
+  );
+  border-right: 1px solid var(--color-rule);
+  opacity: 0.55;
+}
+
+@media (min-width: 48rem) {
+  .gridlines::before {
+    inset-inline: var(--spacing-8);
+    background-image: repeating-linear-gradient(
+      to right,
+      var(--color-rule) 0 1px,
+      transparent 1px calc(100% / 12)
+    );
+  }
+}
+
+/* Page hero (Home, About, Contact): headline left, one card right from 64rem. */
+.hero {
+  padding-block: var(--spacing-8) var(--spacing-12);
+}
+
+.hero-grid {
+  display: grid;
+  gap: var(--spacing-8);
+  align-items: start;
+}
+
+.hero-text {
+  display: grid;
+  gap: var(--spacing-6);
+  padding-top: var(--spacing-4);
+  min-width: 0;
+}
+
+.hero-text > * {
+  margin: 0;
+}
+
+.hero-h1 {
+  font-size: var(--font-scale-h1-size);
+  line-height: var(--font-scale-h1-line-height);
+  hyphens: manual;
+}
+
+.hero-sub {
+  font-size: var(--font-scale-h3-size);
+  line-height: var(--font-scale-h3-line-height);
+  max-width: 40ch;
+  hyphens: manual;
+}
+
+.hero-sublines > p {
+  margin: 0;
+}
+
+/* Two sublines: the short one on phones, the full one elsewhere. `display:
+   none` takes the hidden one out of the accessibility tree. */
+.hero-sub--short {
+  display: none;
+}
+
+@media (max-width: 29.99rem) {
+  .hero-sub {
+    font-size: var(--font-scale-body-size);
+    line-height: var(--font-scale-body-line-height);
+  }
+
+  .hero-sub--full {
+    display: none;
+  }
+
+  .hero-sub--short {
+    display: block;
+  }
+}
+
+@media (min-width: 48rem) {
+  .hero-h1 {
+    font-size: var(--font-scale-display-size);
+    /* h1, not display, line height: the underline needs room between lines. */
+    line-height: var(--font-scale-h1-line-height);
+    letter-spacing: var(--font-scale-display-tracking);
+  }
+}
+
+@media (min-width: 64rem) {
+  .hero-grid {
+    grid-template-columns: 7fr 5fr;
+    column-gap: calc(100% / 12);
+  }
+
+  .hero {
+    padding-block: var(--spacing-16) var(--spacing-24);
+  }
+
+  .hero--page {
+    padding-bottom: var(--spacing-16);
+  }
+}
+
+/* The ledger: the offer at a glance, drawn as a route (free call, one of two
+   builds, after launch). Reused on Contact for the checklist. */
+.ledger {
+  background: var(--color-card);
+  padding: var(--spacing-6);
+  display: grid;
+  gap: var(--spacing-4);
+  min-width: 0;
+}
+
+.ledger > * {
+  margin: 0;
+}
+
+.note + .note {
+  margin-top: var(--spacing-1);
+}
+
+.ledger-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  border-bottom: 2px solid var(--color-fg);
+  padding-bottom: var(--spacing-3);
+}
+
+.ledger-head > p,
+.ledger-head > h2 {
+  margin: 0;
+}
+
+.ledger-label {
+  /* An h2 for the outline that reads as the mono label. */
+  font-family: var(--font-family-mono);
+  font-weight: var(--font-weight-mono);
+  font-size: var(--font-scale-label-size);
+  line-height: var(--font-scale-label-line-height);
+  letter-spacing: var(--font-scale-label-tracking);
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+.ledger-mark {
+  /* The mark sting (inline SVG, 120 units for a 64-unit mark): the box is the
+     mark's 2.5rem, the SVG overflows it by its padding. Without sting.js
+     arming it (JS off, reduced motion, arrived from this site) the animation
+     is off and the SVG's base styles are the resting mark. */
+  position: relative;
+  width: 2.5rem;
+  aspect-ratio: 1;
+  flex: none;
+  margin-block: calc(var(--spacing-1) * -1) 0;
+  color: var(--color-fg);
+}
+
+.ledger-mark svg {
+  position: absolute;
+  inset: -43.75%;
+  width: 187.5%;
+  height: 187.5%;
+}
+
+:root:not(.sting-play) .ledger-mark .cas-a {
+  animation: none;
+}
+
+.ledger-fish {
+  width: 5.5rem;
+  margin-block: -1rem -0.6rem;
+  flex: none;
+}
+
+.route {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 0 var(--spacing-8);
+  position: relative;
+}
+
+.route::before {
+  content: "";
+  position: absolute;
+  left: 5px;
+  top: 1.6rem;
+  bottom: 1.4rem;
+  width: 2px;
+  background: var(--color-rule);
+  transform-origin: top;
+  animation: draw-y var(--duration-draw) var(--ease-draw) var(--duration-base) both;
+}
+
+.route-step {
+  position: relative;
+}
+
+.route-step + .route-step {
+  border-top: 1px solid var(--color-rule);
+}
+
+.route-step::before {
+  content: "";
+  position: absolute;
+  left: calc(-1 * var(--spacing-8));
+  top: 1.15rem;
+  width: 12px;
+  height: 12px;
+  background: var(--color-card);
+  border: 2px solid var(--color-fg);
+}
+
+.route-fork::before {
+  top: 1.45rem;
+}
+
+/* The amber node is the mark's chamfer and appears only where the free call
+   is. */
+.route-step.is-call::before,
+.rail li.is-call::after {
+  background: var(--color-accent-fill);
+  border-color: var(--color-accent-fill);
+  clip-path: polygon(0 0, 70% 0, 100% 30%, 100% 100%, 30% 100%, 0 70%);
+}
+
+.route-step.is-call::before {
+  top: 1.35rem;
+}
+
+.route a {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--spacing-2);
+  padding-block: var(--spacing-3);
+  color: var(--color-fg);
+  text-decoration: none;
+}
+
+.route a:hover .r-name {
+  text-decoration: underline;
+  text-decoration-color: var(--color-accent-fill);
+  text-decoration-thickness: 2px;
+}
+
+.r-name {
+  font-weight: var(--font-weight-display);
+  hyphens: manual;
+  min-width: 0;
+}
+
+.r-dots {
+  flex: 1;
+  border-bottom: 1px dotted var(--color-muted);
+  transform: translateY(-0.3em);
+  min-width: var(--spacing-4);
+}
+
+.r-price {
+  font-weight: var(--font-weight-display);
+  color: var(--color-accent-text);
+  white-space: nowrap;
+}
+
+.is-call a {
+  padding-block: var(--spacing-4);
+}
+
+.is-call .r-name,
+.is-call .r-price,
+.route-fork .r-price {
+  font-size: var(--font-scale-h3-size);
+  line-height: var(--font-scale-h3-line-height);
+}
+
+.route-fork ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.route-fork li + li {
+  border-left: 1px solid var(--color-rule);
+  padding-left: var(--spacing-4);
+}
+
+.route-fork a {
+  flex-direction: column;
+  align-items: start;
+  gap: 0;
+  padding-block: var(--spacing-4);
+}
+
+/* Phones: every ledger row reads name over price (no dangling leader) and the
+   fork stacks. */
+@media (max-width: 29.99rem) {
+  .route a {
+    flex-direction: column;
+    align-items: start;
+    gap: 0;
+  }
+
+  .r-dots {
+    display: none;
+  }
+
+  .route-step::before {
+    top: 1.1rem;
+  }
+
+  .route-step.is-call::before {
+    top: 1.45rem;
+  }
+
+  .route-fork ul {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .route-fork li + li {
+    border-left: 0;
+    padding-left: 0;
+    border-top: 1px solid var(--color-rule);
+  }
+}
+
+/* The proof band: an inverse surface (ink on paper pages, card grey on ink
+   pages), derived from existing tokens until branding names the roles
+   (cubealgos/branding#33). */
+:root {
+  --band-bg: var(--color-fg);
+  --band-fg: var(--color-bg);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --band-bg: var(--color-card);
+    --band-fg: var(--color-fg);
+  }
+}
+
+:root[data-theme="dark"] {
+  --band-bg: var(--color-card);
+  --band-fg: var(--color-fg);
+}
+
+.band {
+  background: var(--band-bg);
+  color: var(--band-fg);
+  padding-block: var(--spacing-16);
+}
+
+.band-grid {
+  display: grid;
+  gap: var(--spacing-6);
+}
+
+.band-title {
+  margin: 0;
+  font-size: var(--font-scale-h1-size);
+  line-height: var(--font-scale-h1-line-height);
+}
+
+.band-text {
+  margin: 0;
+  font-size: var(--font-scale-h3-size);
+  line-height: var(--font-scale-h3-line-height);
+  max-width: 52ch;
+  hyphens: manual;
+}
+
+@media (max-width: 29.99rem) {
+  .band-text {
+    font-size: var(--font-scale-body-size);
+    line-height: var(--font-scale-body-line-height);
+  }
+}
+
+@media (min-width: 64rem) {
+  .band-grid {
+    grid-template-columns: 5fr 7fr;
+    column-gap: calc(100% / 12);
+    align-items: start;
+  }
+
+  .band-title {
+    font-size: var(--font-scale-display-size);
+    line-height: var(--font-scale-display-line-height);
+    letter-spacing: var(--font-scale-display-tracking);
+  }
+}
+
+/* Plain sections: no card, just space and a hairline. */
+h2 {
+  font-size: var(--font-scale-h2-size);
+  line-height: var(--font-scale-h2-line-height);
+  letter-spacing: var(--font-scale-h2-tracking);
+}
+
+h3 {
+  font-size: var(--font-scale-h3-size);
+  line-height: var(--font-scale-h3-line-height);
+  letter-spacing: var(--font-scale-h3-tracking);
+}
+
+.sec {
+  padding-block: var(--spacing-16);
+  border-top: 1px solid var(--color-rule);
+}
+
+.band + .sec,
+.sheet + .sec,
+.sec--first {
+  border-top: 0;
+}
+
+.sec--first {
+  padding-top: var(--spacing-8);
+}
+
+.sec-h2 {
+  margin-bottom: var(--spacing-8);
+}
+
+.sec-head {
+  display: grid;
+  gap: var(--spacing-4);
+  margin-bottom: var(--spacing-8);
+}
+
+.sec-head > * {
+  margin: 0;
+}
+
+.measure {
+  max-width: 62ch;
+  hyphens: manual;
+}
+
+.note {
+  margin-block: var(--spacing-4) 0;
+  color: var(--color-muted);
+  font-size: var(--font-scale-small-size);
+  line-height: var(--font-scale-small-line-height);
+}
+
+@media (min-width: 64rem) {
+  .sec-head {
+    grid-template-columns: 4fr 8fr;
+    align-items: end;
+  }
+}
+
+/* Lanes: three open columns on wide screens, a stack below, one text link
+   each; no rules between them. */
+.lanes {
+  display: grid;
+  gap: var(--spacing-8);
+}
+
+.lane {
+  display: grid;
+  gap: var(--spacing-4);
+  align-content: start;
+  min-width: 0;
+}
+
+.lane > * {
+  margin: 0;
+}
+
+.lane-link {
+  display: inline-block;
+  padding-block: var(--spacing-2);
+  font-weight: var(--font-weight-display);
+}
+
+.lane p {
+  max-width: 52ch;
+  hyphens: manual;
+}
+
+@media (min-width: 64rem) {
+  .lanes {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--spacing-12);
+  }
+}
+
+/* Offers detail, "first the call": the free call is one large chamfered card
+   with "kostenlos" / "free" in display size; the two builds and the hourly
+   rate are a quiet list beside it. No hyphenation inside the card, so short
+   words never break mid-way in the narrow column. */
+article {
+  scroll-margin-top: var(--spacing-8);
+}
+
+#offers {
+  scroll-margin-top: var(--spacing-4);
+}
+
+.pc-grid {
+  display: grid;
+  gap: var(--spacing-12);
+  align-items: start;
+}
+
+.pc-card {
+  display: grid;
+  gap: var(--spacing-3);
+  padding: var(--spacing-6);
+  background: var(--color-card);
+  hyphens: manual;
+}
+
+.pc-card > *,
+.pc-row > * {
+  margin: 0;
+}
+
+.pc-head {
+  display: block;
+  margin: 0;
+  font-size: var(--font-scale-h3-size);
+  line-height: var(--font-scale-h3-line-height);
+}
+
+/* The amber chamfered node marks the free call, as in the ledger and rail. */
+.pc-node {
+  position: relative;
+  padding-left: var(--spacing-6);
+}
+
+.pc-node::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.4em;
+  width: 0.75rem;
+  height: 0.75rem;
+  background: var(--color-accent-fill);
+  clip-path: polygon(0 0, 70% 0, 100% 30%, 100% 100%, 30% 100%, 0 70%);
+}
+
+.pc-free {
+  display: block;
+  margin-top: var(--spacing-1);
+  color: var(--color-accent-text);
+  font-weight: var(--font-weight-display);
+  font-size: var(--font-scale-h1-size);
+  line-height: var(--font-scale-h1-line-height);
+  letter-spacing: var(--font-scale-h1-tracking);
+}
+
+.pc-list {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pc-row {
+  display: grid;
+  gap: var(--spacing-1);
+  padding-block: var(--spacing-6);
+  scroll-margin-top: var(--spacing-8);
+}
+
+.pc-row:first-child {
+  padding-top: 0;
+}
+
+.pc-row + .pc-row {
+  border-top: 1px solid var(--color-rule);
+}
+
+.pc-row .pc-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0 var(--spacing-4);
+}
+
+.pc-price {
+  font-weight: var(--font-weight-display);
+}
+
+.pc-row p {
+  max-width: 52ch;
+}
+
+.pc-row p,
+.pc-grid .note {
+  hyphens: manual;
+}
+
+/* The apps row's three example prices: one compact inline list, small and
+   quiet, not three more rows. */
+.pc-eg {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-1) var(--spacing-6);
+  margin: var(--spacing-1) 0 0;
+  padding: 0;
+  list-style: none;
+  color: var(--color-muted);
+  font-size: var(--font-scale-small-size);
+  line-height: var(--font-scale-small-line-height);
+  hyphens: manual;
+}
+
+.pc-eg .num {
+  white-space: nowrap;
+}
+
+@media (min-width: 30rem) {
+  .pc-card {
+    padding: var(--spacing-8);
+  }
+}
+
+@media (min-width: 64rem) {
+  .pc-grid {
+    grid-template-columns: 6fr 6fr;
+    gap: var(--spacing-16);
+  }
+
+  .pc-free {
+    font-size: var(--font-scale-display-size);
+    line-height: var(--font-scale-display-line-height);
+    letter-spacing: var(--font-scale-display-tracking);
+  }
+}
+
+/* Workflow and "what happens next": the rail. Numbers are a CSS counter; the
+   amber node marks the free call. */
+.rail-wrap {
+  display: grid;
+  gap: var(--spacing-6);
+}
+
+.rail {
+  counter-reset: step;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--spacing-6);
+  position: relative;
+}
+
+.rail::before {
+  content: "";
+  position: absolute;
+  left: 5px;
+  top: 6px;
+  bottom: 6px;
+  width: 2px;
+  background: var(--color-accent-fill);
+  transform-origin: top;
+}
+
+.rail li {
+  counter-increment: step;
+  position: relative;
+  padding-left: var(--spacing-8);
+  min-width: 0;
+}
+
+.rail li::before {
+  content: counter(step, decimal-leading-zero);
+  display: block;
+  margin-bottom: var(--spacing-1);
+  font-family: var(--font-family-mono);
+  font-size: var(--font-scale-label-size);
+  line-height: var(--font-scale-label-line-height);
+  letter-spacing: var(--font-scale-label-tracking);
+  color: var(--color-accent-text);
+}
+
+.rail li::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.35em;
+  width: 12px;
+  height: 12px;
+  background: var(--color-bg);
+  border: 2px solid var(--color-fg);
+}
+
+.rail-fish {
+  width: 7rem;
+}
+
+.next-note {
+  margin: var(--spacing-8) 0 0;
+  padding-top: var(--spacing-4);
+  border-top: 1px solid var(--color-rule);
+  color: var(--color-muted);
+}
+
+#next {
+  scroll-margin-top: var(--spacing-8);
+}
+
+@media (min-width: 64rem) {
+  .rail-wrap {
+    grid-template-columns: 1fr 8rem;
+    align-items: start;
+  }
+
+  .rail-wrap--plain {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .rail {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    padding-top: var(--spacing-12);
+  }
+
+  .rail::before {
+    left: 0;
+    right: 0;
+    top: calc(var(--spacing-12) / 2);
+    bottom: auto;
+    width: auto;
+    height: 2px;
+    transform-origin: left;
+  }
+
+  .rail li {
+    padding-left: 0;
+    hyphens: manual;
+  }
+
+  .rail li::after {
+    top: calc(var(--spacing-12) / -2 - 6px);
+  }
+
+  .rail-fish {
+    width: 100%;
+    margin-top: calc(var(--spacing-12) / 2 - 2.6rem);
+  }
+}
+
+/* Sheet: a light card-grey band, airy, the heading left. */
+.sheet {
+  background: var(--color-card);
+  padding-block: var(--spacing-16);
+}
+
+.sheet-grid {
+  display: grid;
+  gap: var(--spacing-6);
+}
+
+.sheet-title {
+  margin: 0;
+}
+
+.sheet-body {
+  display: grid;
+  gap: var(--spacing-4);
+  max-width: 52ch;
+}
+
+.sheet-body > * {
+  margin: 0;
+}
+
+.sheet-lede {
+  font-size: var(--font-scale-h3-size);
+  line-height: var(--font-scale-h3-line-height);
+  hyphens: manual;
+}
+
+.sheet-note {
+  padding-top: var(--spacing-4);
+  border-top: 2px solid var(--color-fg);
+  font-weight: var(--font-weight-display);
+}
+
+@media (max-width: 29.99rem) {
+  .sheet-lede {
+    font-size: var(--font-scale-body-size);
+    line-height: var(--font-scale-body-line-height);
+  }
+}
+
+@media (min-width: 64rem) {
+  .sheet-grid {
+    grid-template-columns: 4fr 8fr;
+  }
+}
+
+/* FAQ: heading in the left third (sticky), list in the right two thirds. */
+.faq-grid {
+  display: grid;
+  gap: var(--spacing-2);
+}
+
+@media (min-width: 64rem) {
+  .faq-grid {
+    grid-template-columns: 4fr 8fr;
+  }
+
+  .faq-grid h2 {
+    position: sticky;
+    top: var(--spacing-8);
+    align-self: start;
+  }
+}
+
+/* FAQ: native disclosure, one rule per entry. */
+.faq {
+  max-width: 70ch;
+}
+
+.faq details {
+  border-top: 1px solid var(--color-rule);
+}
+
+.faq details:last-child {
+  border-bottom: 1px solid var(--color-rule);
+}
+
+.faq summary {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--spacing-4);
+  padding-block: var(--spacing-4);
+  font-weight: var(--font-weight-display);
+  cursor: pointer;
+  list-style: none;
+  hyphens: manual;
+  overflow-wrap: break-word;
+}
+
+.faq summary::-webkit-details-marker {
+  display: none;
+}
+
+.faq summary::after {
+  content: "+";
+  flex: none;
+  font-family: var(--font-family-mono);
+  color: var(--color-accent-text);
+  transition: transform var(--duration-quick) var(--ease-settle);
+}
+
+/* Open: the "+" turns into a "×" (a quarter turn, quick). */
+.faq details[open] > summary::after {
+  transform: rotate(45deg);
+}
+
+.faq summary:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: -2px;
+}
+
+.faq details p {
+  margin: 0 0 var(--spacing-4);
+}
+
+/* Opening: the answer fades in and rises a few pixels (opacity and transform
+   only, no height animation); closing is instant. */
+.faq details[open] > p {
+  animation: rise var(--duration-base) var(--ease-settle) both;
+}
+
+/* About: the founder split, ticks and the portrait slot. */
+.split {
+  display: grid;
+  gap: var(--spacing-6);
+}
+
+.split-h2 {
+  margin: 0;
+}
+
+.split-body {
+  display: grid;
+  gap: var(--spacing-4);
+  max-width: 60ch;
+}
+
+.split-body > * {
+  margin: 0;
+}
+
+.split-lede {
+  font-size: var(--font-scale-h3-size);
+  line-height: var(--font-scale-h3-line-height);
+  hyphens: manual;
+}
+
+@media (max-width: 29.99rem) {
+  .split-lede {
+    font-size: var(--font-scale-body-size);
+    line-height: var(--font-scale-body-line-height);
+  }
+}
+
+@media (min-width: 64rem) {
+  .split {
+    grid-template-columns: 4fr 8fr;
+  }
+}
+
+.ticks {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  border-top: 2px solid var(--color-fg);
+}
+
+.ticks li {
+  position: relative;
+  padding: var(--spacing-4) 0 var(--spacing-4) var(--spacing-6);
+  border-bottom: 1px solid var(--color-rule);
+  background: var(--color-bg);
+  min-width: 0;
+}
+
+.ticks li::before,
+.note-list li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: calc(var(--spacing-4) + 0.55em);
+  width: var(--spacing-3);
+  height: var(--spacing-1);
+  background: var(--color-accent-fill);
+}
+
+.sec--after-band {
+  border-top: 0;
+}
+
+@media (min-width: 48rem) {
+  .ticks {
+    grid-template-columns: 1fr 1fr;
+    column-gap: var(--spacing-8);
+  }
+
+  .ticks li:last-child {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (min-width: 64rem) {
+  .ticks li:last-child {
+    padding-right: calc(100% / 3);
+  }
+}
+
+.portrait {
+  margin: 0;
+  background: var(--color-card);
+  aspect-ratio: 16 / 9;
+  width: 100%;
+  display: grid;
+  place-items: center;
+  padding: var(--spacing-6);
+}
+
+.portrait .fish-img {
+  width: auto;
+  height: 100%;
+}
+
+/* A photo fills the slot edge to edge. */
+.portrait > img:not(.fish-img) {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+@media (min-width: 64rem) {
+  .portrait {
+    aspect-ratio: 4 / 5;
+    justify-self: end;
+    max-width: 22rem;
+    padding: var(--spacing-8);
+  }
+
+  .portrait .fish-img {
+    width: 100%;
+    height: auto;
+  }
+}
+
+/* Contact: the ledger card holds the checklist. */
+.note-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.note-list li {
+  position: relative;
+  padding: var(--spacing-3) 0 var(--spacing-3) var(--spacing-6);
+  border-top: 1px solid var(--color-rule);
+}
+
+.note-list li::before {
+  top: calc(var(--spacing-3) + 0.7em);
+}
+
+.note-outro {
+  padding-top: var(--spacing-4);
+  border-top: 2px solid var(--color-fg);
+  font-weight: var(--font-weight-display);
+}
+
+.sec--last {
+  padding-bottom: var(--spacing-12);
+}
+
+/* Final call to action: an amber panel with the on-amber fish. */
+.cta-sec {
+  padding-block: var(--spacing-8) var(--spacing-16);
+}
+
+.cta-sec--gap {
+  padding-top: var(--spacing-16);
+}
+
+.cta {
+  background: var(--color-accent-fill);
+  color: var(--color-on-accent);
+  padding: var(--spacing-8) var(--spacing-6);
+  display: grid;
+  gap: var(--spacing-6);
+  align-items: center;
+}
+
+.cta-text {
+  display: grid;
+  gap: var(--spacing-6);
+  justify-items: start;
+}
+
+.cta-text > * {
+  margin: 0;
+}
+
+.cta h2 {
+  font-size: var(--font-scale-h1-size);
+  line-height: var(--font-scale-h1-line-height);
+}
+
+.cta-fish {
+  width: 8rem;
+}
+
+@media (min-width: 48rem) {
+  .cta {
+    grid-template-columns: 1fr 14rem;
+    padding: var(--spacing-16) var(--spacing-12);
+  }
+
+  .cta--slim {
+    grid-template-columns: minmax(0, 1fr);
+    padding-block: var(--spacing-12);
+  }
+
+  .cta h2 {
+    font-size: var(--font-scale-display-size);
+    line-height: var(--font-scale-display-line-height);
+  }
+
+  .cta-fish {
+    width: 100%;
+  }
+}
+
+@media (min-width: 64rem) {
+  .cta--slim .cta-text {
+    grid-template-columns: 1fr auto;
+    align-items: center;
+  }
+}
+
+/* The inverse button sits on amber: ink fill, paper text. */
+.btn--inverse {
+  background: var(--color-on-accent);
+  color: var(--color-primitive-paper);
+}
+
+.btn--inverse::before {
+  background: var(--color-primitive-paper);
+}
+
+.lede {
+  font-size: var(--font-scale-h3-size);
+  line-height: var(--font-scale-h3-line-height);
+}
+
+/* The German 404 headline holds one very long word ("davongeschwommen"), and
+   headings do not hyphenate: it steps down the type scale on narrow screens. */
+@media (max-width: 30rem) {
+  .h1-long {
+    font-size: var(--font-scale-h2-size);
+    line-height: var(--font-scale-h2-line-height);
+  }
+}
+
+@media (max-width: 22.5rem) {
+  .h1-long {
+    font-size: var(--font-scale-h3-size);
+    line-height: var(--font-scale-h3-line-height);
+  }
+}
+
+/* A light stage for the confused fish (its `?` is ink). */
+.fish-stage {
+  --c: var(--chamfer-lg);
+
+  padding: var(--spacing-6);
+  background: var(--color-primitive-on-amber-white);
+  clip-path: polygon(
+    0 0,
+    calc(100% - var(--c)) 0,
+    100% var(--c),
+    100% 100%,
+    var(--c) 100%,
+    0 calc(100% - var(--c))
+  );
+}
+
+/* Stagger step of an element in its group, set in the markup as data-i="N"
+   (no style attribute, so the site needs no inline CSS). web/reveal.js sets
+   --i itself on scroll reveals. */
+[data-i="1"] {
+  --i: 1;
+}
+
+[data-i="2"] {
+  --i: 2;
+}
+
+[data-i="3"] {
+  --i: 3;
+}
+
+[data-i="4"] {
+  --i: 4;
+}
+
+[data-i="5"] {
+  --i: 5;
+}
+
+[data-i="6"] {
+  --i: 6;
+}
+
+/* Motion: transform and opacity only; durations and easings from the tokens.
+   Final states are the base styles, so removing the animation (reduced
+   motion) leaves everything in place. */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(var(--spacing-2));
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.rise {
+  animation: rise var(--duration-base) var(--ease-settle) both;
+  /* About 60 ms between lines: 0.6 x the instant token. */
+  animation-delay: calc(var(--i, 0) * var(--duration-instant) * 0.6);
+}
+
+/* The amber underline under the key phrase: drawn left to right once. */
+@keyframes draw {
+  from {
+    background-size: 0 0.12em;
+  }
+
+  to {
+    background-size: 100% 0.12em;
+  }
+}
+
+.mark {
+  /* An inline underline: the phrase wraps with the headline and every wrapped
+     line gets its own segment (box-decoration-break: clone). */
+  background-image: linear-gradient(
+    var(--color-accent-fill),
+    var(--color-accent-fill)
+  );
+  background-repeat: no-repeat;
+  /* The bar sits just under the baseline, not at the bottom of the font box
+     (which is below the descenders and runs into the next line). */
+  background-position: 0 calc(100% - 0.1em);
+  background-size: 100% 0.12em;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  animation: draw var(--duration-draw) var(--ease-draw) both;
+  animation-delay: var(--duration-base);
+}
+
+/* The route line of the ledger draws top to bottom once on load. */
+@keyframes draw-y {
+  from {
+    transform: scaleY(0);
+  }
+
+  to {
+    transform: scaleY(1);
+  }
+}
+
+/* The rail line draws once when the rail is revealed (only when reveal.js
+   runs; otherwise the base styles show the line). */
+:root.reveal-on .rail.reveal::before {
+  transform: scaleY(0);
+}
+
+:root.reveal-on .rail.reveal.is-in::before {
+  transform: none;
+  transition: transform var(--duration-draw) var(--ease-draw)
+    var(--duration-base);
+}
+
+@media (min-width: 64rem) {
+  :root.reveal-on .rail.reveal::before {
+    transform: scaleX(0);
+  }
+
+  :root.reveal-on .rail.reveal.is-in::before {
+    transform: none;
+  }
+}
+
+/* Reveal on scroll: only when reveal.js runs and motion is allowed does it add
+   .reveal-on to <html>, and only then are .reveal elements hidden; it adds
+   .is-in once as each enters view. Without JavaScript they are plain content. */
+:root.reveal-on .reveal {
+  opacity: 0;
+  transform: translateY(var(--spacing-2));
+}
+
+:root.reveal-on .reveal.is-in {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity var(--duration-base) var(--ease-settle),
+    transform var(--duration-base) var(--ease-settle);
+  /* About 60 ms between siblings: 0.6 x the instant token. */
+  transition-delay: calc(var(--i, 0) * var(--duration-instant) * 0.6);
+}
+
+@media print {
+  :root.reveal-on .reveal {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rise,
+  .mark,
+  .route::before,
+  .faq details[open] > p {
+    animation: none;
+  }
+
+  .faq summary::after {
+    transition: none;
+  }
+
+  :root.reveal-on .rail.reveal::before,
+  :root.reveal-on .rail.reveal.is-in::before {
+    transform: none;
+    transition: none;
+  }
+
+  :root.reveal-on .reveal,
+  :root.reveal-on .reveal.is-in {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .btn,
+  .btn::before {
+    transition: none;
+  }
+
+  .btn:active {
+    transform: none;
+  }
+}
+
+/* Legal pages (Impressum, Datenschutz): plain running text with labelled
+   facts. */
+.legal h2 {
+  font-size: var(--font-scale-h3-size);
+  line-height: var(--font-scale-h3-line-height);
+  letter-spacing: var(--font-scale-h3-tracking);
+  margin-top: var(--spacing-8);
+}
+
+.legal .notice {
+  padding-inline-start: var(--spacing-4);
+  border-inline-start: 2px solid var(--color-accent-fill);
+  font-weight: var(--font-weight-display);
+}
+
+.facts {
+  max-width: 70ch;
+  margin: 0;
+}
+
+.facts dt {
+  margin-top: var(--spacing-4);
+  color: var(--color-muted);
+  font-size: var(--font-scale-small-size);
+  line-height: var(--font-scale-small-line-height);
+}
+
+.facts dd {
+  margin: 0;
+}

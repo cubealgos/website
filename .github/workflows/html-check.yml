@@ -1,0 +1,30 @@
+# Verification only: no deployment step in this file. Runs on GitHub-hosted
+# `ubuntu-24.04` only (this repo is public: a fork PR must never run code on
+# the org's own infrastructure). Toolchain: `.github/actions/setup`.
+#
+# Builds the site first, then checks the built output offline, including that
+# every character of the built pages has a glyph in the self-hosted fonts, and
+# drives the system Chrome (preinstalled on the runner) headless over the built
+# site: no horizontal scroll at 320/375/768/1280 px, the keyboard walkthrough
+# and the language switch.
+name: html-check
+
+on:
+  push:
+    branches: [development, production]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  html-check:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: ./.github/actions/setup
+      - run: dart run tool/og_images.dart --check
+      - run: dart run tool/build.dart
+      - run: dart run tool/html_check.dart
+      - run: dart run tool/fonts/check_coverage.dart build/jaspr
+      - run: dart run tool/browser_check.dart

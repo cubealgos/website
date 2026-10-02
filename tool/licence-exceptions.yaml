@@ -1,0 +1,29 @@
+# Per-package licence exceptions for `tool/licence_check.dart`. Printed in full
+# on every run. An entry is keyed on package AND licence, so a relicense stops
+# it matching. Only MPL-2.0 can be excepted; copyleft is denied outright. See
+# `standards/legal/dependency-license-policy.md` in the cubealgos heimathafen.
+#
+# exceptions:
+#   - package: some_package
+#     licence: MPL-2.0
+#     reason: "Why this is safe."
+exceptions:
+  - package: axe-core
+    licence: MPL-2.0
+    reason: >-
+      The org's existing dev-scope exception (dependency licence policy, Kevin,
+      2026-09-14): axe-core arrives only as a transitive dependency of
+      lighthouse in tool/a11y/ (the accessibility audit), never shipped,
+      consumed unmodified. Not the @axe-core/* runners, not pa11y.
+
+# `verified:` is a different kind of entry: pub.dev's detector sometimes finds
+# no licence for a package whose LICENSE file is fine (a detection gap). It
+# matches the exact version only, never overrides a detected licence, and the
+# recorded licence must itself be on the allow list. Printed on every run.
+verified:
+  - package: html
+    version: 0.15.7
+    licence: MIT
+    reason: >-
+      pub.dev reports no licence; the LICENSE file is the MIT text after a contributor list
+      (read 2026-10-01); transitive dev-only dependency of jaspr_cli.

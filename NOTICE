@@ -1,0 +1,23 @@
+website
+Copyright 2026 Cube Algos UG (haftungsbeschränkt)
+
+This distribution includes software developed by Cube Algos UG
+(haftungsbeschränkt), An der Maar 19, 52525 Heinsberg, Germany, for the
+cubealgos.de website, licensed under the Apache License, Version 2.0 --
+see LICENSE.
+
+--------------------------------------------------------------------------
+
+Scope: the Apache License covers the source code in this repository only.
+It does not cover:
+
+- the page text (copy) of the website, in any language, which is
+  Copyright Cube Algos UG (haftungsbeschränkt), all rights reserved and not
+  offered for reuse;
+- the brand assets used on the site (logos, wordmark, fish, share images;
+  everything under the vendored `web/brand/` directory), which stay all
+  rights reserved and are used under the terms of the `cubealgos/branding`
+  repository (`assets/LICENSE.md`), not relicensed here.
+
+Third-party dependencies keep their own licences; their licence texts are
+reproduced where redistribution requires it.
