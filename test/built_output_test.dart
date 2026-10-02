@@ -193,6 +193,41 @@ void main() {
     expect((manifest['icons'] as List).length, 4);
   });
 
+  test('no built text file names the product in development', () {
+    // Decision 45: no name, no mark, no section, in no page, script, style
+    // sheet, sitemap, JSON-LD block or manifest.
+    final name = RegExp('barrierewacht', caseSensitive: false);
+    final seen = <String>[];
+    for (final f in Directory(_buildDir).listSync(recursive: true)) {
+      if (f is! File) continue;
+      final rel = p.relative(f.path, from: _buildDir);
+      expect(rel, isNot(matches(name)), reason: rel);
+      if (!RegExp(r'\.(html|css|js|json|xml|txt|svg|webmanifest)$')
+          .hasMatch(rel)) {
+        continue;
+      }
+      seen.add(rel);
+      expect(f.readAsStringSync(), isNot(matches(name)), reason: rel);
+    }
+    expect(seen, isNotEmpty);
+  });
+
+  test('no page description names a price', () {
+    for (final entry in pageMeta.values) {
+      for (final meta in entry.values) {
+        expect(
+          meta.description,
+          isNot(
+            matches(
+              RegExp(r'€|Festpreis|fixed price|\bab \d', caseSensitive: false),
+            ),
+          ),
+          reason: meta.title,
+        );
+      }
+    }
+  });
+
   group('Impressum', () {
     // The facts, as in the company's facts file (typed here independently of
     // lib/src/legal_facts.dart so a drift in either fails the test).
@@ -461,16 +496,12 @@ void main() {
     // The footer is the brand copy (home.md "Footer"), character for character.
     const footer = {
       Lang.en: (
-        tagline:
-            'Cube Algos, Heinsberg. Apps, tools and automation at fixed '
-            'prices.',
+        tagline: 'Cube Algos, Heinsberg. Software studio since 2023.',
         links: ['Home', 'About', 'Contact'],
         skip: 'Skip to content',
       ),
       Lang.de: (
-        tagline:
-            'Cube Algos, Heinsberg. Apps, Tools und Automatisierung zum '
-            'Festpreis.',
+        tagline: 'Cube Algos, Heinsberg. Softwarestudio seit 2023.',
         links: ['Start', 'Über', 'Kontakt'],
         skip: 'Zum Inhalt springen',
       ),
