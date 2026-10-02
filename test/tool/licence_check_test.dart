@@ -56,7 +56,7 @@ Future<int> _run(
   List<String> log,
 ) => runLicenceCheck(
   root: dir.path,
-  lookup: (name) async => tags[name] ?? const [],
+  lookup: (name, _) async => tags[name] ?? const [],
   out: log.add,
 );
 
@@ -194,5 +194,38 @@ verified:
       await _run(_repo(pub: {}, npm: {'a': 'MIT AND GPL-3.0-only'}), {}, []),
       1,
     );
+  });
+
+  group('pubDevLookup', () {
+    test('uses the locked version when it has licence tags', () async {
+      final asked = <String>[];
+      final log = <String>[];
+      final got = await pubDevLookup(
+        'pkg',
+        '4.0.0',
+        fetch: (path) async {
+          asked.add(path);
+          return path == 'pkg/versions/4.0.0/score'
+              ? ['license:bsd-3-clause', 'is:dart3-compatible']
+              : const [];
+        },
+        log: log.add,
+      );
+      expect(got, ['bsd-3-clause']);
+      expect(asked, ['pkg/versions/4.0.0/score']);
+      expect(log, isEmpty);
+    });
+
+    test('falls back to the latest version and logs it', () async {
+      final log = <String>[];
+      final got = await pubDevLookup(
+        'pkg',
+        '4.0.0',
+        fetch: (path) async => path == 'pkg/score' ? ['license:mit'] : const [],
+        log: log.add,
+      );
+      expect(got, ['mit']);
+      expect(log.single, contains('pkg 4.0.0 has no licence tag'));
+    });
   });
 }

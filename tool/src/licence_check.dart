@@ -13,9 +13,16 @@ import 'package:yaml/yaml.dart';
 
 import 'licence_policy.dart';
 
-/// Returns the licence identifiers of a pub package: pub.dev `license:` tag
-/// suffixes (e.g. `mit`, `bsd-3-clause`).
-typedef PubLicenceLookup = Future<List<String>> Function(String package);
+/// Returns the licence identifiers of a pub package at a locked version:
+/// pub.dev `license:` tag suffixes (e.g. `mit`, `bsd-3-clause`).
+typedef PubLicenceLookup = Future<List<String>> Function(
+  String package,
+  String version,
+);
+
+/// Fetches the pub.dev score tags at [path] (relative to
+/// `https://pub.dev/api/packages/`).
+typedef PubTagFetch = Future<List<String>> Function(String path);
 
 /// A recorded exception in `tool/licence-exceptions.yaml`.
 class LicenceException {
@@ -195,7 +202,7 @@ Future<List<Dependency>> collectDependencies(
       final pkg = entry.value as YamlMap;
       if (pkg['source'] != 'hosted') continue;
       final name = '${entry.key}';
-      final tags = await lookup(name);
+      final tags = await lookup(name, '${pkg['version']}');
       final licences = [
         for (final t in tags)
           if (!pubDevNonLicenceTags.contains(t) && pubDevTagToSpdx[t] != null)
@@ -269,23 +276,46 @@ Future<int> runLicenceCheck({
   return denied.isEmpty ? 0 : 1;
 }
 
-/// The real lookup: pub.dev's score API `license:` tags.
-Future<List<String>> pubDevLookup(String package) async {
+/// The real lookup: pub.dev's score API `license:` tags for the locked
+/// [version]. The unversioned endpoint describes the latest release, which
+/// stays unanalysed (no tags at all) for a while after it is published, so it
+/// is only the fallback when the locked version itself has no licence tag
+/// (pub.dev does not analyse every version); the fallback is logged.
+Future<List<String>> pubDevLookup(
+  String package,
+  String version, {
+  PubTagFetch fetch = _fetchPubTags,
+  void Function(String) log = _logErr,
+}) async {
+  List<String> licences(List<String> tags) => [
+    for (final t in tags)
+      if (t.startsWith('license:')) t.substring('license:'.length),
+  ];
+  final own = licences(await fetch('$package/versions/$version/score'));
+  if (own.isNotEmpty) return own;
+  final latest = licences(await fetch('$package/score'));
+  log(
+    'licence_check: $package $version has no licence tag on pub.dev; '
+    "using the latest version's tags (${latest.join('/')}).",
+  );
+  return latest;
+}
+
+void _logErr(String line) => stderr.writeln(line);
+
+Future<List<String>> _fetchPubTags(String path) async {
   final client = HttpClient();
   try {
     final request = await client.getUrl(
-      Uri.parse('https://pub.dev/api/packages/$package/score'),
+      Uri.parse('https://pub.dev/api/packages/$path'),
     );
     final response = await request.close();
     if (response.statusCode != 200) {
-      throw StateError('pub.dev returned ${response.statusCode} for $package');
+      throw StateError('pub.dev returned ${response.statusCode} for $path');
     }
     final body = await response.transform(utf8.decoder).join();
-    final tags = (jsonDecode(body) as Map<String, dynamic>)['tags'] as List;
-    return [
-      for (final t in tags.cast<String>())
-        if (t.startsWith('license:')) t.substring('license:'.length),
-    ];
+    final tags = (jsonDecode(body) as Map<String, dynamic>)['tags'] as List?;
+    return tags?.cast<String>() ?? const [];
   } finally {
     client.close();
   }

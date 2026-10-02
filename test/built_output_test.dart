@@ -293,7 +293,10 @@ void main() {
             'the server from STRATO AG (Berlin) and operates it itself.',
         'No access logs, no storage of IP addresses',
         'to write no access logs for this website',
-        "Visitors' IP addresses are therefore not stored.",
+        "Visitors' IP addresses are therefore not stored on this server.",
+        'It acts for us as a processor',
+        'Right to object:',
+        '(Art. 77 GDPR)',
         'This website sets no cookies and uses no tracking or analytics.',
         'loads no content from third parties and embeds no external content',
         'The fonts of this website are self-hosted',
@@ -309,8 +312,11 @@ void main() {
             'betreibt ihn selbst.',
         'Keine Zugriffsprotokolle, keine Speicherung von IP-Adressen',
         'keine Zugriffsprotokolle (Access Logs) schreiben',
-        'Es werden deshalb keine IP-Adressen der Besucherinnen und Besucher '
-            'gespeichert.',
+        'Auf diesem Server werden deshalb keine IP-Adressen der '
+            'Besucherinnen und Besucher gespeichert.',
+        'Sie ist dabei als Auftragsverarbeiterin für uns tätig',
+        'Widerspruchsrecht:',
+        '(Art. 77 DSGVO)',
         'Diese Website setzt keine Cookies, verwendet kein Tracking und keine '
             'Analysedienste.',
         'Die Schriftarten dieser Website sind selbst gehostet',
