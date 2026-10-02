@@ -23,15 +23,11 @@ class NotFoundPage extends StatelessComponent {
     return el('section', classes: 'wrap notfound', [
       el('div', classes: 'notfound-text', [
         h1(classes: 'rise h1-long', [t(c.headline)]),
-        p(
-          classes: 'lede rise',
-          attributes: const {'style': '--i:1'},
-          [t(c.body)],
-        ),
+        p(classes: 'lede rise', attributes: const {'data-i': '1'}, [t(c.body)]),
         el(
           'div',
           classes: 'actions rise',
-          attrs: const {'style': '--i:2'},
+          attrs: const {'data-i': '2'},
           [
             LinkButton(label: c.homeAction, href: pathFor(PageKey.home, lang)),
             a(

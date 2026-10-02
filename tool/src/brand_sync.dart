@@ -130,9 +130,30 @@ Map<String, List<int>> selectFiles(String tag, Map<String, List<int>> assets) {
       if (_wanted(rel)) out[rel] = e.value;
     }
   }
+  // The mark's `<style>` block as an external file: the site sends no inline
+  // CSS, so it links this instead of inlining the SVG's own block.
+  final mark = out[stingMarkSvg];
+  if (mark != null) {
+    out[stingMarkCss] = utf8.encode(stingCssOf(utf8.decode(mark)));
+  }
   return Map.fromEntries(
     out.entries.toList()..sort((a, b) => a.key.compareTo(b.key)),
   );
+}
+
+/// The vendored mark-only sting, whose `<style>` block carries the keyframes.
+const stingMarkSvg = 'sting/sting-mark.svg';
+
+/// The derived stylesheet next to it: that `<style>` block's content.
+const stingMarkCss = 'sting/sting-mark.css';
+
+/// The content of the `<style>` block of the sting [svg], one rule per line.
+String stingCssOf(String svg) {
+  final m = RegExp('<style[^>]*>(.*?)</style>', dotAll: true).firstMatch(svg);
+  if (m == null) {
+    throw const BrandSyncException('sting-mark.svg has no <style>');
+  }
+  return '${m[1]!.trim().replaceAll(RegExp('^ {4}', multiLine: true), '')}\n';
 }
 
 /// The parsed `brand.lock.json`.

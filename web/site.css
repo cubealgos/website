@@ -1597,6 +1597,33 @@ article {
   );
 }
 
+/* Stagger step of an element in its group, set in the markup as data-i="N"
+   (no style attribute, so the site needs no inline CSS). web/reveal.js sets
+   --i itself on scroll reveals. */
+[data-i="1"] {
+  --i: 1;
+}
+
+[data-i="2"] {
+  --i: 2;
+}
+
+[data-i="3"] {
+  --i: 3;
+}
+
+[data-i="4"] {
+  --i: 4;
+}
+
+[data-i="5"] {
+  --i: 5;
+}
+
+[data-i="6"] {
+  --i: 6;
+}
+
 /* Motion: transform and opacity only; durations and easings from the tokens.
    Final states are the base styles, so removing the animation (reduced
    motion) leaves everything in place. */

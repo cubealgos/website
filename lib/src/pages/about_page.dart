@@ -26,7 +26,7 @@ class AboutPage extends StatelessComponent {
             h1(classes: 'hero-h1 rise', [t(c.h1)]),
             p(
               classes: 'hero-sub rise',
-              attributes: const {'style': '--i:1'},
+              attributes: const {'data-i': '1'},
               [t(c.lede)],
             ),
           ]),
@@ -36,7 +36,7 @@ class AboutPage extends StatelessComponent {
           el(
             'figure',
             classes: 'portrait rise',
-            attrs: const {'style': '--i:2'},
+            attrs: const {'data-i': '2'},
             [const Fish(pose: 'idle')],
           ),
         ]),
@@ -64,7 +64,7 @@ class AboutPage extends StatelessComponent {
             h2(id: 'one-title', classes: 'band-title reveal', [t(c.oneTitle)]),
             p(
               classes: 'band-text reveal',
-              attributes: const {'style': '--i:1'},
+              attributes: const {'data-i': '1'},
               [t(c.one)],
             ),
           ]),

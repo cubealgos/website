@@ -92,6 +92,7 @@ List<Finding> checkSite(Directory buildDir) {
   _checkManifest(root, findings);
   _checkThirdParty(buildDir, findings);
   _checkSiteStyles(buildDir, findings);
+  _checkNoInlineStyle(buildDir, findings);
   _checkNoStorage(buildDir, findings);
   return findings;
 }
@@ -351,20 +352,8 @@ void _checkThirdParty(Directory buildDir, List<Finding> out) {
   }
 }
 
-final _styleBlock = RegExp('<style[^>]*>(.*?)</style>', dotAll: true);
-
-/// The vendored mark sting is inlined into the home page with its own
-/// stylesheet (the brand's keyframes, `cas-` prefixed); like the vendored
-/// `brand/` files it is exempt from the token rules. Its colours are
-/// `currentColor` and the accent token.
-final _brandInlineSvg = RegExp(
-  '<svg[^>]*class="cas-mark".*?</svg>',
-  dotAll: true,
-);
-final _styleAttr = RegExp(r'''\sstyle\s*=\s*(?:"([^"]*)"|'([^']*)')''');
-
 /// The site's own CSS (every built stylesheet outside the vendored `brand/`
-/// directory, plus `<style>` blocks and `style` attributes in pages) takes its
+/// directory; the sting's generated `brand/sting-mark.css` included) takes its
 /// colours, durations and easings from the tokens (no hex, colour function,
 /// named colour, `ms`/`s` or easing literal) and animates only `transform` and
 /// `opacity`.
@@ -374,28 +363,46 @@ void _checkSiteStyles(Directory buildDir, List<Finding> out) {
     if (f is! File) continue;
     final rel = p.relative(f.path, from: root).replaceAll(r'\', '/');
     if (rel.startsWith('brand/')) continue;
-    final css = <String>[];
-    if (f.path.endsWith('.css')) {
-      css.add(f.readAsStringSync());
-    } else if (f.path.endsWith('.html')) {
-      final html = f.readAsStringSync().replaceAll(_brandInlineSvg, '');
-      for (final m in _styleBlock.allMatches(html)) {
-        css.add(m[1]!);
-      }
-      for (final m in _styleAttr.allMatches(html)) {
-        css.add(m[1] ?? m[2] ?? '');
-      }
+    if (!f.path.endsWith('.css')) continue;
+    final text = f.readAsStringSync();
+    for (final hit in hardCodedColours(text)) {
+      out.add(Finding('hard-coded-colour', rel, hit));
     }
-    for (final text in css) {
-      for (final hit in hardCodedColours(text)) {
-        out.add(Finding('hard-coded-colour', rel, hit));
-      }
-      for (final hit in literalMotion(text)) {
-        out.add(Finding('literal-motion', rel, hit));
-      }
-      for (final hit in layoutMotion(text)) {
-        out.add(Finding('layout-motion', rel, hit));
-      }
+    for (final hit in literalMotion(text)) {
+      out.add(Finding('literal-motion', rel, hit));
+    }
+    for (final hit in layoutMotion(text)) {
+      out.add(Finding('layout-motion', rel, hit));
+    }
+  }
+}
+
+final _scriptBlock = RegExp(
+  r'<script\b[^>]*>.*?</script>',
+  dotAll: true,
+  caseSensitive: false,
+);
+final _styleElement = RegExp(r'<style\b', caseSensitive: false);
+final _styleAttribute = RegExp(
+  r'<[a-zA-Z][^>]*?\sstyle\s*=',
+  caseSensitive: false,
+);
+
+/// No built page carries inline CSS (a `<style>` element or a `style`
+/// attribute), so the server can send `style-src 'self'` with no hashes. Inline
+/// SVG presentation attributes (`fill=`) and `<script>` contents (JSON-LD) are
+/// no inline CSS and pass.
+void _checkNoInlineStyle(Directory buildDir, List<Finding> out) {
+  final root = buildDir.path;
+  for (final f in buildDir.listSync(recursive: true)) {
+    if (f is! File || !f.path.endsWith('.html')) continue;
+    final rel = p.relative(f.path, from: root).replaceAll(r'\', '/');
+    final html = f.readAsStringSync().replaceAll(_scriptBlock, '');
+    if (_styleElement.hasMatch(html)) {
+      out.add(Finding('inline-style', rel, 'has a <style> element'));
+    }
+    if (_styleAttribute.hasMatch(html)) {
+      out.add(Finding('inline-style', rel, 'has a style attribute'));
     }
   }
 }
