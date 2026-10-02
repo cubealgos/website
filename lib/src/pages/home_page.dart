@@ -8,6 +8,7 @@ import 'package:jaspr/server.dart';
 import 'package:website/src/copy/common_copy.dart';
 import 'package:website/src/copy/home_copy.dart';
 import 'package:website/src/routes.dart';
+import 'package:website/src/seo.dart';
 import 'package:website/src/widgets.dart';
 
 /// The `FAQPage` JSON-LD of [lang], generated from the same data as the
@@ -285,14 +286,15 @@ class HomePage extends StatelessComponent {
               p([t(q.answer)]),
             ]),
         ]),
-        el(
-          'script',
-          attrs: const {'type': 'application/ld+json'},
-          [
-            // `<` is escaped so the JSON can never close the script element.
-            RawText(jsonEncode(faqJsonLd(lang)).replaceAll('<', r'\u003c')),
-          ],
-        ),
+        for (final data in [faqJsonLd(lang), organizationJsonLd()])
+          el(
+            'script',
+            attrs: const {'type': 'application/ld+json'},
+            [
+              // `<` is escaped so the JSON can never close the script element.
+              RawText(jsonEncode(data).replaceAll('<', r'\u003c')),
+            ],
+          ),
       ]),
     ],
   );

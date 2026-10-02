@@ -14,6 +14,7 @@ import 'package:test/test.dart';
 import 'package:website/src/icons.dart';
 import 'package:website/src/page_meta.dart';
 import 'package:website/src/routes.dart';
+import 'package:website/src/seo.dart';
 
 const _buildDir = 'build/jaspr';
 
@@ -88,6 +89,55 @@ void main() {
     }
   });
 
+  test('every indexable page has Open Graph and Twitter tags', () {
+    for (final entry in paths.entries) {
+      for (final lang in Lang.values) {
+        final html = read(entry.value[lang]!);
+        final where = '${entry.key}/${lang.code}';
+        if (entry.key == PageKey.notFound) {
+          expect(html, isNot(contains('og:image')), reason: where);
+          continue;
+        }
+        final meta = pageMeta[entry.key]![lang]!;
+        for (final tag in [
+          '<meta property="og:title" content="${meta.title}"/>',
+          '<meta property="og:url" content="${urlFor(entry.key, lang)}"/>',
+          '<meta property="og:type" content="website"/>',
+          '<meta property="og:locale" content="${ogLocale(lang)}"/>',
+          '<meta property="og:image" content="${shareImageUrl(lang)}"/>',
+          '<meta name="twitter:card" content="summary_large_image"/>',
+          '<meta name="twitter:image" content="${shareImageUrl(lang)}"/>',
+        ]) {
+          expect(html, contains(tag), reason: where);
+        }
+      }
+    }
+  });
+
+  test('both home pages carry Organization and FAQPage JSON-LD', () {
+    for (final lang in Lang.values) {
+      final html = read(pathFor(PageKey.home, lang));
+      final blocks = [
+        for (final m in RegExp(
+          r'<script type="application/ld\+json">(.*?)</script>',
+          dotAll: true,
+        ).allMatches(html))
+          jsonDecode(m[1]!) as Map<String, dynamic>,
+      ];
+      expect(blocks.map((b) => b['@type']), ['FAQPage', 'Organization']);
+      expect(blocks.last, organizationJsonLd());
+    }
+  });
+
+  test('the sitemap carries the alternates and robots.txt points at it', () {
+    final xml = File('$_buildDir/sitemap.xml').readAsStringSync();
+    expect(xml, sitemapXml());
+    expect(
+      File('$_buildDir/robots.txt').readAsStringSync(),
+      contains('Sitemap: https://cubealgos.de/sitemap.xml'),
+    );
+  });
+
   test('the built HTML references only same-origin resources', () {
     final ref = RegExp(r'''\b(?:src|href|action|srcset)="([^"]*)"''');
     for (final entry in paths.values) {
@@ -103,13 +153,15 @@ void main() {
           }
         }
         // Scripts: only the same-origin loaders (card sting on home, reveal on
-        // the content pages) and the FAQ JSON-LD data block on home.
+        // the content pages) and the JSON-LD data blocks (FAQ, Organization) on
+        // home.
         final key = resolve(path)?.key;
         final scripts = RegExp('<script[^>]*>').allMatches(read(path));
         expect(scripts.map((m) => m[0]), switch (key) {
           PageKey.home => [
             contains('src="/sting.js"'),
             contains('src="/reveal.js"'),
+            contains('type="application/ld+json"'),
             contains('type="application/ld+json"'),
           ],
           PageKey.about || PageKey.contact => [contains('src="/reveal.js"')],

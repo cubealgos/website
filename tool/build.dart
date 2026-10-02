@@ -9,25 +9,12 @@
 import 'dart:io';
 
 import 'package:website/src/icons.dart';
-import 'package:website/src/routes.dart';
+import 'package:website/src/seo.dart';
 
 const _outDir = 'build/jaspr';
-// Every indexable page of the route table; the 404 pages stay out.
-void _writeSitemap() {
-  final urls = [
-    for (final entry in paths.entries)
-      if (entry.key != PageKey.notFound)
-        for (final lang in Lang.values) urlFor(entry.key, lang),
-  ];
-  final buffer = StringBuffer()
-    ..writeln('<?xml version="1.0" encoding="UTF-8"?>')
-    ..writeln('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">');
-  for (final url in urls) {
-    buffer.writeln('  <url><loc>$url</loc></url>');
-  }
-  buffer.writeln('</urlset>');
-  File('$_outDir/sitemap.xml').writeAsStringSync(buffer.toString());
-}
+// The sitemap with hreflang alternates, from the route table.
+void _writeSitemap() =>
+    File('$_outDir/sitemap.xml').writeAsStringSync(sitemapXml());
 
 // The web manifest, with the paper token as theme and background colour.
 void _writeManifest() {
