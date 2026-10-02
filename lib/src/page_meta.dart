@@ -17,9 +17,9 @@ const Map<PageKey, Map<Lang, PageMeta>> pageMeta = {
     Lang.en: (
       title: 'Cube Algos | Apps and tools, fixed prices',
       description:
-          'Internal tools and MVPs for owner-led businesses and founders. '
-          'Free first call, fixed price, built and led by Kevin Scheeren in '
-          'Heinsberg.',
+          'Apps and tools for businesses and founders from €1,000, at a fixed '
+          'price after a free first call. Plus automation and self-hosting. '
+          'From Heinsberg.',
       h1:
           'Apps and tools for businesses that would rather focus on their '
           'work.',
@@ -27,9 +27,9 @@ const Map<PageKey, Map<Lang, PageMeta>> pageMeta = {
     Lang.de: (
       title: 'Cube Algos | Apps und Tools zum Festpreis',
       description:
-          'Software für Betriebe und Gründungsteams: interne Tools und erste '
-          'Produktversionen zum Festpreis, mit kostenlosem Erstgespräch. Aus '
-          'Heinsberg.',
+          'Apps und Tools für Betriebe und Gründungsteams ab 1.000 €, zum '
+          'Festpreis nach kostenlosem Erstgespräch. Dazu Automatisierung und '
+          'Self-Hosting. Aus Heinsberg.',
       h1:
           'Apps und Tools für Betriebe, die sich lieber um ihr Geschäft '
           'kümmern.',
@@ -48,8 +48,8 @@ const Map<PageKey, Map<Lang, PageMeta>> pageMeta = {
       title: 'Über Cube Algos | Cube Algos',
       description:
           'Cube Algos ist ein Softwarestudio aus Heinsberg, 2023 von Kevin '
-          'Scheeren gegründet. Apps und interne Tools zum Festpreis, mit '
-          'kostenlosem Erstgespräch.',
+          'Scheeren gegründet. Apps, Tools und Automatisierung zum Festpreis, '
+          'mit kostenlosem Erstgespräch.',
       h1: 'Das Studio und sein Gründer',
     ),
   },

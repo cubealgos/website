@@ -7,12 +7,22 @@ library;
 
 import 'package:website/src/routes.dart';
 
-/// One offer; its heading reads `name, price`.
-typedef Offer = ({String id, String name, String price, String text});
+/// One example price under an offer: `label · price`.
+typedef Example = ({String label, String price});
 
-/// One of the two "where do you start" lanes; its `offerIds` link to offers
-/// (by name, without the price).
-typedef Lane = ({String title, String text, List<String> offerIds});
+/// One offer; its heading reads `name, price`. `examples` are shown as a
+/// compact inline list after `text`.
+typedef Offer = ({
+  String id,
+  String name,
+  String price,
+  String text,
+  List<Example> examples,
+});
+
+/// One of the three "where do you start" lanes; its link reads `link` and
+/// points at the offer `offerId`.
+typedef Lane = ({String title, String text, String link, String offerId});
 
 /// One workflow step: a bold `title` followed by `text`.
 typedef Step = ({String title, String text});
@@ -80,7 +90,8 @@ const Map<Lang, HomeCopy> homeCopy = {
             'You run a business with a few people to a few dozen. Cube '
             'Algos builds you a booking tool, a customer portal or an '
             'internal dashboard that fits how your work already flows.',
-        offerIds: ['tool'],
+        link: 'Apps and tools',
+        offerId: 'apps',
       ),
       (
         title: 'For your idea',
@@ -88,13 +99,23 @@ const Map<Lang, HomeCopy> homeCopy = {
             'You have an idea for an app or a product. Cube Algos helps you '
             'cut the first version down to what matters, then builds it. '
             'You know the price before anything is built.',
-        offerIds: ['mvp'],
+        link: 'MVP',
+        offerId: 'apps',
+      ),
+      (
+        title: 'For your processes',
+        text:
+            'Your team loses time copying between spreadsheets and tools. '
+            'Cube Algos automates that work and, if you like, runs it on '
+            'servers in the EU, GDPR-compliant.',
+        link: 'Automation and self-hosting',
+        offerId: 'automation',
       ),
     ],
     offersTitle: 'What it costs',
     offersIntro:
-        'Fixed prices, agreed before work starts. If your project is '
-        'bigger than a "from" price, the written scope says so.',
+        'Fixed prices, agreed before work starts. You get the fixed price '
+        'for your project in writing after the free call.',
     offers: [
       (
         id: 'call',
@@ -104,22 +125,30 @@ const Map<Lang, HomeCopy> homeCopy = {
             '30 to 45 minutes by video or phone, then a written scope with a '
             'fixed price and a start date within about 3 working days. If '
             "you don't go ahead, it costs nothing.",
+        examples: [],
       ),
       (
-        id: 'tool',
-        name: 'Internal tool',
-        price: 'from €5,900',
-        text:
-            'A booking tool, a customer portal or an internal dashboard for '
-            'your team, focused on one core function.',
+        id: 'apps',
+        name: 'Apps and tools',
+        price: 'from €1,000',
+        text: 'Priced by scope. For orientation:',
+        examples: [
+          (
+            label: 'Small tool, e.g. a form with an overview',
+            price: 'about €1,500',
+          ),
+          (label: 'Internal tool with logins and roles', price: 'about €6,000'),
+          (label: 'MVP for founders', price: 'about €9,000'),
+        ],
       ),
       (
-        id: 'mvp',
-        name: 'MVP / SaaS v1',
-        price: 'from €6,900',
+        id: 'automation',
+        name: 'Automation and self-hosting',
+        price: 'from €3,000',
         text:
-            'The first working version of your product: one core function, '
-            'small enough to learn from real users early.',
+            'Automate workflows, bring data together and run systems on EU '
+            'servers, GDPR-compliant. Ongoing work: €110 an hour.',
+        examples: [],
       ),
       (
         id: 'after',
@@ -128,6 +157,7 @@ const Map<Lang, HomeCopy> homeCopy = {
         text:
             'Follow-up work and updates, on request. You know the cost before '
             'work starts.',
+        examples: [],
       ),
     ],
     vatNote: 'All prices plus 19% VAT.',
@@ -248,7 +278,8 @@ const Map<Lang, HomeCopy> homeCopy = {
             'Beschäftigten. Cube Algos baut Ihnen eine Online-Terminbuchung, '
             'ein Kundenportal oder ein internes Dashboard, passend zu Ihren '
             'Abläufen.',
-        offerIds: ['tool'],
+        link: 'Apps und Tools',
+        offerId: 'apps',
       ),
       (
         title: 'Für Ihre Idee',
@@ -257,13 +288,24 @@ const Map<Lang, HomeCopy> homeCopy = {
             'hilft Ihnen, die erste Version auf das Wesentliche zu '
             'beschränken, und baut sie. Den Preis kennen Sie, bevor etwas '
             'gebaut wird.',
-        offerIds: ['mvp'],
+        link: 'MVP',
+        offerId: 'apps',
+      ),
+      (
+        title: 'Für Ihre Prozesse',
+        text:
+            'Ihr Team verliert Zeit mit Tabellen, Kopieren und Abgleichen. '
+            'Cube Algos automatisiert solche Arbeit und betreibt sie auf '
+            'Wunsch datenschutzkonform auf Servern in der EU.',
+        link: 'Automatisierung und Self-Hosting',
+        offerId: 'automation',
       ),
     ],
     offersTitle: 'Was es kostet',
     offersIntro:
-        'Feste Preise, vereinbart vor Beginn der Arbeit. Ist Ihr Projekt '
-        'größer als der „ab“-Preis, steht das im schriftlichen Angebot.',
+        'Feste Preise, vereinbart vor Beginn der Arbeit. Den Festpreis für '
+        'Ihr Projekt erhalten Sie schriftlich nach dem kostenlosen '
+        'Gespräch.',
     offers: [
       (
         id: 'call',
@@ -274,22 +316,31 @@ const Map<Lang, HomeCopy> homeCopy = {
             'drei Werktagen folgt ein schriftliches Angebot mit Festpreis und '
             'Starttermin. Wenn Sie nicht beauftragen, entstehen Ihnen keine '
             'Kosten.',
+        examples: [],
       ),
       (
-        id: 'tool',
-        name: 'Internes Tool',
-        price: 'ab 5.900 €',
-        text:
-            'Etwa eine Online-Terminbuchung, ein Kundenportal oder ein '
-            'internes Dashboard, mit Fokus auf eine Kernfunktion.',
+        id: 'apps',
+        name: 'Apps und Tools',
+        price: 'ab 1.000 €',
+        text: 'Preis nach Umfang. Zur Orientierung:',
+        examples: [
+          (
+            label: 'Kleines Tool, etwa ein Formular mit Übersicht',
+            price: 'ca. 1.500 €',
+          ),
+          (label: 'Internes Tool mit Logins und Rollen', price: 'ca. 6.000 €'),
+          (label: 'MVP für Gründungsteams', price: 'ca. 9.000 €'),
+        ],
       ),
       (
-        id: 'mvp',
-        name: 'MVP / SaaS v1',
-        price: 'ab 6.900 €',
+        id: 'automation',
+        name: 'Automatisierung und Self-Hosting',
+        price: 'ab 3.000 €',
         text:
-            'Die erste funktionierende Version Ihres Produkts: eine '
-            'Kernfunktion, klein genug für frühe, echte Rückmeldungen.',
+            'Abläufe automatisieren, Daten zusammenführen und Systeme '
+            'datenschutzkonform auf Servern in der EU betreiben. Laufende '
+            'Arbeit: 110 € pro Stunde.',
+        examples: [],
       ),
       (
         id: 'after',
@@ -298,6 +349,7 @@ const Map<Lang, HomeCopy> homeCopy = {
         text:
             'Änderungen und Updates auf Anfrage. Die Kosten kennen Sie '
             'vorher.',
+        examples: [],
       ),
     ],
     vatNote: 'Alle Preise zzgl. 19 % USt.',

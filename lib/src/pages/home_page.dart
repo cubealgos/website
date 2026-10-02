@@ -151,8 +151,8 @@ class HomePage extends StatelessComponent {
           li(classes: 'route-step is-call', [row('call')]),
           li(classes: 'route-step route-fork', [
             ul([
-              li([row('tool', leader: false)]),
-              li([row('mvp', leader: false)]),
+              li([row('apps', leader: false)]),
+              li([row('automation', leader: false)]),
             ]),
           ]),
           li(classes: 'route-step', [row('after')]),
@@ -192,14 +192,13 @@ class HomePage extends StatelessComponent {
             el('div', classes: 'lane reveal', [
               h3([t(lane.title)]),
               p([t(lane.text)]),
-              for (final id in lane.offerIds)
-                p([
-                  a(
-                    [t(_offer(c, id).name)],
-                    href: '#offer-$id',
-                    classes: 'lane-link',
-                  ),
-                ]),
+              p([
+                a(
+                  [t(lane.link)],
+                  href: '#offer-${lane.offerId}',
+                  classes: 'lane-link',
+                ),
+              ]),
             ]),
         ]),
       ]),
@@ -213,6 +212,16 @@ class HomePage extends StatelessComponent {
         ...offerSpans(o, nameClass: 'pc-name', priceClass: 'pc-price'),
       ]),
       p([t(o.text)]),
+      if (o.examples.isNotEmpty)
+        ul(classes: 'pc-eg', [
+          for (final e in o.examples)
+            li([
+              span([t(e.label)]),
+              // The dot travels with the price, never dangling at a line end.
+              t(' '),
+              span(classes: 'num', [t('· ${e.price}')]),
+            ]),
+        ]),
     ]);
 
     return el(
@@ -237,8 +246,8 @@ class HomePage extends StatelessComponent {
             ]),
             div([
               ul(classes: 'pc-list', [
-                row(_offer(c, 'tool')),
-                row(_offer(c, 'mvp')),
+                row(_offer(c, 'apps')),
+                row(_offer(c, 'automation')),
                 row(_offer(c, 'after')),
               ]),
               p(classes: 'note', [t('${c.vatNote} · ${c.accessibleNote}')]),
