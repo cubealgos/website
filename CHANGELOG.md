@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Datenschutz after a sentence-by-sentence review against the live server: STRATO named as processor, "no IP storage" scoped to this server, the browser cache stated instead of "stores nothing on your device", a separate right-to-object paragraph (Art. 21(1)), Art. 77 for complaints, a note that contact details are voluntary; dated 2 October 2026 (#16).
+
 ## 0.1.0
 
 - The price-section intro no longer hyphenates short words on phones („Ar-beit"): `.measure` uses `hyphens: manual` like the other prose blocks (#64).
