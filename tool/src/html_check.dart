@@ -8,10 +8,14 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:path/path.dart' as p;
+import 'package:website/src/outbound.dart';
 
 import 'css_rules.dart';
 
-/// The only host the built pages may point at.
+/// The only host the built pages may point at, apart from the few links of
+/// `outboundUrls` (Kevin's site, GitHub, LinkedIn), which may be the `href` of
+/// an `<a>` and nothing else: no script, stylesheet, image, form action or
+/// `url()` (a link is not a request).
 const siteHost = 'cubealgos.de';
 
 /// One rule violation.
@@ -232,6 +236,12 @@ void _checkLinks(
       final uri = Uri.tryParse(value);
       if (uri == null) {
         add('broken-link', 'unparseable URL "$value"');
+        continue;
+      }
+      // Exactly these URLs, as a plain link, character for character.
+      if (tag.name == 'a' &&
+          tag.attrs['href'] == value &&
+          outboundUrls.contains(value)) {
         continue;
       }
       if (uri.hasScheme && (uri.scheme == 'mailto' || uri.scheme == 'tel')) {
