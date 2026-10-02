@@ -3,7 +3,7 @@ description: >-
   Cube Algos' public website (cubealgos.de): a Jaspr static site, German at
   the root and English under /en/.
 publish_to: none
-version: 0.1.0
+version: 0.1.1
 
 environment:
   sdk: ^3.13.4
