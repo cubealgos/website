@@ -28,7 +28,7 @@ class AppState extends State<App> with PreloadStateMixin {
   @override
   Component build(BuildContext context) {
     final route =
-        resolve(context.url) ?? (key: PageKey.notFound, lang: Lang.en);
+        resolve(context.url) ?? (key: PageKey.notFound, lang: Lang.de);
     return PageShell(pageKey: route.key, lang: route.lang);
   }
 }

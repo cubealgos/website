@@ -6,13 +6,13 @@
 /// sitemap all derive from [paths] and [pathFor]; nothing else spells a URL.
 library;
 
-/// A site language. English is the default and lives at the root.
+/// A site language. German is the default and lives at the root.
 enum Lang {
-  /// English, at the root (`/`).
-  en('en'),
+  /// German, at the root (`/`).
+  de('de'),
 
-  /// German, under `/de/`.
-  de('de');
+  /// English, under `/en/`.
+  en('en');
 
   new(this.code);
 
@@ -20,7 +20,7 @@ enum Lang {
   final String code;
 
   /// The other language.
-  Lang get other => this == en ? de : en;
+  Lang get other => this == de ? en : de;
 }
 
 /// The pages of the site. Every page exists in both languages.
@@ -51,12 +51,12 @@ const siteOrigin = 'https://cubealgos.de';
 /// pages end in `/` and build to `<path>index.html`; the 404 pages are flat
 /// files.
 const Map<PageKey, Map<Lang, String>> paths = {
-  PageKey.home: {Lang.en: '/', Lang.de: '/de/'},
-  PageKey.about: {Lang.en: '/about/', Lang.de: '/de/ueber-mich/'},
-  PageKey.contact: {Lang.en: '/contact/', Lang.de: '/de/kontakt/'},
-  PageKey.impressum: {Lang.en: '/impressum/', Lang.de: '/de/impressum/'},
-  PageKey.datenschutz: {Lang.en: '/datenschutz/', Lang.de: '/de/datenschutz/'},
-  PageKey.notFound: {Lang.en: '/404.html', Lang.de: '/de/404.html'},
+  PageKey.home: {Lang.de: '/', Lang.en: '/en/'},
+  PageKey.about: {Lang.de: '/ueber-cube-algos/', Lang.en: '/en/about/'},
+  PageKey.contact: {Lang.de: '/kontakt/', Lang.en: '/en/contact/'},
+  PageKey.impressum: {Lang.de: '/impressum/', Lang.en: '/en/impressum/'},
+  PageKey.datenschutz: {Lang.de: '/datenschutz/', Lang.en: '/en/datenschutz/'},
+  PageKey.notFound: {Lang.de: '/404.html', Lang.en: '/en/404.html'},
 };
 
 /// The path of [key] in [lang].

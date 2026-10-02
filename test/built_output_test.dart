@@ -75,7 +75,7 @@ void main() {
           html,
           contains(
             '<link hreflang="x-default" '
-            'href="${urlFor(entry.key, Lang.en)}" rel="alternate"/>',
+            'href="${urlFor(entry.key, Lang.de)}" rel="alternate"/>',
           ),
           reason: where,
         );
@@ -173,12 +173,12 @@ void main() {
 
     test('only the English page says the German text is authoritative', () {
       const line = 'The German version of this page is legally authoritative.';
-      expect(read('/impressum/'), contains(line));
-      expect(read('/de/impressum/'), isNot(contains(line)));
+      expect(read('/en/impressum/'), contains(line));
+      expect(read('/impressum/'), isNot(contains(line)));
     });
 
     test('the German page has § 5 DDG and both liability sections', () {
-      final html = read('/de/impressum/');
+      final html = read('/impressum/');
       for (final h in [
         'Angaben gemäß § 5 DDG',
         'Haftung für Inhalte',
@@ -298,10 +298,7 @@ void main() {
     }
 
     test('only the English page says the German text is authoritative', () {
-      expect(
-        read('/de/datenschutz/'),
-        isNot(contains('legally authoritative')),
-      );
+      expect(read('/datenschutz/'), isNot(contains('legally authoritative')));
     });
 
     test('title and description are as specified', () {

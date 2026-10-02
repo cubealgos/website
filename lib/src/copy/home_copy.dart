@@ -63,11 +63,10 @@ const Map<Lang, HomeCopy> homeCopy = {
     secondaryCta: 'Services and prices',
     studioTitle: 'A small studio, deliberately',
     studioText:
-        'Cube Algos was founded in 2023 by Kevin Scheeren, a trained '
-        'software developer. He leads every project personally, from '
-        'the first conversation to launch and beyond. There is no '
-        'account manager and no hand-off to a junior team. Because '
-        'capacity is limited, you get an honest start date before you '
+        'One developer, start to finish. Kevin Scheeren founded Cube '
+        'Algos in 2023 and builds every project himself, so the person '
+        'you talk to is the person who writes your code. Fewer projects '
+        'at a time means a start date you can rely on, agreed before you '
         'sign.',
     lanesTitle: 'Where do you start?',
     lanes: [
@@ -263,12 +262,11 @@ const Map<Lang, HomeCopy> homeCopy = {
     secondaryCta: 'Leistungen und Preise',
     studioTitle: 'Ein kleines Studio, mit Absicht',
     studioText:
-        'Cube Algos wurde 2023 von Kevin Scheeren gegründet, '
-        'ausgebildeter Softwareentwickler. Er führt jedes Projekt '
-        'persönlich, vom ersten Gespräch bis zum Launch und darüber '
-        'hinaus. Es gibt keinen Account-Manager und keine Übergabe an '
-        'ein Junior-Team. Weil die Kapazität begrenzt ist, erhalten Sie '
-        'vor Vertragsabschluss einen ehrlichen Starttermin.',
+        'Ein Entwickler, von Anfang bis Ende. Kevin Scheeren hat Cube '
+        'Algos 2023 gegründet und setzt jedes Projekt selbst um. Wer mit '
+        'Ihnen spricht, schreibt auch Ihren Code. Weniger Projekte '
+        'gleichzeitig heißt: ein verlässlicher Starttermin, vereinbart '
+        'vor Vertragsabschluss.',
     lanesTitle: 'Wo stehen Sie?',
     lanes: [
       (

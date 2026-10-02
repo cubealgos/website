@@ -2,7 +2,7 @@
 
 /// A tiny static file server over a built site, for the headless-browser
 /// checks. Directory URLs serve `index.html`; unknown paths serve `404.html`
-/// (`de/404.html` below `/de/`).
+/// (`en/404.html` below `/en/`).
 library;
 
 import 'dart:io';
@@ -32,11 +32,11 @@ Future<HttpServer> serveDirectory(String root) async {
     var file = File(p.join(root, path.substring(1)));
     var status = HttpStatus.ok;
     if (!file.existsSync() || !p.isWithin(root, file.path)) {
-      // German paths get the German 404 page, like the production server.
+      // English paths get the English 404 page, like the production server.
       file = File(
         p.join(
           root,
-          path == '/de' || path.startsWith('/de/') ? 'de/404.html' : '404.html',
+          path == '/en' || path.startsWith('/en/') ? 'en/404.html' : '404.html',
         ),
       );
       status = HttpStatus.notFound;

@@ -1,7 +1,7 @@
 name: website
 description: >-
-  Cube Algos' public website (cubealgos.de): a Jaspr static site, English at
-  the root and German under /de/.
+  Cube Algos' public website (cubealgos.de): a Jaspr static site, German at
+  the root and English under /en/.
 publish_to: none
 version: 0.1.0
 
