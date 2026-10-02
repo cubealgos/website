@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 /// The licence gate: every pub dependency (from `pubspec.lock`) and every npm
-/// dev tool (from `package-lock.json`, if one exists) must be on the policy's
+/// dev tool (from every `package-lock.json`: the root and `tool/<name>/`) must be on the policy's
 /// allow list, or be recorded as a per-package exception.
 library;
 
@@ -166,6 +166,21 @@ List<String> npmLicences(Object? license) {
   return cleaned.split(' OR ').map((s) => s.trim()).toList();
 }
 
+/// The npm lockfiles of the repo at [root]: `package-lock.json` at the root and
+/// in every `tool/<name>/` folder (dev tooling such as `tool/a11y/`).
+List<File> npmLockfiles(String root) {
+  final dirs = [Directory(root)];
+  final tool = Directory(p.join(root, 'tool'));
+  if (tool.existsSync()) {
+    dirs.addAll(tool.listSync().whereType<Directory>());
+  }
+  return [
+    for (final d in dirs)
+      if (File(p.join(d.path, 'package-lock.json')).existsSync())
+        File(p.join(d.path, 'package-lock.json')),
+  ];
+}
+
 /// Collects every hosted pub package and npm package of the repo at [root].
 Future<List<Dependency>> collectDependencies(
   String root,
@@ -189,8 +204,7 @@ Future<List<Dependency>> collectDependencies(
       deps.add(Dependency('pub', name, '${pkg['version']}', licences));
     }
   }
-  final npmLock = File(p.join(root, 'package-lock.json'));
-  if (npmLock.existsSync()) {
+  for (final npmLock in npmLockfiles(root)) {
     final doc = jsonDecode(npmLock.readAsStringSync()) as Map<String, dynamic>;
     final packages = (doc['packages'] as Map<String, dynamic>?) ?? {};
     for (final entry in packages.entries) {

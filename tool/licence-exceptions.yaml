@@ -7,7 +7,14 @@
 #   - package: some_package
 #     licence: MPL-2.0
 #     reason: "Why this is safe."
-exceptions: []
+exceptions:
+  - package: axe-core
+    licence: MPL-2.0
+    reason: >-
+      The org's existing dev-scope exception (dependency licence policy, Kevin,
+      2026-09-14): axe-core arrives only as a transitive dependency of
+      lighthouse in tool/a11y/ (the accessibility audit), never shipped,
+      consumed unmodified. Not the @axe-core/* runners, not pa11y.
 
 # `verified:` is a different kind of entry: pub.dev's detector sometimes finds
 # no licence for a package whose LICENSE file is fine (a detection gap). It

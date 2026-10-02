@@ -61,6 +61,28 @@ Future<int> _run(
 );
 
 void main() {
+  test('a lockfile under tool/<name>/ is checked too', () async {
+    final dir = _repo(pub: {'good': '1.0.0'});
+    final sub = Directory(p.join(dir.path, 'tool', 'a11y'))
+      ..createSync(recursive: true);
+    File(p.join(sub.path, 'package-lock.json')).writeAsStringSync(
+      jsonEncode({
+        'packages': {
+          '': {'name': 'a11y'},
+          'node_modules/axe-core': {'version': '4.0.0', 'license': 'MPL-2.0'},
+        },
+      }),
+    );
+    final log = <String>[];
+    expect(
+      await _run(dir, {
+        'good': ['mit'],
+      }, log),
+      1,
+    );
+    expect(log.join('\n'), contains('DENIED: npm:axe-core'));
+  });
+
   test('an MIT fixture passes', () async {
     final log = <String>[];
     final dir = _repo(pub: {'good': '1.0.0'});

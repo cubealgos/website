@@ -1,0 +1,35 @@
+# Verification only: no deployment step in this file. Runs on GitHub-hosted
+# `ubuntu-24.04` only (this repo is public: a fork PR must never run code on
+# the org's own infrastructure). Toolchain: `.github/actions/setup`.
+#
+# Accessibility over the built site, German and English, 404 pages included:
+# `a11y_check` (headless Chrome: landmarks, one H1, heading order, names, `lang`,
+# a visible focus ring on every tab stop, text contrast in the light and the dark
+# theme) and Lighthouse's accessibility audits (dev-only npm tooling in
+# `tool/a11y/`, lockfile committed; `axe-core` arrives through it, see
+# `tool/licence-exceptions.yaml`). Any failed audit fails the job.
+name: a11y
+
+on:
+  push:
+    branches: [development, production]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  a11y:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: ./.github/actions/setup
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+      - run: dart run tool/build.dart
+      - run: dart run tool/a11y_check.dart
+      - run: npm --prefix tool/a11y ci --ignore-scripts
+      - run: node tool/a11y/lighthouse_a11y.mjs
+        env:
+          CHROME_PATH: /usr/bin/google-chrome
