@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- German About: navigation and footer say „Über", URL `/ueber/` instead of `/ueber-cube-algos/` (#55).
 - Licence and governance files (#2).
 - Repo conventions, README, CLAUDE.md, commit-msg hook (#3).
 - Jaspr static scaffold with bilingual routes (#4).

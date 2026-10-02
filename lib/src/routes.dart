@@ -52,7 +52,7 @@ const siteOrigin = 'https://cubealgos.de';
 /// files.
 const Map<PageKey, Map<Lang, String>> paths = {
   PageKey.home: {Lang.de: '/', Lang.en: '/en/'},
-  PageKey.about: {Lang.de: '/ueber-cube-algos/', Lang.en: '/en/about/'},
+  PageKey.about: {Lang.de: '/ueber/', Lang.en: '/en/about/'},
   PageKey.contact: {Lang.de: '/kontakt/', Lang.en: '/en/contact/'},
   PageKey.impressum: {Lang.de: '/impressum/', Lang.en: '/en/impressum/'},
   PageKey.datenschutz: {Lang.de: '/datenschutz/', Lang.en: '/en/datenschutz/'},

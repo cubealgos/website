@@ -410,7 +410,7 @@ void main() {
       ),
       Lang.de: (
         tagline: 'Cube Algos, Heinsberg. Apps und interne Tools zum Festpreis.',
-        links: ['Start', 'Über Cube Algos', 'Kontakt'],
+        links: ['Start', 'Über', 'Kontakt'],
         skip: 'Zum Inhalt springen',
       ),
     };
