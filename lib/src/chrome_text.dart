@@ -37,8 +37,7 @@ const Map<Lang, ChromeText> chromeText = {
     langFooterLabel: 'Switch language',
     footerLabel: 'Footer',
     legalLabel: 'Legal',
-    tagline:
-        'Cube Algos, Heinsberg. Apps, tools and automation at fixed prices.',
+    tagline: 'Cube Algos, Heinsberg. Software studio since 2023.',
     home: 'Home',
     about: 'About',
     contact: 'Contact',
@@ -54,8 +53,7 @@ const Map<Lang, ChromeText> chromeText = {
     langFooterLabel: 'Sprache wechseln',
     footerLabel: 'Fußbereich',
     legalLabel: 'Rechtliches',
-    tagline:
-        'Cube Algos, Heinsberg. Apps, Tools und Automatisierung zum Festpreis.',
+    tagline: 'Cube Algos, Heinsberg. Softwarestudio seit 2023.',
     home: 'Start',
     about: 'Über',
     contact: 'Kontakt',

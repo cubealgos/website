@@ -26,23 +26,8 @@ Map<String, Object> faqJsonLd(Lang lang) => {
   ],
 };
 
-/// The heading of an offer: `name, price`.
-String offerHeading(Offer o) => '${o.name}, ${o.price}';
-
-/// `name, price` as separate spans joined by a visually hidden `", "`, so the
-/// text still reads `name, price` while the price can be styled on its own.
-List<Component> offerSpans(
-  Offer o, {
-  required String nameClass,
-  required String priceClass,
-}) => [
-  span(classes: nameClass, [t(o.name)]),
-  span(classes: 'vh', [t(', ')]),
-  span(classes: '$priceClass num', [t(o.price)]),
-];
-
-/// The home page body: hero with the price ledger, studio band, lanes, offers,
-/// workflow, FAQ, final call to action.
+/// The home page body: hero with the stack card, the studio's own software,
+/// client projects, the studio facts, FAQ, final call to action.
 class HomePage extends StatelessComponent {
   /// Creates the home page in [lang].
   const new({required this.lang, super.key});
@@ -55,16 +40,13 @@ class HomePage extends StatelessComponent {
     final c = homeCopy[lang]!;
     return Component.fragment([
       _hero(c),
+      _own(c),
+      _projects(c),
       _studio(c),
-      _lanes(c),
-      _offers(c),
-      _workflow(c),
       _faq(c),
       _cta(c),
     ]);
   }
-
-  Offer _offer(HomeCopy c, String id) => c.offers.firstWhere((o) => o.id == id);
 
   Component _hero(HomeCopy c) {
     final at = c.h1.indexOf(c.h1Mark);
@@ -99,171 +81,140 @@ class HomePage extends StatelessComponent {
             attrs: const {'data-i': '3'},
             [
               MailButton(label: startProject[lang]!),
-              a([t(c.secondaryCta)], href: '#offers', classes: 'text-link'),
+              a(
+                [t(c.secondaryCta)],
+                href: '#${c.ownAnchor}',
+                classes: 'text-link',
+              ),
             ],
           ),
         ]),
-        _ledger(c),
+        _stack(c),
       ]),
     ]);
   }
 
-  /// The price ledger beside the headline: the offer as a route (free call,
-  /// one of two builds, after launch), every row linking to its detail.
-  Component _ledger(HomeCopy c) {
-    Component row(String id, {bool leader = true}) {
-      final o = _offer(c, id);
-      return a(href: '#offer-$id', [
-        span(classes: 'r-name', [t(o.name)]),
-        span(classes: 'vh', [t(', ')]),
-        if (leader)
-          const span(
-            classes: 'r-dots',
-            attributes: {'aria-hidden': 'true'},
-            [],
-          ),
-        span(classes: 'r-price num', [t(o.price)]),
-      ]);
-    }
-
-    return el(
+  /// The tech stack beside the headline: label and value rows on a route
+  /// line, the free first call last, the note on client projects beneath. The
+  /// mark sting plays in the card head.
+  Component _stack(HomeCopy c) => el('div', classes: 'stack-col', [
+    el(
       'aside',
-      classes: 'ledger rise',
-      attrs: const {'data-i': '2', 'aria-labelledby': 'ledger-label'},
+      classes: 'ledger stack-card rise',
+      attrs: const {'data-i': '2', 'aria-labelledby': 'stack-label'},
       [
         div(classes: 'ledger-head', [
-          p(id: 'ledger-label', classes: 'eyebrow-muted', [t(c.offersTitle)]),
+          p(id: 'stack-label', classes: 'eyebrow-muted', [t(c.stackTitle)]),
           div(classes: 'ledger-mark', [RawText(stingSvg())]),
         ]),
-        ol(classes: 'route', [
-          li(classes: 'route-step is-call', [row('call')]),
-          li(classes: 'route-step route-fork', [
-            ul([
-              li([row('apps', leader: false)]),
-              li([row('automation', leader: false)]),
+        dl(classes: 'stack', [
+          for (var i = 0; i < c.stack.length; i++)
+            div(classes: i == c.stack.length - 1 ? 'is-call' : null, [
+              dt([t(c.stack[i].label)]),
+              dd([t(c.stack[i].value)]),
             ]),
-          ]),
-          li(classes: 'route-step', [row('after')]),
         ]),
-        p(classes: 'note', [t(c.vatNote)]),
       ],
-    );
-  }
+    ),
+    el(
+      'p',
+      classes: 'note stack-note rise',
+      attrs: const {'data-i': '3'},
+      [t(c.stackNote)],
+    ),
+  ]);
 
-  Component _studio(HomeCopy c) => el(
+  Component _own(HomeCopy c) => el(
     'section',
     classes: 'band',
-    attrs: const {'aria-labelledby': 'studio-title'},
+    id: c.ownAnchor,
+    attrs: const {'aria-labelledby': 'own-title'},
     [
       el('div', classes: 'wrap band-grid', [
-        h2(id: 'studio-title', classes: 'band-title reveal', [
-          t(c.studioTitle),
-        ]),
+        h2(id: 'own-title', classes: 'band-title reveal', [t(c.ownTitle)]),
         p(
           classes: 'band-text reveal',
           attributes: const {'data-i': '1'},
-          [t(c.studioText)],
+          [t(c.ownText)],
         ),
       ]),
     ],
   );
 
-  Component _lanes(HomeCopy c) => el(
+  Component _projects(HomeCopy c) => el(
     'section',
-    classes: 'sec',
-    attrs: const {'aria-labelledby': 'lanes-title'},
+    classes: 'sec projects',
+    id: c.projectsAnchor,
+    attrs: const {'aria-labelledby': 'projects-title'},
     [
       el('div', classes: 'wrap', [
-        h2(id: 'lanes-title', classes: 'sec-h2 reveal', [t(c.lanesTitle)]),
-        el('div', classes: 'lanes', [
-          for (final lane in c.lanes)
-            el('div', classes: 'lane reveal', [
-              h3([t(lane.title)]),
-              p([t(lane.text)]),
-              p([
-                a(
-                  [t(lane.link)],
-                  href: '#offer-${lane.offerId}',
-                  classes: 'lane-link',
-                ),
-              ]),
+        el('div', classes: 'sec-head reveal', [
+          h2(id: 'projects-title', [t(c.projectsTitle)]),
+          p(classes: 'measure', [t(c.projectsIntro)]),
+        ]),
+        el('div', classes: 'lanes lanes--eg', [
+          for (var i = 0; i < c.lanes.length; i++)
+            el(
+              'div',
+              classes: 'lane reveal',
+              attrs: {'data-i': '$i'},
+              [
+                h3([t(c.lanes[i].title)]),
+                p([t(c.lanes[i].text)]),
+                div(classes: 'lane-eg', [
+                  p(classes: 'eyebrow-muted', [t(c.examplesLabel)]),
+                  ul(classes: 'eg-list', [
+                    for (final e in c.lanes[i].examples) li([t(e)]),
+                  ]),
+                ]),
+              ],
+            ),
+        ]),
+        el('div', classes: 'route-block', [
+          h3(classes: 'reveal', [t(c.routeTitle)]),
+          el('div', classes: 'rail-wrap', [
+            ol(classes: 'rail reveal', [
+              for (var i = 0; i < c.steps.length; i++)
+                li(classes: i == 0 ? 'is-call' : null, [
+                  strong([t(c.steps[i].title)]),
+                  t(' ${c.steps[i].text}'),
+                ]),
             ]),
+            const div(classes: 'rail-fish', [Fish(pose: 'swimming')]),
+          ]),
+          el('div', classes: 'route-close reveal', [
+            MailButton(label: startProject[lang]!),
+            p(classes: 'note', [t(c.routeNote)]),
+          ]),
         ]),
       ]),
     ],
   );
 
-  Component _offers(HomeCopy c) {
-    final call = _offer(c, 'call');
-    Component row(Offer o) => li(id: 'offer-${o.id}', classes: 'pc-row', [
-      h3(classes: 'pc-head', [
-        ...offerSpans(o, nameClass: 'pc-name', priceClass: 'pc-price'),
-      ]),
-      p([t(o.text)]),
-      if (o.examples.isNotEmpty)
-        ul(classes: 'pc-eg', [
-          for (final e in o.examples)
-            li([
-              span([t(e.label)]),
-              // The dot travels with the price, never dangling at a line end.
-              t(' '),
-              span(classes: 'num', [t('· ${e.price}')]),
-            ]),
-        ]),
-    ]);
-
-    return el(
-      'section',
-      classes: 'sec',
-      id: 'offers',
-      attrs: const {'aria-labelledby': 'offers-title'},
-      [
-        el('div', classes: 'wrap', [
-          el('div', classes: 'sec-head reveal', [
-            h2(id: 'offers-title', [t(c.offersTitle)]),
-            p(classes: 'measure', [t(c.offersIntro)]),
-          ]),
-          el('div', classes: 'pc-grid reveal', [
-            el('article', id: 'offer-call', classes: 'pc-card', [
-              h3(classes: 'pc-head', [
-                span(classes: 'pc-name pc-node', [t(call.name)]),
-                span(classes: 'vh', [t(', ')]),
-                span(classes: 'pc-free num', [t(call.price)]),
-              ]),
-              p([t(call.text)]),
-            ]),
-            div([
-              ul(classes: 'pc-list', [
-                row(_offer(c, 'apps')),
-                row(_offer(c, 'automation')),
-                row(_offer(c, 'after')),
-              ]),
-              p(classes: 'note', [t('${c.vatNote} · ${c.accessibleNote}')]),
-            ]),
-          ]),
-        ]),
-      ],
-    );
-  }
-
-  Component _workflow(HomeCopy c) => el(
+  Component _studio(HomeCopy c) => el(
     'section',
-    classes: 'sec',
-    attrs: const {'aria-labelledby': 'workflow-title'},
+    classes: 'sheet studio-sheet',
+    attrs: const {'aria-labelledby': 'studio-title'},
     [
-      el('div', classes: 'wrap', [
-        h2(id: 'workflow-title', classes: 'sec-h2 reveal', [
-          t(c.workflowTitle),
+      el('div', classes: 'wrap sheet-grid', [
+        h2(id: 'studio-title', classes: 'sheet-title reveal', [
+          t(c.studioTitle),
         ]),
-        el('div', classes: 'rail-wrap', [
-          ol(classes: 'rail reveal', [
-            for (var i = 0; i < c.steps.length; i++)
-              li(classes: i == 0 ? 'is-call' : null, [
-                strong([t(c.steps[i].title)]),
-                t(' ${c.steps[i].text}'),
-              ]),
-          ]),
-          const div(classes: 'rail-fish', [Fish(pose: 'swimming')]),
+        ul(classes: 'studio-items', [
+          for (var i = 0; i < c.studio.length; i++)
+            li(
+              classes: 'reveal',
+              attributes: {'data-i': '${i < 5 ? i : 5}'},
+              [
+                strong([t(c.studio[i].lead)]),
+                t(' '),
+                ...inlineLinks(c.studio[i].text),
+                if (c.studio[i].aside case final aside?) ...[
+                  t(' '),
+                  ...inlineLinks(aside, linkClass: 'item-link'),
+                ],
+              ],
+            ),
         ]),
       ]),
     ],

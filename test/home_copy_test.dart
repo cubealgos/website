@@ -9,9 +9,10 @@ import 'dart:io';
 import 'package:test/test.dart';
 import 'package:website/src/copy/common_copy.dart';
 import 'package:website/src/copy/home_copy.dart';
+import 'package:website/src/outbound.dart';
 import 'package:website/src/page_meta.dart';
-import 'package:website/src/pages/home_page.dart';
 import 'package:website/src/routes.dart';
+import 'package:website/src/widgets.dart';
 
 import 'support/page_text.dart';
 
@@ -24,24 +25,31 @@ List<String> expectedBlocks(Lang lang) {
     c.sublineShort,
     startProject[lang]!,
     c.secondaryCta,
-    // The price ledger beside the headline.
-    c.offersTitle,
-    for (final o in c.offers) offerHeading(o),
-    c.vatNote,
-    c.studioTitle,
-    c.studioText,
-    c.lanesTitle,
-    for (final lane in c.lanes) ...[lane.title, lane.text, lane.link],
-    c.offersTitle,
-    c.offersIntro,
-    for (final o in c.offers) ...[
-      offerHeading(o),
-      o.text,
-      for (final e in o.examples) '${e.label} · ${e.price}',
+    // The stack card beside the headline, and the note beneath it.
+    c.stackTitle,
+    for (final row in c.stack) ...[row.label, row.value],
+    c.stackNote,
+    c.ownTitle,
+    c.ownText,
+    c.projectsTitle,
+    c.projectsIntro,
+    for (final lane in c.lanes) ...[
+      lane.title,
+      lane.text,
+      c.examplesLabel,
+      ...lane.examples,
     ],
-    '${c.vatNote} · ${c.accessibleNote}',
-    c.workflowTitle,
+    c.routeTitle,
     for (final s in c.steps) '${s.title} ${s.text}',
+    startProject[lang]!,
+    c.routeNote,
+    c.studioTitle,
+    for (final i in c.studio)
+      [
+        i.lead,
+        plainText(i.text),
+        if (i.aside != null) plainText(i.aside!),
+      ].join(' '),
     c.faqTitle,
     for (final q in c.faq) ...[q.question, q.answer],
     c.ctaTitle,
@@ -79,9 +87,11 @@ void main() {
         expect(html, isNot(contains('<base')));
       });
 
-      test('the offers anchor exists and the secondary CTA targets it', () {
-        expect(html, contains('id="offers"'));
-        expect(html, contains('href="#offers"'));
+      test('the secondary CTA targets the own-software section', () {
+        final c = homeCopy[lang]!;
+        expect(html, contains('id="${c.ownAnchor}"'));
+        expect(html, contains('href="#${c.ownAnchor}"'));
+        expect(html, contains('id="${c.projectsAnchor}"'));
       });
 
       test('the only contact route is mailto:hello@cubealgos.de', () {
@@ -101,7 +111,7 @@ void main() {
         final ld = jsonDecode(m.first[1]!) as Map<String, dynamic>;
         expect(ld['@type'], 'FAQPage');
         final entities = ld['mainEntity'] as List<dynamic>;
-        expect(entities, hasLength(8));
+        expect(entities, hasLength(9));
         final blocks = mainBlocks(html);
         final start = blocks.indexOf(homeCopy[lang]!.faqTitle) + 1;
         for (var i = 0; i < entities.length; i++) {
@@ -118,65 +128,70 @@ void main() {
   }
 
   for (final lang in Lang.values) {
-    test('home ${lang.code}: no separate after-launch section', () {
-      final html = builtHtml(PageKey.home, lang);
-      expect(html, isNot(contains('id="after-launch"')));
-      expect(html, contains('id="offer-after"'));
-    });
-
-    test('home ${lang.code}: lane links point at their offer', () {
-      final html = builtHtml(PageKey.home, lang);
-      final c = homeCopy[lang]!;
-      for (final lane in c.lanes) {
-        expect(
-          html,
-          contains(
-            'class="lane-link" href="#offer-${lane.offerId}">${lane.link}</a>',
-          ),
-        );
-      }
-    });
-
     test('home ${lang.code}: full and short hero sublines both built', () {
       final html = builtHtml(PageKey.home, lang);
       expect(html, contains('hero-sub hero-sub--full'));
       expect(html, contains('hero-sub hero-sub--short'));
     });
-  }
 
-  test('prices are formatted per language', () {
-    final en = homeCopy[Lang.en]!.offers.map((o) => o.price);
-    final de = homeCopy[Lang.de]!.offers.map((o) => o.price);
-    expect(en, ['free', 'from €1,000', 'from €3,000', '€95 an hour']);
-    expect(de, ['kostenlos', 'ab 1.000 €', 'ab 3.000 €', '95 € pro Stunde']);
-  });
+    test(
+      'home ${lang.code}: three lanes, five studio items, nine questions',
+      () {
+        final c = homeCopy[lang]!;
+        expect(c.lanes, hasLength(3));
+        expect(c.studio, hasLength(5));
+        expect(c.faq, hasLength(9));
+        expect(c.stack, hasLength(6));
+      },
+    );
 
-  test('three lanes, the third for processes, each linking to an offer', () {
-    for (final lang in Lang.values) {
-      final c = homeCopy[lang]!;
-      expect(c.lanes, hasLength(3));
-      expect(c.lanes.last.offerId, 'automation');
-    }
-  });
-
-  test('no website offer, no care plans', () {
-    for (final lang in Lang.values) {
+    test('home ${lang.code}: no price, no pricing model, no product name', () {
       final html = builtHtml(PageKey.home, lang);
+      final text = mainBlocks(html).join('\n');
+      expect(text, isNot(matches(RegExp(r'€|\bEUR\b|\bEuro\b'))));
+      expect(text, isNot(matches(RegExp(r'\d\s?%'))));
+      expect(text, isNot(matches(_pricing)));
+      expect(html, isNot(contains('id="offers"')));
       expect(
         html,
-        isNot(matches(RegExp('€ ?49|49 €|149|2[.,]490|490|8[.,]900'))),
+        isNot(matches(RegExp('barrierewacht', caseSensitive: false))),
       );
-      expect(html, isNot(contains('Idea check')));
-    }
-  });
+    });
 
-  for (final lang in Lang.values) {
-    test('every ledger link on home ${lang.code} has a target', () {
+    test(
+      'home ${lang.code}: the free first call is the one thing about money',
+      () {
+        final c = homeCopy[lang]!;
+        expect(c.stack.last.value, lang == Lang.de ? 'kostenlos' : 'free');
+        expect(
+          c.steps.first.title,
+          contains(lang == Lang.de ? 'Kostenloses' : 'Free'),
+        );
+      },
+    );
+
+    test('home ${lang.code}: links to other sites are the allow-listed', () {
       final html = builtHtml(PageKey.home, lang);
-      for (final id in ['call', 'apps', 'automation', 'after']) {
-        expect(html, contains('id="offer-$id"'));
-        expect('href="#offer-$id"'.allMatches(html), isNotEmpty);
-      }
+      final hrefs = {
+        for (final m in RegExp(
+          '<a [^>]*href="(https?://[^"]*)"',
+        ).allMatches(html))
+          m[1]!,
+      };
+      expect(hrefs, {
+        if (lang == Lang.de) personalSiteUrl else personalSiteUrlEn,
+        githubOrgUrl,
+      });
+      expect(html, contains('rel="noreferrer"'));
     });
   }
 }
+
+/// Words of a pricing model: the studio's marketing pages say nothing about
+/// prices, a fixed price, VAT or an hourly rate (decisions 42 and 43).
+final _pricing = RegExp(
+  'Festpreis|fixed price|Stundensatz|hourly|per hour|pro Stunde|'
+  r'\bUSt\b|\bVAT\b|zzgl|Nettopreis|keine Kosten|costs nothing|'
+  r'\bPreis|\bprices?\b',
+  caseSensitive: false,
+);

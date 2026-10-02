@@ -5,6 +5,8 @@ import 'dart:io';
 import 'package:path/path.dart' as p;
 import 'package:test/test.dart';
 
+import 'package:website/src/outbound.dart';
+
 import '../../tool/src/html_check.dart';
 
 const _head = '''
@@ -210,6 +212,53 @@ void main() {
         ),
       });
       expect(checkSite(dir), isEmpty);
+    });
+    test('pass for the allow-listed outbound links, as plain links only', () {
+      final dir = _site({
+        'index.html': _page(
+          body: [
+            for (final url in outboundUrls)
+              '<a href="$url" rel="noreferrer">x</a>',
+          ].join(),
+        ),
+      });
+      expect(checkSite(dir), isEmpty);
+    });
+    test('fail for an outbound link that is not on the allow list', () {
+      for (final url in [
+        'https://github.com/other',
+        'https://github.com/cubealgos/website',
+        'https://www.linkedin.com/in/someone',
+        'https://kevinscheeren.de/kontakt/',
+        'https://example.com/',
+      ]) {
+        final dir = _site({'index.html': _page(body: '<a href="$url">x</a>')});
+        expect(_rules(dir), ['foreign-host'], reason: url);
+      }
+    });
+    test('fail for an allow-listed URL with a query, fragment or http', () {
+      for (final url in [
+        '$githubOrgUrl?ref=site',
+        '$githubOrgUrl#top',
+        'http://github.com/cubealgos',
+        personalSiteUrl.replaceFirst('https://', '//'),
+      ]) {
+        final dir = _site({'index.html': _page(body: '<a href="$url">x</a>')});
+        expect(_rules(dir), ['foreign-host'], reason: url);
+      }
+    });
+    test('fail for an allow-listed URL used as anything but a link', () {
+      for (final body in [
+        '<img src="$githubOrgUrl" alt="x"/>',
+        '<script src="$githubProfileUrl"></script>',
+        '<form action="$linkedinProfileUrl"></form>',
+        '<a href="/" src="$personalSiteUrl">x</a>',
+      ]) {
+        final dir = _site({'index.html': _page(body: body)});
+        expect(_rules(dir), ['foreign-host'], reason: body);
+      }
+      final dir = _site({'a.css': '@font-face{src:url($githubOrgUrl)}'});
+      expect(_rules(dir), ['third-party']);
     });
     test('fail for another host', () {
       final dir = _site({

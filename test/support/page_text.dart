@@ -41,6 +41,17 @@ List<String> mainBlocks(String html) {
   body = body.replaceAll(RegExp('<script[^>]*>.*?</script>', dotAll: true), '');
   // Decorative inline SVGs (the card sting) carry a stylesheet, not text.
   body = body.replaceAll(RegExp('<style[^>]*>.*?</style>', dotAll: true), '');
+  // The renderer wraps a long line of text and inline elements; a source
+  // newline before more text, or after text before an inline tag, is no block
+  // boundary. A newline between two tags still separates sibling inline
+  // elements such as two buttons.
+  body = body.replaceAllMapped(
+    RegExp(
+      r'\s*\n\s*(?=[^<\s])|'
+      '(?<=[^>\\s])[ \\t]*\\n\\s*(?=<(?:${_inline.join('|')})\\b)',
+    ),
+    (_) => ' ',
+  );
   body = body.replaceAllMapped(RegExp(r'</?([a-zA-Z][a-zA-Z0-9]*)\b[^>]*>'), (
     m,
   ) {
