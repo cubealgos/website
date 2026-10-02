@@ -8,9 +8,11 @@ import 'dart:io';
 import 'package:test/test.dart';
 import 'package:website/src/copy/about_copy.dart';
 import 'package:website/src/copy/common_copy.dart';
+import 'package:website/src/outbound.dart';
 import 'package:website/src/page_meta.dart';
 import 'package:website/src/pages/about_page.dart';
 import 'package:website/src/routes.dart';
+import 'package:website/src/widgets.dart';
 
 import 'support/page_text.dart';
 
@@ -21,12 +23,12 @@ List<String> expectedBlocks(Lang lang) {
     c.lede,
     c.whoTitle,
     ...c.who,
-    '${c.linksIntro} ${c.links.join(' · ')}',
+    '${c.linksIntro} ${c.links.map(plainText).join(' · ')}',
     c.oneTitle,
     c.one,
     c.ownTitle,
     c.own,
-    c.ownCode,
+    plainText(c.ownCode),
     c.howTitle,
     ...c.how,
     c.whereTitle,
@@ -88,11 +90,30 @@ void main() {
         );
       });
 
-      test('other sites are plain text, never links', () {
-        expect(html, isNot(matches(RegExp('<a [^>]*href="(https?:)?//'))));
-        for (final address in aboutCopy[lang]!.links) {
-          expect(html, contains('<span class="url">$address</span>'));
-        }
+      test('the founder links are the three profile links, labelled', () {
+        final line = RegExp(
+          '<p class="links-line">(.*?)</p>',
+          dotAll: true,
+        ).firstMatch(html)![1]!;
+        final links = {
+          for (final m in RegExp(
+            '<a [^>]*href="([^"]*)"[^>]*>(.*?)</a>',
+          ).allMatches(line))
+            m[2]!: m[1]!,
+        };
+        expect(links, {
+          'kevinscheeren.de': lang == Lang.de
+              ? personalSiteUrl
+              : personalSiteUrlEn,
+          'GitHub': githubProfileUrl,
+          'LinkedIn': linkedinProfileUrl,
+        });
+        expect(html, contains('href="$githubOrgUrl"'));
+        // Two links labelled "GitHub" lead to different places: the one to the
+        // organisation has its own accessible name, which holds the label.
+        final org = RegExp('<a [^>]*href="$githubOrgUrl"[^>]*>')
+            .firstMatch(html)![0]!;
+        expect(org, matches(RegExp('aria-label="[^"]*GitHub[^"]*"')));
       });
 
       test('no sentence about prices', () {

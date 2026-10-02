@@ -6,6 +6,7 @@ library;
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/server.dart';
 import 'package:website/src/chrome_text.dart';
+import 'package:website/src/outbound.dart';
 
 /// A plain element: [tag] with optional [classes], [id] and [attrs].
 Component el(
@@ -96,3 +97,36 @@ class LinkButton extends StatelessComponent {
     a([Component.text(label)], href: href, classes: 'btn'),
   ]);
 }
+
+final _markdownLink = RegExp(r'\[([^\]]+)\]\(([^)|]+)(?:\|([^)]+))?\)');
+
+/// [text] with `[label](url)` links turned into `<a>` elements; the URLs must
+/// be in [outboundUrls] (asserted), so a typo cannot ship a stray link. A
+/// `[label](url|name)` link also carries `name` as its accessible name (it
+/// must contain the label), for two links of one label to different targets.
+List<Component> inlineLinks(String text, {String? linkClass}) {
+  final out = <Component>[];
+  var at = 0;
+  for (final m in _markdownLink.allMatches(text)) {
+    assert(
+      outboundUrls.contains(m[2]),
+      'not an allowed outbound link: ${m[2]}',
+    );
+    if (m.start > at) out.add(t(text.substring(at, m.start)));
+    out.add(
+      a(
+        [t(m[1]!)],
+        href: m[2]!,
+        classes: linkClass,
+        attributes: {'rel': 'noreferrer', 'aria-label': ?m[3]},
+      ),
+    );
+    at = m.end;
+  }
+  if (at < text.length) out.add(t(text.substring(at)));
+  return out;
+}
+
+/// [text] as read aloud: the labels of its `[label](url)` links, no URLs.
+String plainText(String text) =>
+    text.replaceAllMapped(_markdownLink, (m) => m[1]!);

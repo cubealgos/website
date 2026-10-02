@@ -207,10 +207,11 @@ class HomePage extends StatelessComponent {
               attributes: {'data-i': '${i < 5 ? i : 5}'},
               [
                 strong([t(c.studio[i].lead)]),
-                t(' ${c.studio[i].text}'),
+                t(' '),
+                ...inlineLinks(c.studio[i].text),
                 if (c.studio[i].aside case final aside?) ...[
                   t(' '),
-                  span(classes: 'item-aside', [t(aside)]),
+                  ...inlineLinks(aside, linkClass: 'item-link'),
                 ],
               ],
             ),

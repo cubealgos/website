@@ -9,8 +9,10 @@ import 'dart:io';
 import 'package:test/test.dart';
 import 'package:website/src/copy/common_copy.dart';
 import 'package:website/src/copy/home_copy.dart';
+import 'package:website/src/outbound.dart';
 import 'package:website/src/page_meta.dart';
 import 'package:website/src/routes.dart';
+import 'package:website/src/widgets.dart';
 
 import 'support/page_text.dart';
 
@@ -43,7 +45,11 @@ List<String> expectedBlocks(Lang lang) {
     c.routeNote,
     c.studioTitle,
     for (final i in c.studio)
-      '${i.lead} ${i.text}${i.aside == null ? '' : ' ${i.aside}'}',
+      [
+        i.lead,
+        plainText(i.text),
+        if (i.aside != null) plainText(i.aside!),
+      ].join(' '),
     c.faqTitle,
     for (final q in c.faq) ...[q.question, q.answer],
     c.ctaTitle,
@@ -164,11 +170,19 @@ void main() {
       },
     );
 
-    test('home ${lang.code}: other sites are plain text, never links', () {
+    test('home ${lang.code}: links to other sites are the allow-listed', () {
       final html = builtHtml(PageKey.home, lang);
-      expect(html, isNot(matches(RegExp('<a [^>]*href="(https?:)?//'))));
-      expect(html, contains('github.com/cubealgos'));
-      expect(html, contains('kevinscheeren.de'));
+      final hrefs = {
+        for (final m in RegExp(
+          '<a [^>]*href="(https?://[^"]*)"',
+        ).allMatches(html))
+          m[1]!,
+      };
+      expect(hrefs, {
+        if (lang == Lang.de) personalSiteUrl else personalSiteUrlEn,
+        githubOrgUrl,
+      });
+      expect(html, contains('rel="noreferrer"'));
     });
   }
 }

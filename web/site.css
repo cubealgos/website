@@ -946,20 +946,20 @@ h3 {
   margin: 0;
 }
 
-/* A pointer to another site, shown as plain text: the built pages link to no
-   other host (html_check), so addresses are text and never a link. */
-.item-aside {
+/* Links to other sites (the few html_check allows): a plain text link, set
+   bold where it stands alone. */
+.item-link {
   display: inline-block;
   font-weight: var(--font-weight-display);
   padding-block: var(--spacing-1);
 }
 
-.url {
+.links-line a {
   font-weight: var(--font-weight-display);
   white-space: nowrap;
 }
 
-/* Short bold lines and addresses never hyphenate ("Softwarestu-dio",
+/* Short bold lines and link names never hyphenate ("Softwarestu-dio",
    "kevinschee-ren.de" at 320 px). */
 .tagline,
 .links-line {

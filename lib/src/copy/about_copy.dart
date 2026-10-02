@@ -5,6 +5,7 @@
 // ignore_for_file: unnecessary_parenthesis
 library;
 
+import 'package:website/src/outbound.dart';
 import 'package:website/src/routes.dart';
 
 /// All copy of the about page in one language.
@@ -14,8 +15,8 @@ typedef AboutCopy = ({
   String whoTitle,
   List<String> who,
 
-  /// The line before the founder's addresses: they are plain text, as the
-  /// built pages link to no other host.
+  /// The line before the founder's links, and the links, each a
+  /// `[label](url)` to a URL of `outbound.dart`.
   String linksIntro,
   List<String> links,
 
@@ -26,7 +27,7 @@ typedef AboutCopy = ({
   String ownTitle,
   String own,
 
-  /// The pointer to the studio's public code, plain text like `links`.
+  /// The pointer to the studio's public code, with a `[label](url)` link.
   String ownCode,
   String howTitle,
   List<String> how,
@@ -57,9 +58,9 @@ const Map<Lang, AboutCopy> aboutCopy = {
     ],
     linksIntro: 'His CV and projects are on his own site:',
     links: [
-      'kevinscheeren.de',
-      'github.com/kevinscheeren',
-      'linkedin.com/in/kevinscheeren',
+      '[kevinscheeren.de]($personalSiteUrlEn)',
+      '[GitHub]($githubProfileUrl)',
+      '[LinkedIn]($linkedinProfileUrl)',
     ],
     photoAlt: 'Kevin Scheeren',
     oneTitle: 'One person, on purpose',
@@ -75,7 +76,7 @@ const Map<Lang, AboutCopy> aboutCopy = {
         'development.',
     ownCode:
         'The code of this website and the Cube Algos brand are public on '
-        'github.com/cubealgos.',
+        '[GitHub]($githubOrgUrl|The Cube Algos GitHub organisation).',
     howTitle: 'How Cube Algos works',
     how: [
       'You see progress as it happens.',
@@ -112,9 +113,9 @@ const Map<Lang, AboutCopy> aboutCopy = {
     ],
     linksIntro: 'Lebenslauf und Projekte stehen auf Kevins eigener Website:',
     links: [
-      'kevinscheeren.de',
-      'github.com/kevinscheeren',
-      'linkedin.com/in/kevinscheeren',
+      '[kevinscheeren.de]($personalSiteUrl)',
+      '[GitHub]($githubProfileUrl)',
+      '[LinkedIn]($linkedinProfileUrl)',
     ],
     photoAlt: 'Kevin Scheeren',
     oneTitle: 'Eine Person, mit Absicht',
@@ -130,7 +131,8 @@ const Map<Lang, AboutCopy> aboutCopy = {
         'Entwicklung.',
     ownCode:
         'Der Code dieser Website und die Marke von Cube Algos liegen '
-        'öffentlich auf github.com/cubealgos.',
+        'öffentlich auf '
+        '[GitHub]($githubOrgUrl|GitHub-Organisation von Cube Algos).',
     howTitle: 'So arbeitet Cube Algos',
     how: [
       'Den Fortschritt sehen Sie laufend.',

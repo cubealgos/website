@@ -6,6 +6,7 @@
 /// free first call is the only thing it says about money.
 library;
 
+import 'package:website/src/outbound.dart';
 import 'package:website/src/routes.dart';
 
 /// One row of the hero's stack card: a `label` and its `value`.
@@ -19,8 +20,8 @@ typedef Lane = ({String title, String text, List<String> examples});
 typedef Step = ({String title, String text});
 
 /// One item of the studio section: a bold `lead`, its `text` and, for the
-/// pointer to another site, an `aside` shown as plain text (the built pages
-/// link to no other host).
+/// pointer to Kevin's site, an `aside`. `text` and `aside` may carry
+/// `[label](url)` links, only to the URLs of `outbound.dart`.
 typedef StudioItem = ({String lead, String text, String? aside});
 
 /// One FAQ entry.
@@ -164,7 +165,7 @@ const Map<Lang, HomeCopy> homeCopy = {
             'Kevin Scheeren founded Cube Algos in 2023 and builds everything '
             "himself, the studio's own products as well as client projects. "
             'The person you talk to is the person who writes the code.',
-        aside: "Kevin's background: kevinscheeren.de",
+        aside: "[Kevin's background: kevinscheeren.de]($personalSiteUrlEn)",
       ),
       (
         lead: 'Built with AI, checked by a developer.',
@@ -192,7 +193,7 @@ const Map<Lang, HomeCopy> homeCopy = {
         lead: 'Code you can read.',
         text:
             'The code of this website and the Cube Algos brand are public on '
-            'github.com/cubealgos.',
+            '[GitHub]($githubOrgUrl).',
         aside: null,
       ),
     ],
@@ -387,7 +388,7 @@ const Map<Lang, HomeCopy> homeCopy = {
             'Kevin Scheeren hat Cube Algos 2023 gegründet und baut alles '
             'selbst, die eigenen Produkte ebenso wie die Projekte für seine '
             'Kundschaft. Wer mit Ihnen spricht, schreibt auch den Code.',
-        aside: 'Kevins Werdegang: kevinscheeren.de',
+        aside: '[Kevins Werdegang: kevinscheeren.de]($personalSiteUrl)',
       ),
       (
         lead: 'Mit KI gebaut, von einem Entwickler geprüft.',
@@ -415,7 +416,7 @@ const Map<Lang, HomeCopy> homeCopy = {
         lead: 'Code zum Nachlesen.',
         text:
             'Der Code dieser Website und die Marke von Cube Algos liegen '
-            'öffentlich auf github.com/cubealgos.',
+            'öffentlich auf [GitHub]($githubOrgUrl).',
         aside: null,
       ),
     ],

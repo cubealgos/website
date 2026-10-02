@@ -46,12 +46,11 @@ class AboutPage extends StatelessComponent {
             el('div', classes: 'split-body reveal', [
               for (var i = 0; i < c.who.length; i++)
                 p(classes: i == 0 ? 'split-lede' : null, [t(c.who[i])]),
-              // Plain text: the built pages link to no other host.
               p(classes: 'links-line', [
                 t('${c.linksIntro} '),
                 for (var i = 0; i < c.links.length; i++) ...[
                   if (i > 0) t(' · '),
-                  span(classes: 'url', [t(c.links[i])]),
+                  ...inlineLinks(c.links[i]),
                 ],
               ]),
             ]),
@@ -82,7 +81,7 @@ class AboutPage extends StatelessComponent {
             h2(id: 'own-title', classes: 'sheet-title reveal', [t(c.ownTitle)]),
             el('div', classes: 'sheet-body reveal', [
               p(classes: 'sheet-lede', [t(c.own)]),
-              p([t(c.ownCode)]),
+              p(inlineLinks(c.ownCode)),
             ]),
           ]),
         ],
