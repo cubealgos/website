@@ -10,7 +10,8 @@ import 'package:website/src/routes.dart';
 /// One offer; its heading reads `name, price`.
 typedef Offer = ({String id, String name, String price, String text});
 
-/// One of the two "where do you start" lanes; its `offerIds` link to offers.
+/// One of the two "where do you start" lanes; its `offerIds` link to offers
+/// (by name, without the price).
 typedef Lane = ({String title, String text, List<String> offerIds});
 
 /// One workflow step: a bold `title` followed by `text`.
@@ -27,6 +28,9 @@ typedef HomeCopy = ({
   /// The part of `h1` that carries the drawn underline.
   String h1Mark,
   String subline,
+
+  /// The shorter subline shown on phones (below 30rem) instead of `subline`.
+  String sublineShort,
   String secondaryCta,
   String studioTitle,
   String studioText,
@@ -39,9 +43,6 @@ typedef HomeCopy = ({
   String accessibleNote,
   String workflowTitle,
   List<Step> steps,
-  String afterTitle,
-  String afterText,
-  String afterNote,
   String faqTitle,
   List<Faq> faq,
   String ctaTitle,
@@ -60,6 +61,9 @@ const Map<Lang, HomeCopy> homeCopy = {
         'owner-led businesses and founders: AI-accelerated, reviewed line '
         'by line by a trained developer, at a fixed price agreed before '
         'work starts.',
+    sublineShort:
+        'Built faster with AI, checked by a trained developer, at a fixed '
+        'price.',
     secondaryCta: 'Services and prices',
     studioTitle: 'A small studio, deliberately',
     studioText:
@@ -73,20 +77,17 @@ const Map<Lang, HomeCopy> homeCopy = {
       (
         title: 'For your business',
         text:
-            'You run a business with a few people to a few dozen: a trade, '
-            'a practice, a studio, a restaurant, a shop. You need a booking '
-            'tool, a customer portal or a dashboard for your team. Cube '
-            'Algos builds it around how your work already flows, so you can '
-            'keep running the business.',
+            'You run a business with a few people to a few dozen. Cube '
+            'Algos builds you a booking tool, a customer portal or an '
+            'internal dashboard that fits how your work already flows.',
         offerIds: ['tool'],
       ),
       (
         title: 'For your idea',
         text:
-            "You have an idea for an app or a product, and you're deciding "
-            'on your own what happens next. Cube Algos helps you find out '
-            'what to build first, then builds it. You start with a free '
-            'call, and you know what it costs before anything is built.',
+            'You have an idea for an app or a product. Cube Algos helps you '
+            'cut the first version down to what matters, then builds it. '
+            'You know the price before anything is built.',
         offerIds: ['mvp'],
       ),
     ],
@@ -100,77 +101,48 @@ const Map<Lang, HomeCopy> homeCopy = {
         name: 'First call',
         price: 'free',
         text:
-            '30 to 45 minutes by video or phone. Within about 3 working '
-            'days you get a written scope with a fixed price and a start '
-            "date. If you don't go ahead, it costs nothing.",
+            '30 to 45 minutes by video or phone, then a written scope with a '
+            'fixed price and a start date within about 3 working days. If '
+            "you don't go ahead, it costs nothing.",
       ),
       (
         id: 'tool',
         name: 'Internal tool',
         price: 'from €5,900',
         text:
-            'A booking tool, a customer portal or an ops dashboard for your '
-            'team, built around one core flow and how your business '
-            'actually works.',
+            'A booking tool, a customer portal or an internal dashboard for '
+            'your team, focused on one core function.',
       ),
       (
         id: 'mvp',
         name: 'MVP / SaaS v1',
         price: 'from €6,900',
         text:
-            'The first working version of your product, built around one '
-            'core flow and small enough to put in front of real users and '
-            'learn from.',
+            'The first working version of your product: one core function, '
+            'small enough to learn from real users early.',
       ),
       (
         id: 'after',
         name: 'After launch',
         price: '€95 an hour',
         text:
-            'Follow-up work and updates, on request. You are told the cost '
-            'before work starts, and nothing is billed without your yes.',
+            'Follow-up work and updates, on request. You know the cost before '
+            'work starts.',
       ),
     ],
     vatNote: 'All prices plus 19% VAT.',
     accessibleNote: 'Every build is accessible from the start.',
     workflowTitle: 'The workflow',
     steps: [
-      (
-        title: 'Free call.',
-        text: 'You and Kevin talk for 30 to 45 minutes, by video or phone.',
-      ),
+      (title: 'Free call.', text: '30 to 45 minutes, by video or phone.'),
       (
         title: 'Written scope.',
-        text:
-            'Within about 3 working days you get what will be built, a '
-            'fixed price and a start date, in writing. If you '
-            "don't go ahead, it costs nothing.",
+        text: 'A fixed price and a start date in about 3 working days.',
       ),
-      (
-        title: 'Build.',
-        text:
-            'Kevin builds it. You see progress along the way, not only at '
-            'the end.',
-      ),
-      (
-        title: 'Launch.',
-        text: 'It goes live, and Cube Algos makes sure it works.',
-      ),
-      (
-        title: 'After launch.',
-        text:
-            'The app is yours. Follow-up work and updates are available on '
-            'request.',
-      ),
+      (title: 'Build.', text: 'Kevin builds; you see progress along the way.'),
+      (title: 'Launch.', text: 'It goes live and is yours.'),
+      (title: 'After launch.', text: 'Changes and updates on request.'),
     ],
-    afterTitle: 'After launch',
-    afterText:
-        "Once it's live, it's yours. Software drifts out of date over "
-        'time, so updates and follow-up work are available on request, at '
-        '€95 an hour. You are told the cost before work starts.',
-    afterNote:
-        'There are no care subscriptions and no retainers. Nobody '
-        'monitors your app unless you ask for it.',
     faqTitle: 'Questions',
     faq: [
       (
@@ -256,6 +228,9 @@ const Map<Lang, HomeCopy> homeCopy = {
         'Produktversionen für inhabergeführte Betriebe und Gründungsteams. '
         'Mit KI schneller gebaut, Zeile für Zeile von einem ausgebildeten '
         'Entwickler geprüft und zu einem Festpreis, den Sie vorher kennen.',
+    sublineShort:
+        'Mit KI schneller gebaut, von einem ausgebildeten Entwickler '
+        'geprüft, zum Festpreis.',
     secondaryCta: 'Leistungen und Preise',
     studioTitle: 'Klein, und das mit Absicht',
     studioText:
@@ -270,21 +245,18 @@ const Map<Lang, HomeCopy> homeCopy = {
         title: 'Für Ihren Betrieb',
         text:
             'Sie führen einen Betrieb mit wenigen bis ein paar Dutzend '
-            'Beschäftigten: Handwerk, Praxis, Studio, Gastronomie, '
-            'Einzelhandel. Sie brauchen eine Online-Terminbuchung, ein '
-            'Kundenportal oder eine Übersicht für Ihr Team. Cube Algos baut '
-            'sie passend zu Ihren Abläufen, und Sie kümmern sich weiter um '
-            'Ihr Geschäft.',
+            'Beschäftigten. Cube Algos baut Ihnen eine Online-Terminbuchung, '
+            'ein Kundenportal oder ein internes Dashboard, passend zu Ihren '
+            'Abläufen.',
         offerIds: ['tool'],
       ),
       (
         title: 'Für Ihre Idee',
         text:
-            'Sie haben eine Idee für eine App oder ein Produkt und '
-            'entscheiden allein, wie es weitergeht. Cube Algos hilft Ihnen '
-            'herauszufinden, was zuerst gebaut werden sollte, und baut genau '
-            'das. Am Anfang steht ein kostenloses Gespräch, und den Preis '
-            'kennen Sie, bevor etwas gebaut wird.',
+            'Sie haben eine Idee für eine App oder ein Produkt. Cube Algos '
+            'hilft Ihnen, die erste Version auf das Wesentliche zu '
+            'beschränken, und baut sie. Den Preis kennen Sie, bevor etwas '
+            'gebaut wird.',
         offerIds: ['mvp'],
       ),
     ],
@@ -298,35 +270,34 @@ const Map<Lang, HomeCopy> homeCopy = {
         name: 'Erstgespräch',
         price: 'kostenlos',
         text:
-            '30 bis 45 Minuten per Video oder Telefon. Danach erhalten Sie '
-            'innerhalb von etwa drei Werktagen ein schriftliches Angebot mit '
-            'Festpreis und Starttermin. Sagen Sie ab, kostet Sie das nichts.',
+            '30 bis 45 Minuten per Video oder Telefon. Innerhalb von etwa '
+            'drei Werktagen folgt ein schriftliches Angebot mit Festpreis und '
+            'Starttermin. Wenn Sie nicht beauftragen, entstehen Ihnen keine '
+            'Kosten.',
       ),
       (
         id: 'tool',
         name: 'Internes Tool',
         price: 'ab 5.900 €',
         text:
-            'Zum Beispiel eine Online-Terminbuchung, ein Kundenportal oder '
-            'eine Übersicht für Ihr Team. Gebaut rund um einen zentralen '
-            'Ablauf und so, wie Ihr Betrieb wirklich arbeitet.',
+            'Etwa eine Online-Terminbuchung, ein Kundenportal oder ein '
+            'internes Dashboard, mit Fokus auf eine Kernfunktion.',
       ),
       (
         id: 'mvp',
         name: 'MVP / SaaS v1',
         price: 'ab 6.900 €',
         text:
-            'Die erste funktionierende Version Ihres Produkts. Gebaut rund '
-            'um einen zentralen Ablauf und klein genug, um früh echte '
-            'Rückmeldungen zu bekommen und daraus zu lernen.',
+            'Die erste funktionierende Version Ihres Produkts: eine '
+            'Kernfunktion, klein genug für frühe, echte Rückmeldungen.',
       ),
       (
         id: 'after',
-        name: 'Nach dem Start',
+        name: 'Nach der Übergabe',
         price: '95 € pro Stunde',
         text:
-            'Änderungen und Updates auf Anfrage. Sie kennen die Kosten '
-            'vorher, und ohne Ihre Zustimmung wird nichts abgerechnet.',
+            'Änderungen und Updates auf Anfrage. Die Kosten kennen Sie '
+            'vorher.',
       ),
     ],
     vatNote: 'Alle Preise zzgl. 19 % USt.',
@@ -335,41 +306,19 @@ const Map<Lang, HomeCopy> homeCopy = {
     steps: [
       (
         title: 'Kostenloses Gespräch.',
-        text: '30 bis 45 Minuten mit Kevin, per Video oder Telefon.',
+        text: '30 bis 45 Minuten, per Video oder Telefon.',
       ),
       (
         title: 'Schriftliches Angebot.',
-        text:
-            'Innerhalb von etwa drei Werktagen: was gebaut wird, zu welchem '
-            'Festpreis und ab wann. Sagen Sie ab, kostet es nichts.',
+        text: 'Festpreis und Starttermin in etwa drei Werktagen.',
       ),
       (
         title: 'Umsetzung.',
-        text:
-            'Kevin baut. Den Fortschritt sehen Sie laufend, nicht erst am '
-            'Ende.',
+        text: 'Kevin baut, Sie sehen den Fortschritt laufend.',
       ),
-      (
-        title: 'Start.',
-        text:
-            'Die Anwendung geht online, und Cube Algos sorgt dafür, dass sie '
-            'läuft.',
-      ),
-      (
-        title: 'Danach.',
-        text:
-            'Die Anwendung gehört Ihnen. Änderungen und Updates gibt es auf '
-            'Anfrage.',
-      ),
+      (title: 'Übergabe.', text: 'Ihre App geht online und gehört Ihnen.'),
+      (title: 'Danach.', text: 'Änderungen und Updates auf Anfrage.'),
     ],
-    afterTitle: 'Nach dem Start',
-    afterText:
-        'Sobald die Anwendung online ist, gehört sie Ihnen. Software braucht '
-        'mit der Zeit Pflege. Updates und Änderungen gibt es deshalb auf '
-        'Anfrage, für 95 € pro Stunde, und die Kosten kennen Sie vorher.',
-    afterNote:
-        'Es gibt keine Wartungsverträge und keine monatlichen Pauschalen. '
-        'Ihre Anwendung wird nur überwacht, wenn Sie das beauftragen.',
     faqTitle: 'Fragen',
     faq: [
       (
@@ -377,8 +326,8 @@ const Map<Lang, HomeCopy> homeCopy = {
         answer:
             'Alle Preise auf dieser Seite sind Nettopreise, zuzüglich 19 % '
             'Umsatzsteuer. Das erste Gespräch ist kostenlos. Danach erhalten '
-            'Sie ein schriftliches Angebot mit Festpreis. Sagen Sie ab, '
-            'kostet Sie das nichts.',
+            'Sie ein schriftliches Angebot mit Festpreis. Wenn Sie nicht '
+            'beauftragen, entstehen Ihnen keine Kosten.',
       ),
       (
         question:
@@ -407,14 +356,14 @@ const Map<Lang, HomeCopy> homeCopy = {
             'dürfen weiterverwendet werden.',
       ),
       (
-        question: 'Was passiert nach dem Start?',
+        question: 'Was passiert nach der Übergabe?',
         answer:
-            'Ihre Anwendung ist online und gehört Ihnen. Änderungen und '
-            'Updates übernimmt Kevin auf Anfrage zum Stundensatz aus „Was es '
+            'Ihre App ist online und gehört Ihnen. Änderungen und Updates '
+            'übernimmt Kevin auf Anfrage zum Stundensatz aus „Was es '
             'kostet“, mit einem Angebot vorab. Es gibt keine '
-            'Wartungsverträge, und niemand überwacht Ihre Anwendung, wenn '
-            'Sie das nicht beauftragen. Sie können damit jederzeit auch zu '
-            'jemand anderem gehen.',
+            'Wartungsverträge, und niemand überwacht sie, wenn Sie das nicht '
+            'beauftragen. Sie können damit jederzeit auch zu jemand anderem '
+            'gehen.',
       ),
       (
         question: 'Was ist, wenn Kevin ausgelastet oder nicht erreichbar ist?',
@@ -427,7 +376,7 @@ const Map<Lang, HomeCopy> homeCopy = {
             'krankheitsbedingt aus, erfahren Sie das so schnell wie möglich.',
       ),
       (
-        question: 'Ist die Anwendung barrierearm?',
+        question: 'Ist die App barrierearm?',
         answer:
             'Ja. Jedes Projekt ist von Anfang an auf Barrierefreiheit '
             'ausgelegt: per Tastatur und Screenreader bedienbar, mit gut '

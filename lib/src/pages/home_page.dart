@@ -53,7 +53,7 @@ List<Component> offerSpans(
 ];
 
 /// The home page body: hero with the price ledger, studio band, lanes, offers,
-/// workflow, after launch, FAQ, final call to action.
+/// workflow, FAQ, final call to action.
 class HomePage extends StatelessComponent {
   /// Creates the home page in [lang].
   const new({required this.lang, super.key});
@@ -70,7 +70,6 @@ class HomePage extends StatelessComponent {
       _lanes(c),
       _offers(c),
       _workflow(c),
-      _after(c),
       _faq(c),
       _cta(c),
     ]);
@@ -94,10 +93,16 @@ class HomePage extends StatelessComponent {
               t(c.h1.substring(at + c.h1Mark.length)),
             ],
           ),
-          p(
-            classes: 'hero-sub rise',
+          // Two sublines; CSS shows the short one below 30rem and hides the
+          // other with `display: none`, so only one is exposed to assistive
+          // tech at a time.
+          div(
+            classes: 'hero-sublines rise',
             attributes: const {'style': '--i:2'},
-            [t(c.subline)],
+            [
+              p(classes: 'hero-sub hero-sub--full', [t(c.subline)]),
+              p(classes: 'hero-sub hero-sub--short', [t(c.sublineShort)]),
+            ],
           ),
           el(
             'div',
@@ -189,7 +194,7 @@ class HomePage extends StatelessComponent {
               for (final id in lane.offerIds)
                 p([
                   a(
-                    [t(offerHeading(_offer(c, id)))],
+                    [t(_offer(c, id).name)],
                     href: '#offer-$id',
                     classes: 'lane-link',
                   ),
@@ -200,50 +205,48 @@ class HomePage extends StatelessComponent {
     ],
   );
 
-  Component _row(Offer o, {bool call = false}) => el(
-    'article',
-    id: 'offer-${o.id}',
-    classes: call ? 'fk-row fk-row--call' : 'fk-row',
-    [
-      h3(classes: 'fk-head', [
-        ...offerSpans(o, nameClass: 'fk-name', priceClass: 'fk-price'),
+  Component _offers(HomeCopy c) {
+    final call = _offer(c, 'call');
+    Component row(Offer o) => li(id: 'offer-${o.id}', classes: 'pc-row', [
+      h3(classes: 'pc-head', [
+        ...offerSpans(o, nameClass: 'pc-name', priceClass: 'pc-price'),
       ]),
-      p(classes: 'fk-text', [t(o.text)]),
-    ],
-  );
+      p([t(o.text)]),
+    ]);
 
-  Component _build(Offer o) =>
-      el('article', id: 'offer-${o.id}', classes: 'fk-build', [
-        h3(classes: 'fk-head', [
-          ...offerSpans(o, nameClass: 'fk-name', priceClass: 'fk-big'),
-        ]),
-        p(classes: 'fk-text', [t(o.text)]),
-      ]);
-
-  Component _offers(HomeCopy c) => el(
-    'section',
-    classes: 'sec',
-    id: 'offers',
-    attrs: const {'aria-labelledby': 'offers-title'},
-    [
-      el('div', classes: 'wrap', [
-        el('div', classes: 'sec-head reveal', [
-          h2(id: 'offers-title', [t(c.offersTitle)]),
-          p(classes: 'measure', [t(c.offersIntro)]),
-        ]),
-        el('div', classes: 'fork reveal', [
-          _row(_offer(c, 'call'), call: true),
-          el('div', classes: 'fk-builds', [
-            _build(_offer(c, 'tool')),
-            _build(_offer(c, 'mvp')),
+    return el(
+      'section',
+      classes: 'sec',
+      id: 'offers',
+      attrs: const {'aria-labelledby': 'offers-title'},
+      [
+        el('div', classes: 'wrap', [
+          el('div', classes: 'sec-head reveal', [
+            h2(id: 'offers-title', [t(c.offersTitle)]),
+            p(classes: 'measure', [t(c.offersIntro)]),
           ]),
-          _row(_offer(c, 'after')),
+          el('div', classes: 'pc-grid reveal', [
+            el('article', id: 'offer-call', classes: 'pc-card', [
+              h3(classes: 'pc-head', [
+                span(classes: 'pc-name pc-node', [t(call.name)]),
+                span(classes: 'vh', [t(', ')]),
+                span(classes: 'pc-free num', [t(call.price)]),
+              ]),
+              p([t(call.text)]),
+            ]),
+            div([
+              ul(classes: 'pc-list', [
+                row(_offer(c, 'tool')),
+                row(_offer(c, 'mvp')),
+                row(_offer(c, 'after')),
+              ]),
+              p(classes: 'note', [t('${c.vatNote} · ${c.accessibleNote}')]),
+            ]),
+          ]),
         ]),
-        p(classes: 'note', [t(c.vatNote)]),
-        p(classes: 'note', [t(c.accessibleNote)]),
-      ]),
-    ],
-  );
+      ],
+    );
+  }
 
   Component _workflow(HomeCopy c) => el(
     'section',
@@ -263,23 +266,6 @@ class HomePage extends StatelessComponent {
               ]),
           ]),
           const div(classes: 'rail-fish', [Fish(pose: 'swimming')]),
-        ]),
-      ]),
-    ],
-  );
-
-  Component _after(HomeCopy c) => el(
-    'section',
-    classes: 'sheet',
-    id: 'after-launch',
-    attrs: const {'aria-labelledby': 'after-title'},
-    [
-      el('div', classes: 'wrap sheet-grid', [
-        h2(id: 'after-title', classes: 'sheet-title reveal', [t(c.afterTitle)]),
-        el('div', classes: 'sheet-body reveal', [
-          p(classes: 'sheet-lede', [t(c.afterText)]),
-          p(classes: 'sheet-note', [t(c.afterNote)]),
-          p(classes: 'note', [t(c.vatNote)]),
         ]),
       ]),
     ],

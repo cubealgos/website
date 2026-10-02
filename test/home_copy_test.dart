@@ -21,6 +21,7 @@ List<String> expectedBlocks(Lang lang) {
     c.eyebrow,
     c.h1,
     c.subline,
+    c.sublineShort,
     startProject[lang]!,
     c.secondaryCta,
     // The price ledger beside the headline.
@@ -34,19 +35,14 @@ List<String> expectedBlocks(Lang lang) {
       lane.title,
       lane.text,
       for (final id in lane.offerIds)
-        offerHeading(c.offers.firstWhere((o) => o.id == id)),
+        c.offers.firstWhere((o) => o.id == id).name,
     ],
     c.offersTitle,
     c.offersIntro,
     for (final o in c.offers) ...[offerHeading(o), o.text],
-    c.vatNote,
-    c.accessibleNote,
+    '${c.vatNote} · ${c.accessibleNote}',
     c.workflowTitle,
     for (final s in c.steps) '${s.title} ${s.text}',
-    c.afterTitle,
-    c.afterText,
-    c.afterNote,
-    c.vatNote,
     c.faqTitle,
     for (final q in c.faq) ...[q.question, q.answer],
     c.ctaTitle,
@@ -118,6 +114,34 @@ void main() {
           );
         }
       });
+    });
+  }
+
+  for (final lang in Lang.values) {
+    test('home ${lang.code}: no separate after-launch section', () {
+      final html = builtHtml(PageKey.home, lang);
+      expect(html, isNot(contains('id="after-launch"')));
+      expect(html, contains('id="offer-after"'));
+    });
+
+    test('home ${lang.code}: lane links name the offer without its price', () {
+      final html = builtHtml(PageKey.home, lang);
+      final c = homeCopy[lang]!;
+      for (final lane in c.lanes) {
+        for (final id in lane.offerIds) {
+          final o = c.offers.firstWhere((o) => o.id == id);
+          expect(
+            html,
+            contains('class="lane-link" href="#offer-$id">${o.name}</a>'),
+          );
+        }
+      }
+    });
+
+    test('home ${lang.code}: full and short hero sublines both built', () {
+      final html = builtHtml(PageKey.home, lang);
+      expect(html, contains('hero-sub hero-sub--full'));
+      expect(html, contains('hero-sub hero-sub--short'));
     });
   }
 
