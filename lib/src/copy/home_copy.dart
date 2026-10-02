@@ -248,216 +248,206 @@ const Map<Lang, HomeCopy> homeCopy = {
     ctaButton: 'Write to hello@cubealgos.de',
   ),
   Lang.de: (
-    eyebrow: 'KI-natives Softwarestudio · Heinsberg',
-    h1:
-        'Apps und Tools für Unternehmen, die sich lieber auf ihr Geschäft '
-        'konzentrieren.',
-    h1Mark: 'auf ihr Geschäft konzentrieren',
+    eyebrow: 'KI-gestütztes Softwarestudio · Heinsberg',
+    h1: 'Apps und Tools für Betriebe, die sich lieber um ihr Geschäft kümmern.',
+    h1Mark: 'um ihr Geschäft kümmern',
     subline:
-        'Cube Algos konzipiert und entwickelt interne Werkzeuge, Apps und '
-        'MVPs für inhabergeführte Unternehmen und Gründer:innen: '
-        'KI-beschleunigt, Zeile für Zeile von einem ausgebildeten '
-        'Entwickler geprüft, zum Festpreis, der vor Projektbeginn '
-        'feststeht.',
+        'Cube Algos entwickelt interne Tools, Apps und erste '
+        'Produktversionen für inhabergeführte Betriebe und Gründungsteams. '
+        'Mit KI schneller gebaut, Zeile für Zeile von einem ausgebildeten '
+        'Entwickler geprüft und zu einem Festpreis, den Sie vorher kennen.',
     secondaryCta: 'Leistungen und Preise',
-    studioTitle: 'Ein kleines Studio, mit Absicht',
+    studioTitle: 'Klein, und das mit Absicht',
     studioText:
-        'Ein Entwickler, von Anfang bis Ende. Kevin Scheeren hat Cube '
-        'Algos 2023 gegründet und setzt jedes Projekt selbst um. Wer mit '
-        'Ihnen spricht, schreibt auch Ihren Code. Weniger Projekte '
-        'gleichzeitig heißt: ein verlässlicher Starttermin, vereinbart '
-        'vor Vertragsabschluss.',
+        'Ein Entwickler, von Anfang bis Ende. Kevin Scheeren hat Cube Algos '
+        '2023 gegründet und setzt jedes Projekt selbst um. Wer mit Ihnen '
+        'spricht, schreibt auch Ihren Code. Weil nur wenige Projekte '
+        'gleichzeitig laufen, steht Ihr Starttermin verlässlich fest, bevor '
+        'Sie unterschreiben.',
     lanesTitle: 'Wo stehen Sie?',
     lanes: [
       (
-        title: 'Für Ihr Geschäft',
+        title: 'Für Ihren Betrieb',
         text:
-            'Sie führen ein Unternehmen mit einigen wenigen bis ein paar '
-            'Dutzend Mitarbeitenden: Handwerk, Praxis, Studio, Restaurant, '
-            'Laden. Sie brauchen eine Terminbuchung, ein Kundenportal oder '
-            'ein Dashboard für Ihr Team. Cube Algos baut es passend zu '
-            'Ihren Abläufen, und Sie führen weiter Ihr Geschäft.',
+            'Sie führen einen Betrieb mit wenigen bis ein paar Dutzend '
+            'Beschäftigten: Handwerk, Praxis, Studio, Gastronomie, '
+            'Einzelhandel. Sie brauchen eine Online-Terminbuchung, ein '
+            'Kundenportal oder eine Übersicht für Ihr Team. Cube Algos baut '
+            'sie passend zu Ihren Abläufen, und Sie kümmern sich weiter um '
+            'Ihr Geschäft.',
         offerIds: ['tool'],
       ),
       (
         title: 'Für Ihre Idee',
         text:
-            'Sie haben die Idee für eine App oder ein Produkt und '
-            'entscheiden selbst, wie es weitergeht. Cube Algos hilft Ihnen '
-            'herauszufinden, was zuerst gebaut werden sollte, und baut es '
-            'dann. Sie beginnen mit einem kostenlosen Gespräch und wissen, '
-            'was es kostet, bevor etwas gebaut wird.',
+            'Sie haben eine Idee für eine App oder ein Produkt und '
+            'entscheiden allein, wie es weitergeht. Cube Algos hilft Ihnen '
+            'herauszufinden, was zuerst gebaut werden sollte, und baut genau '
+            'das. Am Anfang steht ein kostenloses Gespräch, und den Preis '
+            'kennen Sie, bevor etwas gebaut wird.',
         offerIds: ['mvp'],
       ),
     ],
     offersTitle: 'Was es kostet',
     offersIntro:
-        'Feste Preise, vereinbart, bevor die Arbeit beginnt. Ist Ihr '
-        'Projekt größer als ein „ab“-Preis, steht das im schriftlichen '
-        'Umfang.',
+        'Feste Preise, vereinbart vor Beginn der Arbeit. Ist Ihr Projekt '
+        'größer als der „ab“-Preis, steht das im schriftlichen Angebot.',
     offers: [
       (
         id: 'call',
         name: 'Erstgespräch',
         price: 'kostenlos',
         text:
-            '30 bis 45 Minuten per Video oder Telefon. Innerhalb von etwa '
-            '3 Werktagen erhalten Sie einen schriftlichen Umfang mit '
-            'Festpreis und Starttermin. Entscheiden Sie sich dagegen, '
-            'kostet es nichts.',
+            '30 bis 45 Minuten per Video oder Telefon. Danach erhalten Sie '
+            'innerhalb von etwa drei Werktagen ein schriftliches Angebot mit '
+            'Festpreis und Starttermin. Sagen Sie ab, kostet Sie das nichts.',
       ),
       (
         id: 'tool',
         name: 'Internes Tool',
         price: 'ab 5.900 €',
         text:
-            'Eine Terminbuchung, ein Kundenportal oder ein Dashboard für '
-            'Ihr Team, gebaut um einen zentralen Ablauf und danach, wie '
-            'Ihr Betrieb tatsächlich arbeitet.',
+            'Zum Beispiel eine Online-Terminbuchung, ein Kundenportal oder '
+            'eine Übersicht für Ihr Team. Gebaut rund um einen zentralen '
+            'Ablauf und so, wie Ihr Betrieb wirklich arbeitet.',
       ),
       (
         id: 'mvp',
         name: 'MVP / SaaS v1',
         price: 'ab 6.900 €',
         text:
-            'Die erste lauffähige Version Ihres Produkts, gebaut um einen '
-            'zentralen Ablauf und klein genug, um sie echten '
-            'Nutzer:innen zu zeigen und daraus zu lernen.',
+            'Die erste funktionierende Version Ihres Produkts. Gebaut rund '
+            'um einen zentralen Ablauf und klein genug, um früh echte '
+            'Rückmeldungen zu bekommen und daraus zu lernen.',
       ),
       (
         id: 'after',
-        name: 'Nach dem Launch',
+        name: 'Nach dem Start',
         price: '95 € pro Stunde',
         text:
-            'Folgearbeiten und Updates auf Anfrage. Sie erfahren die '
-            'Kosten vorher, und ohne Ihr Ja wird nichts berechnet.',
+            'Änderungen und Updates auf Anfrage. Sie kennen die Kosten '
+            'vorher, und ohne Ihre Zustimmung wird nichts abgerechnet.',
       ),
     ],
     vatNote: 'Alle Preise zzgl. 19 % USt.',
-    accessibleNote: 'Jedes Projekt wird von Anfang an barrierearm gebaut.',
+    accessibleNote: 'Jedes Projekt ist von Anfang an barrierearm.',
     workflowTitle: 'So läuft es ab',
     steps: [
       (
         title: 'Kostenloses Gespräch.',
-        text:
-            'Sie sprechen 30 bis 45 Minuten mit Kevin, per Video oder '
-            'Telefon.',
+        text: '30 bis 45 Minuten mit Kevin, per Video oder Telefon.',
       ),
       (
-        title: 'Schriftlicher Umfang.',
+        title: 'Schriftliches Angebot.',
         text:
-            'Innerhalb von etwa 3 Werktagen erhalten Sie schriftlich, was '
-            'gebaut wird, zu welchem Festpreis und ab welchem '
-            'Starttermin. Entscheiden Sie sich dagegen, kostet es nichts.',
+            'Innerhalb von etwa drei Werktagen: was gebaut wird, zu welchem '
+            'Festpreis und ab wann. Sagen Sie ab, kostet es nichts.',
       ),
       (
-        title: 'Bau.',
+        title: 'Umsetzung.',
         text:
-            'Kevin baut es. Sie sehen den Fortschritt unterwegs, nicht erst '
-            'am Ende.',
+            'Kevin baut. Den Fortschritt sehen Sie laufend, nicht erst am '
+            'Ende.',
       ),
       (
-        title: 'Launch.',
+        title: 'Start.',
         text:
-            'Es geht online, und Cube Algos stellt sicher, dass es '
-            'funktioniert.',
+            'Die Anwendung geht online, und Cube Algos sorgt dafür, dass sie '
+            'läuft.',
       ),
       (
-        title: 'Nach dem Launch.',
+        title: 'Danach.',
         text:
-            'Die App gehört Ihnen. Folgearbeiten und Updates gibt es auf '
+            'Die Anwendung gehört Ihnen. Änderungen und Updates gibt es auf '
             'Anfrage.',
       ),
     ],
-    afterTitle: 'Nach dem Launch',
+    afterTitle: 'Nach dem Start',
     afterText:
-        'Sobald es online ist, gehört es Ihnen. Software veraltet mit der '
-        'Zeit, deshalb gibt es Updates und Folgearbeiten auf Anfrage, für '
-        '95 € pro Stunde. Sie erfahren die Kosten, bevor die Arbeit '
-        'beginnt.',
+        'Sobald die Anwendung online ist, gehört sie Ihnen. Software braucht '
+        'mit der Zeit Pflege. Updates und Änderungen gibt es deshalb auf '
+        'Anfrage, für 95 € pro Stunde, und die Kosten kennen Sie vorher.',
     afterNote:
-        'Es gibt keine Betreuungsverträge und keine Retainer. Niemand '
-        'überwacht Ihre App, solange Sie es nicht beauftragen.',
+        'Es gibt keine Wartungsverträge und keine monatlichen Pauschalen. '
+        'Ihre Anwendung wird nur überwacht, wenn Sie das beauftragen.',
     faqTitle: 'Fragen',
     faq: [
       (
         question: 'Was kostet es, und ist die Umsatzsteuer enthalten?',
         answer:
-            'Die Preise auf dieser Seite sind Nettopreise. Die Umsatzsteuer '
-            'von 19 % kommt hinzu. Das erste Gespräch ist kostenlos. Danach '
-            'erhalten Sie einen schriftlichen Umfang mit Festpreis, und '
-            'wenn Sie sich dagegen entscheiden, kostet es nichts.',
+            'Alle Preise auf dieser Seite sind Nettopreise, zuzüglich 19 % '
+            'Umsatzsteuer. Das erste Gespräch ist kostenlos. Danach erhalten '
+            'Sie ein schriftliches Angebot mit Festpreis. Sagen Sie ab, '
+            'kostet Sie das nichts.',
       ),
       (
         question:
-            'Arbeitet Cube Algos mit KI, und was passiert mit Ihren Daten?',
+            'Arbeitet Cube Algos mit KI, und was geschieht mit Ihren Daten?',
         answer:
-            'Ja. KI fließt in die gesamte Arbeitsweise ein: Planung, '
-            'Schreiben und Prüfen von Code. Kevin ist ausgebildeter '
-            'Entwickler und prüft jede Zeile, bevor sie live geht. '
-            'Personenbezogene Daten Ihrer Kund:innen gelangen nie in '
-            'KI-Werkzeuge, und die eingesetzten KI-Werkzeuge sind so '
-            'eingestellt, dass sie nicht mit Ihrem Projekt trainiert '
-            'werden.',
+            'Ja. KI hilft bei Planung, Programmierung und Tests. Kevin ist '
+            'ausgebildeter Entwickler und prüft jede Zeile, bevor sie live '
+            'geht. Personenbezogene Daten Ihrer Kundschaft kommen nie in '
+            'KI-Werkzeuge, und die eingesetzten Werkzeuge sind so '
+            'eingestellt, dass sie nicht mit Ihrem Projekt trainiert werden.',
       ),
       (
-        question: 'Wie lange dauert es?',
+        question: 'Wie lange dauert ein Projekt?',
         answer:
-            'Das hängt vom Umfang ab. Eine Zahl nennt Cube Algos erst, wenn '
-            'klar ist, was Sie brauchen. Nach dem kostenlosen Gespräch '
-            'erhalten Sie innerhalb von etwa 3 Werktagen einen '
-            'schriftlichen Umfang mit Festpreis und Starttermin.',
+            'Das hängt vom Umfang ab, deshalb gibt es vorab keine '
+            'Pauschalzahl. Nach dem kostenlosen Gespräch erhalten Sie '
+            'innerhalb von etwa drei Werktagen ein Angebot mit Festpreis und '
+            'Starttermin.',
       ),
       (
         question: 'Wem gehört der Code?',
         answer:
-            'Ihnen. Sobald das Projekt vollständig bezahlt ist, gehören '
-            'Ihnen Code und Inhalte. Die eigenen allgemeinen Bausteine von '
-            'Cube Algos, etwa Vorlagen und Bibliotheken, die nicht speziell '
-            'für Ihr Projekt entstehen, darf das Studio weiter verwenden.',
+            'Ihnen, sobald das Projekt vollständig bezahlt ist: Code und '
+            'Inhalte. Allgemeine Bausteine von Cube Algos, etwa Vorlagen und '
+            'Bibliotheken, die nicht eigens für Ihr Projekt entstehen, '
+            'dürfen weiterverwendet werden.',
       ),
       (
-        question: 'Was passiert nach dem Launch?',
+        question: 'Was passiert nach dem Start?',
         answer:
-            'Ihr Projekt ist online und bleibt Ihres. Wünschen Sie später '
-            'Änderungen oder Updates, übernimmt Kevin sie auf Anfrage zum '
-            'Stundensatz unter „Was es kostet“, vorab angeboten. Es gibt '
-            'keine Betreuungsverträge, und niemand überwacht Ihre App, '
-            'solange Sie es nicht beauftragen. Sie können damit auch '
-            'woanders hingehen.',
+            'Ihre Anwendung ist online und gehört Ihnen. Änderungen und '
+            'Updates übernimmt Kevin auf Anfrage zum Stundensatz aus „Was es '
+            'kostet“, mit einem Angebot vorab. Es gibt keine '
+            'Wartungsverträge, und niemand überwacht Ihre Anwendung, wenn '
+            'Sie das nicht beauftragen. Sie können damit jederzeit auch zu '
+            'jemand anderem gehen.',
       ),
       (
-        question: 'Was ist, wenn Kevin ausgelastet oder nicht da ist?',
+        question: 'Was ist, wenn Kevin ausgelastet oder nicht erreichbar ist?',
         answer:
-            'Cube Algos wird von einer Person geführt und sagt das offen. '
+            'Cube Algos ist ein Ein-Personen-Studio und sagt das offen. '
             'Projekte werden im Voraus eingeplant: Sie erhalten vor '
-            'Vertragsabschluss einen verbindlichen Starttermin, geplante '
-            'Abwesenheiten werden frühzeitig angekündigt. Eine Vertretung '
-            'gibt es nicht, ebenso wenig garantierte Reaktionszeiten. Wird '
-            'Kevin krank, erfahren Sie es so schnell wie möglich.',
+            'Vertragsabschluss einen verbindlichen Starttermin, und geplante '
+            'Abwesenheiten werden früh angekündigt. Eine Vertretung gibt es '
+            'nicht, feste Reaktionszeiten auch nicht. Fällt Kevin '
+            'krankheitsbedingt aus, erfahren Sie das so schnell wie möglich.',
       ),
       (
-        question: 'Ist es barrierearm?',
+        question: 'Ist die Anwendung barrierearm?',
         answer:
-            'Jedes Projekt ist von Anfang an auf Barrierefreiheit '
-            'ausgelegt: bedienbar mit der Tastatur und mit Screenreadern, '
-            'gut lesbare Texte, geprüfte Kontraste. Das gehört zur '
-            'Arbeitsweise von Cube Algos und ist kein Extra. Eine '
-            'rechtliche Konformität für Ihr Unternehmen wird nicht '
-            'zugesagt, und auch Ihre eigenen Inhalte spielen eine Rolle.',
+            'Ja. Jedes Projekt ist von Anfang an auf Barrierefreiheit '
+            'ausgelegt: per Tastatur und Screenreader bedienbar, mit gut '
+            'lesbaren Texten und geprüften Kontrasten. Das gehört zur '
+            'Arbeitsweise und ist kein Aufpreis. Eine rechtliche Konformität '
+            'für Ihr Unternehmen wird nicht zugesagt, auch weil Ihre eigenen '
+            'Inhalte eine Rolle spielen.',
       ),
       (
         question: 'Müssen Sie schon genau wissen, was Sie wollen?',
         answer:
-            'Nein. Ein paar Sätze reichen. Ist die Idee noch unscharf, ist '
-            'genau dafür das kostenlose Gespräch da.',
+            'Nein. Ein paar Sätze reichen. Ist die Idee noch vage, ist genau '
+            'dafür das kostenlose Gespräch da.',
       ),
     ],
-    ctaTitle: 'Am Anfang steht eine kurze E-Mail.',
+    ctaTitle: 'Alles beginnt mit einer kurzen E-Mail.',
     ctaText:
-        'Ein paar Zeilen dazu, was Sie brauchen, genügen. Kevin liest '
-        'jede Anfrage selbst und antwortet mit einem Vorschlag für den '
-        'nächsten Schritt, meist einem kostenlosen Gespräch.',
-    ctaButton: 'Schreiben an hello@cubealgos.de',
+        'Ein paar Zeilen zu Ihrem Vorhaben genügen. Kevin liest jede Anfrage '
+        'selbst und antwortet mit einem Vorschlag für den nächsten Schritt, '
+        'meist einem kostenlosen Gespräch.',
+    ctaButton: 'E-Mail an hello@cubealgos.de',
   ),
 };

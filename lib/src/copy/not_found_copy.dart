@@ -27,9 +27,9 @@ const Map<Lang, NotFoundCopy> notFoundCopy = {
   Lang.de: (
     headline: 'Diese Seite ist davongeschwommen.',
     body:
-        'Vielleicht ist der Link alt oder falsch eingetippt. Zur Startseite '
-        'geht es mit einem Klick.',
+        'Vielleicht ist der Link veraltet oder vertippt. Zur Startseite ist '
+        'es nur ein Klick.',
     homeAction: 'Zur Startseite',
-    mailAction: 'Schreiben Sie Kevin',
+    mailAction: 'Kevin schreiben',
   ),
 };

@@ -71,46 +71,44 @@ const Map<Lang, AboutCopy> aboutCopy = {
   Lang.de: (
     h1: 'Das Studio und sein Gründer',
     lede:
-        'Cube Algos ist ein Softwarestudio in Heinsberg, 2023 gegründet '
-        'und geführt von Kevin Scheeren.',
+        'Cube Algos ist ein Softwarestudio aus Heinsberg. Kevin Scheeren hat '
+        'es 2023 gegründet und führt es bis heute selbst.',
     whoTitle: 'Der Gründer',
     who: [
-      ('Kevin Scheeren programmiert seit 2016, zuerst in der Schule '
-          'und in seiner Freizeit, beruflich seit 2019. Er ist '
-          'ausgebildeter Entwickler: Seine Ausbildung zum '
+      ('Kevin Scheeren programmiert seit 2016, erst in der Schule und in der '
+          'Freizeit, seit 2019 beruflich. Seine Ausbildung zum '
           'Mathematisch-technischen Softwareentwickler (MATSE) hat er '
           'abgeschlossen.'),
-      ('Cube Algos hat er 2023 gegründet, um Apps, SaaS und interne '
-          'Werkzeuge zu bauen. Er liebt es, Software zu bauen, und möchte '
-          'das zu seinen eigenen Bedingungen tun: sorgfältig, kreativ und '
-          'für Menschen, die sie wirklich benutzen.'),
+      ('2023 hat er Cube Algos gegründet, um Apps, SaaS-Produkte und interne '
+          'Tools zu bauen, und zwar so, wie er Software am liebsten baut: '
+          'sorgfältig, mit eigenen Ideen und für Menschen, die sie wirklich '
+          'nutzen.'),
     ],
     oneTitle: 'Eine Person, mit Absicht',
     one:
-        'Cube Algos wird von einer Person geführt. Sie sprechen direkt '
-        'mit dem Menschen, der Ihr Projekt baut, ohne Account-Manager '
-        'dazwischen und ohne Informationsverlust bei der Übergabe. Die '
-        'Kapazität ist begrenzt, deshalb erhalten Sie vor '
-        'Vertragsabschluss einen ehrlichen Starttermin.',
-    howTitle: 'Wie Cube Algos arbeitet',
+        'Bei Cube Algos sprechen Sie direkt mit dem Menschen, der Ihr '
+        'Projekt baut. Es gibt keinen Account-Manager dazwischen, und bei '
+        'keiner Übergabe geht etwas verloren. Weil die Zeit begrenzt ist, '
+        'erhalten Sie vor Vertragsabschluss einen ehrlichen Starttermin.',
+    howTitle: 'So arbeitet Cube Algos',
     how: [
-      'Feste Preise, schriftlich, bevor gebaut wird.',
-      'Sie sehen den Fortschritt, während er entsteht.',
-      'Jedes Projekt wird von Anfang an barrierearm gebaut.',
-      ('Ein kostenloses Erstgespräch, dann in etwa 3 Werktagen ein '
-          'schriftlicher Umfang. Entscheiden Sie sich dagegen, kostet es '
+      'Feste Preise, schriftlich vereinbart, bevor gebaut wird.',
+      'Den Fortschritt sehen Sie laufend.',
+      'Jedes Projekt ist von Anfang an barrierearm.',
+      ('Zuerst ein kostenloses Gespräch, dann innerhalb von etwa drei '
+          'Werktagen ein schriftliches Angebot. Sagen Sie ab, kostet es '
           'nichts.'),
-      ('KI-Werkzeuge kommen jeden Tag zum Einsatz, weil sie die Arbeit '
-          'schneller machen. Als ausgebildeter Entwickler liest und '
-          'versteht Kevin jede Zeile, bevor sie live geht. KI hilft beim '
-          'Schreiben; was live geht, entscheidet Kevin.'),
+      ('KI-Werkzeuge gehören zum Alltag, weil sie die Arbeit schneller '
+          'machen. Kevin ist ausgebildeter Entwickler und liest und versteht '
+          'jede Zeile, bevor sie live geht. Die KI hilft beim Schreiben, die '
+          'Entscheidung trifft Kevin.'),
     ],
-    whereTitle: 'Wo Cube Algos sitzt',
+    whereTitle: 'Standort',
     where:
-        'Cube Algos UG (haftungsbeschränkt) hat ihren Sitz in '
-        'Heinsberg, Nordrhein-Westfalen. Die meiste Arbeit läuft '
-        'remote. Wenn es hilft und passt, trifft Kevin Sie auf Anfrage '
-        'auch vor Ort, rund um Heinsberg und Aachen.',
-    ctaTitle: 'Möchten Sie sprechen?',
+        'Die Cube Algos UG (haftungsbeschränkt) sitzt in Heinsberg in '
+        'Nordrhein-Westfalen. Die meiste Arbeit läuft remote. Wenn es hilft '
+        'und passt, trifft Kevin Sie auch persönlich, rund um Heinsberg und '
+        'Aachen.',
+    ctaTitle: 'Interesse an einem Gespräch?',
   ),
 };
