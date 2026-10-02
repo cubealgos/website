@@ -96,8 +96,8 @@ const Map<Lang, AboutCopy> aboutCopy = {
       'Den Fortschritt sehen Sie laufend.',
       'Jedes Projekt ist von Anfang an barrierearm.',
       ('Zuerst ein kostenloses Gespräch, dann innerhalb von etwa drei '
-          'Werktagen ein schriftliches Angebot. Sagen Sie ab, kostet es '
-          'nichts.'),
+          'Werktagen ein schriftliches Angebot. Wenn Sie nicht beauftragen, '
+          'entstehen Ihnen keine Kosten.'),
       ('KI-Werkzeuge gehören zum Alltag, weil sie die Arbeit schneller '
           'machen. Kevin ist ausgebildeter Entwickler und liest und versteht '
           'jede Zeile, bevor sie live geht. Die KI hilft beim Schreiben, die '

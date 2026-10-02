@@ -67,8 +67,8 @@ const Map<Lang, ContactCopy> contactCopy = {
         'erwähnen:',
     include: [
       ('Worum es bei Ihrem Unternehmen oder Projekt geht, in einem Satz.'),
-      ('Was entstehen soll: Terminbuchung, Kundenportal, Teamübersicht, MVP '
-          'oder „noch unklar“.'),
+      ('Was entstehen soll: Terminbuchung, Kundenportal, internes Dashboard, '
+          'MVP oder „noch unklar“.'),
       'Wer es nutzen wird.',
       'Ob es einen festen Termin gibt.',
       ('Was es schon gibt: nichts, eine Skizze, eine Tabelle, eine '
@@ -86,7 +86,8 @@ const Map<Lang, ContactCopy> contactCopy = {
           'Video oder Telefon.'),
       ('Innerhalb von etwa drei Werktagen danach erhalten Sie ein '
           'schriftliches Angebot mit Festpreis und Starttermin.'),
-      'Sie entscheiden. Sagen Sie ab, kostet es nichts.',
+      ('Sie entscheiden. Wenn Sie nicht beauftragen, entstehen Ihnen keine '
+          'Kosten.'),
     ],
     nextNote:
         'Ihre E-Mail bleibt vertraulich. Diese Seite verwendet kein '
