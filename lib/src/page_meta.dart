@@ -27,12 +27,12 @@ const Map<PageKey, Map<Lang, PageMeta>> pageMeta = {
     Lang.de: (
       title: 'Cube Algos | Apps und Tools zum Festpreis',
       description:
-          'Interne Tools und MVPs für Inhaber:innen und Gründer:innen. '
-          'Kostenloses Erstgespräch, Festpreis, gebaut und geleitet von '
-          'Kevin Scheeren in Heinsberg.',
+          'Software für Betriebe und Gründungsteams: interne Tools und erste '
+          'Produktversionen zum Festpreis, mit kostenlosem Erstgespräch. Aus '
+          'Heinsberg.',
       h1:
-          'Apps und Tools für Unternehmen, die sich lieber auf ihr '
-          'Geschäft konzentrieren.',
+          'Apps und Tools für Betriebe, die sich lieber um ihr Geschäft '
+          'kümmern.',
     ),
   },
   PageKey.about: {
@@ -47,9 +47,9 @@ const Map<PageKey, Map<Lang, PageMeta>> pageMeta = {
     Lang.de: (
       title: 'Über Cube Algos | Cube Algos',
       description:
-          'Cube Algos ist ein Softwarestudio in Heinsberg, 2023 gegründet und '
-          'geführt von Kevin Scheeren. Apps und interne Werkzeuge zum '
-          'Festpreis, mit kostenlosem Erstgespräch.',
+          'Cube Algos ist ein Softwarestudio aus Heinsberg, 2023 von Kevin '
+          'Scheeren gegründet. Apps und interne Tools zum Festpreis, mit '
+          'kostenlosem Erstgespräch.',
       h1: 'Das Studio und sein Gründer',
     ),
   },
@@ -64,10 +64,10 @@ const Map<PageKey, Map<Lang, PageMeta>> pageMeta = {
     Lang.de: (
       title: 'Kontakt | Cube Algos',
       description:
-          'Schreiben Sie Cube Algos in Heinsberg an hello@cubealgos.de. '
-          'Sagen Sie Kevin, was Sie brauchen, und vereinbaren Sie ein '
-          'kostenloses Erstgespräch.',
-      h1: 'Schreiben Sie Kevin.',
+          'Schreiben Sie Cube Algos in Heinsberg an hello@cubealgos.de: kurz '
+          'beschreiben, was Sie brauchen, und ein kostenloses Erstgespräch '
+          'vereinbaren.',
+      h1: 'Schreiben Sie Kevin eine E-Mail.',
     ),
   },
   PageKey.impressum: {

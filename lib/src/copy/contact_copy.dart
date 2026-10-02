@@ -56,35 +56,37 @@ const Map<Lang, ContactCopy> contactCopy = {
     nextNote: 'Your email stays confidential. This page has no tracking.',
   ),
   Lang.de: (
-    h1: 'Schreiben Sie Kevin.',
+    h1: 'Schreiben Sie Kevin eine E-Mail.',
     lede:
-        'Kein Formular und kein Verkaufsdruck. Erzählen Sie Kevin, '
-        'was Sie brauchen; er liest jede E-Mail selbst und antwortet '
-        'mit einem Vorschlag für den nächsten Schritt.',
+        'Kein Formular, kein Verkaufsdruck. Beschreiben Sie kurz, was Sie '
+        'brauchen. Kevin liest jede E-Mail selbst und antwortet mit einem '
+        'Vorschlag für den nächsten Schritt.',
     includeTitle: 'Was in die erste E-Mail gehört',
-    includeIntro: 'Ein paar Zeilen genügen. Wenn Sie können, nennen Sie Kevin:',
+    includeIntro:
+        'Ein paar Zeilen genügen. Hilfreich ist, wenn Sie Folgendes '
+        'erwähnen:',
     include: [
-      'Was Ihr Unternehmen oder Projekt ist, in einem Satz.',
-      ('Was gebaut werden soll: Terminbuchung, Kundenportal, Dashboard, '
-          'MVP oder „noch unklar“.'),
+      ('Worum es bei Ihrem Unternehmen oder Projekt geht, in einem Satz.'),
+      ('Was entstehen soll: Terminbuchung, Kundenportal, Teamübersicht, MVP '
+          'oder „noch unklar“.'),
       'Wer es nutzen wird.',
-      'Ob es einen Termin gibt, bis zu dem es fertig sein muss.',
-      ('Was schon vorhanden ist: nichts, eine Skizze, eine Tabelle, '
-          'eine bestehende App.'),
-      'Was Sie anderswo gesehen haben und mögen oder nicht mögen.',
+      'Ob es einen festen Termin gibt.',
+      ('Was es schon gibt: nichts, eine Skizze, eine Tabelle, eine '
+          'bestehende App.'),
+      'Was Ihnen anderswo gefällt oder nicht gefällt.',
     ],
     includeOutro:
-        'Bei etwas unsicher? Schreiben Sie trotzdem. Genau dafür ist '
-        'das kostenlose Gespräch da.',
+        'Noch unsicher? Schreiben Sie trotzdem. Genau dafür ist das '
+        'kostenlose Gespräch da.',
     nextTitle: 'Wie es weitergeht',
     next: [
-      'Sie schreiben. Kevin liest es selbst.',
-      'Er antwortet, mit Rückfragen oder einem Vorschlag.',
-      ('Passt es, folgt ein kostenloses Gespräch von 30 bis 45 Minuten, '
-          'per Video oder Telefon.'),
-      ('Innerhalb von etwa 3 Werktagen nach dem Gespräch erhalten Sie '
-          'einen schriftlichen Umfang mit Festpreis und Starttermin.'),
-      'Sie entscheiden. Entscheiden Sie sich dagegen, kostet es nichts.',
+      'Sie schreiben, und Kevin liest selbst.',
+      'Er antwortet mit Rückfragen oder einem Vorschlag.',
+      ('Passt es, folgt ein kostenloses Gespräch von 30 bis 45 Minuten, per '
+          'Video oder Telefon.'),
+      ('Innerhalb von etwa drei Werktagen danach erhalten Sie ein '
+          'schriftliches Angebot mit Festpreis und Starttermin.'),
+      'Sie entscheiden. Sagen Sie ab, kostet es nichts.',
     ],
     nextNote:
         'Ihre E-Mail bleibt vertraulich. Diese Seite verwendet kein '

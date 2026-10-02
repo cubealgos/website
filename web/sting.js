@@ -1,15 +1,25 @@
 /* SPDX-License-Identifier: Apache-2.0 */
 /* Home page: plays the mark sting inside the offer card when a visitor arrives
    from outside the site (a direct load, an external link or an empty
-   referrer), once the card is in view and has faded in. Loaded in <head> on the
-   home pages. Without JavaScript, with reduced motion, or when the referrer is
-   a page of this site, the card shows the still mark. Stores nothing. */
+   referrer) or reloads the page, once the card is in view and has faded in.
+   Loaded in <head> on the home pages. Without JavaScript, with reduced motion,
+   or when the visitor came from a page of this site, the card shows the still
+   mark. Stores nothing. */
 (function () {
   'use strict';
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
+  // A reload keeps the original referrer but is an arrival, not navigation.
+  var reloaded = false;
+  try {
+    var nav = performance.getEntriesByType('navigation')[0];
+    reloaded = !!nav && nav.type === 'reload';
+  } catch (e) {
+    // No navigation timing: judge by the referrer alone.
+  }
+
   // Arriving from another page of this site: the still, no replay.
-  if (document.referrer) {
+  if (document.referrer && !reloaded) {
     try {
       if (new URL(document.referrer).origin === window.location.origin) return;
     } catch (e) {

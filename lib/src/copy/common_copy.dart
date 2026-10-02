@@ -14,5 +14,5 @@ const Map<Lang, String> startProject = {
 /// The label of the "write to Kevin" button on the about page.
 const Map<Lang, String> writeToKevin = {
   Lang.en: 'Write to Kevin',
-  Lang.de: 'Schreiben Sie Kevin',
+  Lang.de: 'Kevin schreiben',
 };

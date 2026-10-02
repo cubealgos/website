@@ -50,7 +50,7 @@ const Map<Lang, ChromeText> chromeText = {
     langLabel: 'Sprache',
     footerLabel: 'Fußbereich',
     legalLabel: 'Rechtliches',
-    tagline: 'Cube Algos, Heinsberg. Apps und interne Werkzeuge zum Festpreis.',
+    tagline: 'Cube Algos, Heinsberg. Apps und interne Tools zum Festpreis.',
     home: 'Start',
     about: 'Über Cube Algos',
     contact: 'Kontakt',

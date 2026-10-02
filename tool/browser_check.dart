@@ -540,6 +540,36 @@ const _stingState = '''
 })()
 ''';
 
+const _faqProbe = '''
+(() => {
+  const d = document.querySelector('.faq details');
+  const summary = d.querySelector('summary');
+  const answer = d.querySelector('p');
+  const icon = getComputedStyle(summary, '::after');
+  const props = new Set();
+  for (const a of answer.getAnimations()) {
+    for (const k of a.effect.getKeyframes()) {
+      for (const p of Object.keys(k)) {
+        if (!['offset', 'computedOffset', 'easing', 'composite'].includes(p)) props.add(p);
+      }
+    }
+  }
+  const style = getComputedStyle(answer);
+  return {
+    open: d.open,
+    answerAnimations: answer.getAnimations().length,
+    answerProps: [...props].sort(),
+    answerName: style.animationName,
+    answerDuration: style.animationDuration,
+    answerEasing: style.animationTimingFunction,
+    iconDuration: icon.transitionDuration,
+    iconEasing: icon.transitionTimingFunction,
+    iconProperty: icon.transitionProperty,
+    iconMatrix: icon.transform,
+  };
+})()
+''';
+
 const _motionProbe = '''
 (() => {
   const css = (el, prop, pseudo) => getComputedStyle(el, pseudo)[prop];
@@ -673,6 +703,14 @@ Future<List<String>> _motionChecks(
       if ((await page.evalMap(_stingState))['playing'] == true) {
         out.add('$where ($theme): sting plays after on-site navigation');
       }
+      // A reload keeps the same-origin referrer but is an arrival: it plays.
+      final reloaded = page.waitForLoad();
+      await page.eval('location.reload()');
+      await reloaded;
+      await Future<void>.delayed(const Duration(milliseconds: 1200));
+      if ((await page.evalMap(_stingState))['playing'] != true) {
+        out.add('$where ($theme): a reload does not play the sting');
+      }
       // Nothing is written to any storage over the whole walk.
       if (back['sessionLen'] != 0 || back['localLen'] != 0) {
         out.add('$where ($theme): storage written: $back');
@@ -700,6 +738,49 @@ Future<List<String>> _motionChecks(
       if (s['marks'] != 0 || s['scripts'] != scripts) {
         out.add('${pathFor(key, lang)} ($mode): sting on a non-home page: $s');
       }
+    }
+  }
+
+  // FAQ: the answer fades in and rises (opacity/transform, base, settle) and
+  // the "+" turns a quarter (quick, settle); none of it with reduced motion.
+  for (final lang in Lang.values) {
+    final page = await session();
+    await page.goto('$base${pathFor(PageKey.home, lang)}');
+    await page.eval("document.querySelector('.faq details').scrollIntoView()");
+    await Future<void>.delayed(const Duration(milliseconds: 700));
+    await page.eval("document.querySelector('.faq summary').click()");
+    final mid = await page.evalMap(_faqProbe);
+    await Future<void>.delayed(const Duration(milliseconds: 600));
+    final done = await page.evalMap(_faqProbe);
+    final where = '${pathFor(PageKey.home, lang)} FAQ ($mode)';
+    final turned = ((done['iconMatrix'] as String?) ?? '').startsWith(
+      'matrix(0.70',
+    );
+    if (done['open'] != true || !turned) {
+      out.add('$where: the opened item is not settled with a ×: $done');
+    }
+    if (reduced) {
+      if (mid['answerAnimations'] != 0 ||
+          mid['answerName'] != 'none' ||
+          mid['iconDuration'] != '0s') {
+        out.add('$where: the opening still animates: $mid');
+      }
+      continue;
+    }
+    if (mid['answerAnimations'] != 1 ||
+        '${mid['answerProps']}' != '[opacity, transform]') {
+      out.add('$where: answer animation is not opacity/transform only: $mid');
+    }
+    if (mid['answerDuration'] != _seconds(_token('--duration-base')) ||
+        mid['answerEasing'] != _bezier(_token('--ease-settle'))) {
+      out.add('$where: answer motion is not base/settle: $mid');
+    }
+    if (mid['iconDuration'] != _seconds(_token('--duration-quick')) ||
+        mid['iconEasing'] != _bezier(_token('--ease-settle'))) {
+      out.add('$where: icon motion is not quick/settle: $mid');
+    }
+    if (mid['iconProperty'] != 'transform') {
+      out.add('$where: icon transitions ${mid['iconProperty']}: $mid');
     }
   }
 
