@@ -13,6 +13,7 @@ import 'package:website/src/pages/home_page.dart';
 import 'package:website/src/pages/not_found_page.dart';
 import 'package:website/src/routes.dart';
 import 'package:website/src/seo.dart';
+import 'package:website/src/sting.dart';
 
 /// The pages whose sections rise in on scroll (`reveal.js`).
 const Set<PageKey> revealPages = {PageKey.home, PageKey.about, PageKey.contact};
@@ -65,6 +66,10 @@ class PageShell extends StatelessComponent {
           const link(href: '/fonts/fonts.css', rel: 'stylesheet'),
           const link(href: '/brand/tokens.css', rel: 'stylesheet'),
           const link(href: '/site.css', rel: 'stylesheet'),
+          // The sting's keyframes, extracted from the vendored SVG by the
+          // build.
+          if (pageKey == PageKey.home)
+            const link(href: stingCssPath, rel: 'stylesheet'),
           // The sting plays on arrival, not from a page of this site.
           if (pageKey == PageKey.home) const script(src: '/sting.js'),
           // Sections rise in as they scroll into view; content pages only.

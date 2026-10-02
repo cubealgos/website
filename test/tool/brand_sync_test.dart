@@ -72,7 +72,7 @@ Map<String, List<int>> _release(String tag, {bool deflate = false}) {
     'sting-$tag.zip': _zip({
       'sting-$tag/sting/sting-paper.svg': '<svg/>',
       'sting-$tag/sting/sting-paper-still.png': 'png',
-      'sting-$tag/sting/sting-mark.svg': '<svg/>',
+      'sting-$tag/sting/sting-mark.svg': '<svg><style>.a{}</style></svg>',
       'sting-$tag/sting/sting-mark-still.svg': '<svg/>',
       'sting-$tag/sting/sting-paper.gif': 'gif',
       'sting-$tag/sting/sting-paper-16x9.mp4': 'mp4',
@@ -119,6 +119,7 @@ void main() {
       'fish/idle.svg',
       'logo/mark.svg',
       'sting/sting-mark-still.svg',
+      'sting/sting-mark.css',
       'sting/sting-mark.svg',
       'sting/sting-paper-still.png',
       'sting/sting-paper.svg',
@@ -186,5 +187,11 @@ void main() {
     expect(fonts, contains('font-family: "DM Mono"'));
     expect(tokens, contains('--font-family-sans: Onest,'));
     expect(tokens, contains('--font-family-mono: "DM Mono",'));
+  });
+
+  test("the sting stylesheet is the mark's <style> content", () {
+    const svg =
+        '<svg>\n  <style>\n    .a { x: 1; }\n    .b { y: 2; }\n  </style>\n<path/></svg>';
+    expect(stingCssOf(svg), '.a { x: 1; }\n.b { y: 2; }\n');
   });
 }
