@@ -69,7 +69,7 @@ language switch, hreflang alternates and canonical URLs all derive from it.
 | Datenschutz | `/datenschutz/` | `/de/datenschutz/` |
 | 404 | `/404.html` | `/de/404.html` |
 
-The pages are empty shells for now (title, description, H1); content arrives in later issues.
+Home, About, Contact and the 404 pages carry their content (copy as data in `lib/src/copy/`, tested against the built pages); Impressum and Datenschutz are still shells. The 404 pages are `noindex`, outside the sitemap and use root-absolute URLs only, so the server can answer any unknown path with them (German below `/de/`).
 The built HTML references only same-origin resources.
 
 ## Brand assets

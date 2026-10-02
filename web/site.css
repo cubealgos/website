@@ -747,6 +747,38 @@ h3 {
   color: var(--color-muted);
 }
 
+/* The German 404 headline holds one very long word ("davongeschwommen"), and
+   headings do not hyphenate: it steps down the type scale on narrow screens. */
+@media (max-width: 30rem) {
+  .h1-long {
+    font-size: var(--font-scale-h2-size);
+    line-height: var(--font-scale-h2-line-height);
+  }
+}
+
+@media (max-width: 22.5rem) {
+  .h1-long {
+    font-size: var(--font-scale-h3-size);
+    line-height: var(--font-scale-h3-line-height);
+  }
+}
+
+/* A light stage for the confused fish (its `?` is ink). */
+.fish-stage {
+  --c: var(--chamfer-lg);
+
+  padding: var(--spacing-6);
+  background: var(--color-primitive-on-amber-white);
+  clip-path: polygon(
+    0 0,
+    calc(100% - var(--c)) 0,
+    100% var(--c),
+    100% 100%,
+    var(--c) 100%,
+    0 calc(100% - var(--c))
+  );
+}
+
 /* Motion: transform and opacity only; durations and easings from the tokens.
    Final states are the base styles, so removing the animation (reduced
    motion) leaves everything in place. */

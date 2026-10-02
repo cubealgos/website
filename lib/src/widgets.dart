@@ -79,3 +79,20 @@ class MailButton extends StatelessComponent {
     ),
   ]);
 }
+
+/// A chamfered button that links to [href] (an internal path).
+class LinkButton extends StatelessComponent {
+  /// Creates a button labelled [label] leading to [href].
+  const new({required this.label, required this.href, super.key});
+
+  /// The button text.
+  final String label;
+
+  /// The root-absolute target path.
+  final String href;
+
+  @override
+  Component build(BuildContext context) => span(classes: 'btn-wrap', [
+    a([Component.text(label)], href: href, classes: 'btn'),
+  ]);
+}

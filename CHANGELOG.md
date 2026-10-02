@@ -19,4 +19,6 @@
 - Home page, EN and DE: hero with the idle fish, two lanes, offers, workflow, care, FAQ with matching `FAQPage` JSON-LD and a closing call to action, all from one copy data file per page and tested against the built output (#10). The pages carry no `<base>` element, so in-page links (`#main`, `#offers`) stay on the page.
 - About page, EN and DE: who I am, why one person, how I work, where, with the idle fish in a figure slot a photo can replace (#11).
 - Contact page, EN and DE: mailto only with no form, script or tracking, what to put in the first email, what happens next and the company details (#12).
+- 404 pages, EN and DE: the confused fish with the microcopy, emitted as `404.html` and `de/404.html`, noindex, root-absolute URLs only; `html-check` exempts them from canonical and hreflang explicitly (and requires noindex), and the local static server answers `/de/` paths with the German page (#13).
 - The headline underline is an inline background that follows the wrapped phrase, one segment per line; headings no longer hyphenate (#10).
+- The 404 headline steps down the type scale on narrow screens instead of hyphenating its long German word (#13).

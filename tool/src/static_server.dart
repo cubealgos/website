@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: Apache-2.0
 
 /// A tiny static file server over a built site, for the headless-browser
-/// checks. Directory URLs serve `index.html`; unknown paths serve `404.html`.
+/// checks. Directory URLs serve `index.html`; unknown paths serve `404.html`
+/// (`de/404.html` below `/de/`).
 library;
 
 import 'dart:io';
@@ -31,7 +32,13 @@ Future<HttpServer> serveDirectory(String root) async {
     var file = File(p.join(root, path.substring(1)));
     var status = HttpStatus.ok;
     if (!file.existsSync() || !p.isWithin(root, file.path)) {
-      file = File(p.join(root, '404.html'));
+      // German paths get the German 404 page, like the production server.
+      file = File(
+        p.join(
+          root,
+          path == '/de' || path.startsWith('/de/') ? 'de/404.html' : '404.html',
+        ),
+      );
       status = HttpStatus.notFound;
     }
     request.response

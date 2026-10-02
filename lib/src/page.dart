@@ -10,6 +10,7 @@ import 'package:website/src/page_meta.dart';
 import 'package:website/src/pages/about_page.dart';
 import 'package:website/src/pages/contact_page.dart';
 import 'package:website/src/pages/home_page.dart';
+import 'package:website/src/pages/not_found_page.dart';
 import 'package:website/src/routes.dart';
 
 /// The page shell: `<html lang>`, title, description, canonical and hreflang
@@ -62,18 +63,27 @@ class PageShell extends StatelessComponent {
           const link(href: '/site.css', rel: 'stylesheet'),
           // The sting plays on arrival, not from a page of this site.
           if (pageKey == PageKey.home) const script(src: '/sting.js'),
-          link(href: canonical, rel: 'canonical'),
-          for (final alt in Lang.values)
+          // The 404 pages are not indexed and are no equivalents of each other:
+          // noindex, and neither a canonical nor hreflang alternates.
+          if (pageKey == PageKey.notFound)
+            const Component.element(
+              tag: 'meta',
+              attributes: {'name': 'robots', 'content': 'noindex'},
+            )
+          else ...[
+            link(href: canonical, rel: 'canonical'),
+            for (final alt in Lang.values)
+              link(
+                href: urlFor(pageKey, alt),
+                rel: 'alternate',
+                attributes: {'hreflang': alt.code},
+              ),
             link(
-              href: urlFor(pageKey, alt),
+              href: urlFor(pageKey, Lang.en),
               rel: 'alternate',
-              attributes: {'hreflang': alt.code},
+              attributes: const {'hreflang': 'x-default'},
             ),
-          link(
-            href: urlFor(pageKey, Lang.en),
-            rel: 'alternate',
-            attributes: const {'hreflang': 'x-default'},
-          ),
+          ],
         ],
       ),
       SkipLink(lang: lang),
@@ -90,6 +100,8 @@ class PageShell extends StatelessComponent {
             AboutPage(lang: lang)
           else if (pageKey == PageKey.contact)
             ContactPage(lang: lang)
+          else if (pageKey == PageKey.notFound)
+            NotFoundPage(lang: lang)
           else
             div(classes: 'wrap', [
               h1(classes: 'rise', [Component.text(meta.h1)]),
