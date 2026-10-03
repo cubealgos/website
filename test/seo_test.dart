@@ -3,6 +3,7 @@
 import 'dart:io';
 
 import 'package:test/test.dart';
+import 'package:website/src/outbound.dart';
 import 'package:website/src/routes.dart';
 import 'package:website/src/seo.dart';
 
@@ -18,6 +19,7 @@ void main() {
     expect(org['url'], 'https://cubealgos.de/');
     expect(org['email'], 'hello@cubealgos.de');
     expect(org['logo'], 'https://cubealgos.de/brand/logo/mark.svg');
+    expect(org['sameAs'], ['https://www.linkedin.com/company/cubealgos/']);
     expect(
       File('web/brand/logo/mark.svg').existsSync(),
       isTrue,
@@ -34,6 +36,20 @@ void main() {
       containsAll(['missing name', 'logo is not on https://cubealgos.de']),
     );
   });
+
+  test(
+    'an Organization sameAs outside the outbound allow-list is rejected',
+    () {
+      const other = 'https://www.linkedin.com/in/someone';
+      final bad = {
+        ...organizationJsonLd(),
+        'sameAs': [linkedinCompanyUrl, other],
+      };
+      expect(organizationProblems(bad), [
+        'sameAs $other is not on the outbound allow-list',
+      ]);
+    },
+  );
 
   test('the sitemap lists 10 URLs with alternates and no 404', () {
     final xml = sitemapXml();

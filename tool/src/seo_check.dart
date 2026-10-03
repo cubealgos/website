@@ -9,6 +9,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:path/path.dart' as p;
+import 'package:website/src/outbound.dart';
 import 'package:website/src/page_meta.dart';
 import 'package:website/src/routes.dart';
 import 'package:website/src/seo.dart';
@@ -49,6 +50,14 @@ List<String> organizationProblems(Object? data) {
     final v = data[key];
     if (v is String && Uri.tryParse(v)?.host != Uri.parse(siteOrigin).host) {
       out.add('$key is not on $siteOrigin');
+    }
+  }
+  final sameAs = data['sameAs'];
+  if (sameAs is List) {
+    for (final v in sameAs) {
+      if (v is! String || !outboundUrls.contains(v)) {
+        out.add('sameAs $v is not on the outbound allow-list');
+      }
     }
   }
   return out;

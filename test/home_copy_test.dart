@@ -181,6 +181,8 @@ void main() {
       expect(hrefs, {
         if (lang == Lang.de) personalSiteUrl else personalSiteUrlEn,
         githubOrgUrl,
+        // The footer's company page.
+        linkedinCompanyUrl,
       });
       expect(html, contains('rel="noreferrer"'));
     });
