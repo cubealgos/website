@@ -11,11 +11,11 @@
 //    focus token on every stop) in light and dark;
 //  * the language switch on every page lands on the same page in the other
 //    language (on the 404 pages: on the home page of the other language);
-//  * UI motion: the mark sting sits in the home offer card (not in the header,
-//    which has the same height on every page) and starts once the card is in
-//    view, on a direct load and not when arriving from a page of this site
-//    (same-origin referrer), with nothing written to session or local storage;
-//    it is the still mark under reduced motion (a second
+//  * UI motion: the mark sting sits in the home hero's stack card (not in the
+//    header, which has the same height on every page) and starts once the card
+//    is in view, on a direct load and not when arriving from a page of this
+//    site (same-origin referrer), with nothing written to session or local
+//    storage; it is the still mark under reduced motion (a second
 //    Chrome started with `--force-prefers-reduced-motion`); durations and
 //    easings are the tokens; only transform, opacity and the underline's
 //    background-size animate; button press and hover;
@@ -826,7 +826,9 @@ Future<List<String>> _motionChecks(
   }
   if (!(p['animations']! as int > 0)) out.add('motion: nothing animates');
   final delays = (p['staggerDelays']! as List<dynamic>).join(' ');
-  if (delays != '0s 0.06s 0.12s 0.18s 0.12s') {
+  // Eyebrow, headline, subline, buttons; then the stack card (data-i 2) and
+  // its note (data-i 3).
+  if (delays != '0s 0.06s 0.12s 0.18s 0.12s 0.18s') {
     out.add('motion: stagger delays $delays');
   }
 

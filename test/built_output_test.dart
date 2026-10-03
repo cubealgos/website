@@ -12,6 +12,7 @@ import 'dart:io';
 import 'package:path/path.dart' as p;
 import 'package:test/test.dart';
 import 'package:website/src/icons.dart';
+import 'package:website/src/outbound.dart';
 import 'package:website/src/page_meta.dart';
 import 'package:website/src/routes.dart';
 import 'package:website/src/seo.dart';
@@ -19,6 +20,23 @@ import 'package:website/src/seo.dart';
 const _buildDir = 'build/jaspr';
 
 String _fileFor(String path) => path.endsWith('/') ? '${path}index.html' : path;
+
+/// The references (`src`, `href`, `action`, `srcset`) of [html] that leave the
+/// site's own host, except the `href` of an `<a>` to a URL of [outboundUrls]
+/// (a link is not a request).
+List<String> foreignReferences(String html) {
+  final tag = RegExp(r'<([a-zA-Z0-9]+)\b([^>]*)>');
+  final attr = RegExp(r'''\b(src|href|action|srcset)="([^"]*)"''');
+  final host = Uri.parse(siteOrigin).host;
+  return [
+    for (final t in tag.allMatches(html))
+      for (final a in attr.allMatches(t[2]!))
+        if ((a[2]!.startsWith('//') || a[2]!.contains('://')) &&
+            Uri.parse(a[2]!).host != host &&
+            !(t[1] == 'a' && a[1] == 'href' && outboundUrls.contains(a[2])))
+          a[2]!,
+  ];
+}
 
 void main() {
   setUpAll(() async {
@@ -139,19 +157,9 @@ void main() {
   });
 
   test('the built HTML references only same-origin resources', () {
-    final ref = RegExp(r'''\b(?:src|href|action|srcset)="([^"]*)"''');
     for (final entry in paths.values) {
       for (final path in entry.values) {
-        for (final m in ref.allMatches(read(path))) {
-          final url = m[1]!;
-          if (url.startsWith('//') || url.contains('://')) {
-            expect(
-              Uri.parse(url).host,
-              Uri.parse(siteOrigin).host,
-              reason: '$path references $url',
-            );
-          }
-        }
+        expect(foreignReferences(read(path)), isEmpty, reason: path);
         // Scripts: only the same-origin loaders (card sting on home, reveal on
         // the content pages) and the JSON-LD data blocks (FAQ, Organization) on
         // home.
@@ -191,6 +199,77 @@ void main() {
     expect(manifest['theme_color'], '#EDEEF1');
     expect(manifest['background_color'], '#EDEEF1');
     expect((manifest['icons'] as List).length, 4);
+  });
+
+  test('a link off the allow list is a foreign reference', () {
+    for (final url in [
+      'https://github.com/other',
+      'https://www.linkedin.com/in/someone',
+      '$githubOrgUrl?ref=x',
+    ]) {
+      expect(foreignReferences('<a href="$url">x</a>'), [url]);
+    }
+    for (final url in outboundUrls) {
+      expect(foreignReferences('<a href="$url">x</a>'), isEmpty);
+      // Only as the href of a link, never as a request.
+      expect(foreignReferences('<img src="$url"/>'), [url]);
+      expect(foreignReferences('<link href="$url" rel="stylesheet"/>'), [url]);
+    }
+  });
+
+  test("home and about link Kevin's site in their own language", () {
+    const own = {Lang.de: personalSiteUrl, Lang.en: personalSiteUrlEn};
+    final href = RegExp('<a [^>]*href="(https://[^"]*)"');
+    for (final lang in Lang.values) {
+      for (final key in [PageKey.home, PageKey.about]) {
+        final links = [
+          for (final m in href.allMatches(read(pathFor(key, lang)))) m[1]!,
+        ].where((u) => u != '$siteOrigin/' && !u.startsWith(siteOrigin));
+        expect(links, contains(own[lang]), reason: '$key ${lang.code}');
+        expect(links, contains(githubOrgUrl), reason: '$key ${lang.code}');
+        expect(
+          links.toSet().difference(outboundUrls),
+          isEmpty,
+          reason: '$key ${lang.code}',
+        );
+        expect(links, isNot(contains(own[lang.other])));
+      }
+    }
+  });
+
+  test('no built text file names the product in development', () {
+    // Decision 45: no name, no mark, no section, in no page, script, style
+    // sheet, sitemap, JSON-LD block or manifest.
+    final name = RegExp('barrierewacht', caseSensitive: false);
+    final seen = <String>[];
+    for (final f in Directory(_buildDir).listSync(recursive: true)) {
+      if (f is! File) continue;
+      final rel = p.relative(f.path, from: _buildDir);
+      expect(rel, isNot(matches(name)), reason: rel);
+      if (!RegExp(r'\.(html|css|js|json|xml|txt|svg|webmanifest)$')
+          .hasMatch(rel)) {
+        continue;
+      }
+      seen.add(rel);
+      expect(f.readAsStringSync(), isNot(matches(name)), reason: rel);
+    }
+    expect(seen, isNotEmpty);
+  });
+
+  test('no page description names a price', () {
+    for (final entry in pageMeta.values) {
+      for (final meta in entry.values) {
+        expect(
+          meta.description,
+          isNot(
+            matches(
+              RegExp(r'€|Festpreis|fixed price|\bab \d', caseSensitive: false),
+            ),
+          ),
+          reason: meta.title,
+        );
+      }
+    }
   });
 
   group('Impressum', () {
@@ -302,6 +381,12 @@ void main() {
         'The fonts of this website are self-hosted',
         'Your browser makes no request to Google Fonts or to any other '
             'third party for them.',
+        'This website contains links to pages of third parties, namely '
+            'kevinscheeren.de, GitHub and LinkedIn. They are plain links: '
+            'only when you click one does your browser leave this website '
+            'and request the linked page; before that, no data is sent to '
+            'these providers. What happens to your data there is governed by '
+            'their own privacy notices.',
         'The mailbox is provided by Proton AG (Switzerland)',
         'LDI NRW',
         'We use no automated decision-making',
@@ -322,6 +407,13 @@ void main() {
         'Die Schriftarten dieser Website sind selbst gehostet',
         'Ihr Browser stellt dafür keine Verbindung zu Google Fonts oder '
             'einem anderen Dritten her.',
+        'Diese Website enthält Links auf Seiten Dritter, namentlich auf '
+            'kevinscheeren.de, GitHub und LinkedIn. Es sind gewöhnliche '
+            'Links: Erst wenn Sie einen anklicken, verlässt Ihr Browser '
+            'diese Website und ruft die verlinkte Seite auf; vorher werden '
+            'keine Daten an diese Anbieter übertragen. Was dort mit Ihren '
+            'Daten geschieht, richtet sich nach deren eigenen '
+            'Datenschutzhinweisen.',
         'Das Postfach stellt Proton AG (Schweiz) bereit',
         'LDI NRW',
         'keine automatisierte Entscheidungsfindung',
@@ -354,6 +446,110 @@ void main() {
         expect(html, isNot(contains('Barrierefreiheitsstärkungsgesetz')));
       });
     }
+
+    test(
+      'the sections are numbered consecutively and cross-refer correctly',
+      () {
+        // Heading text and the sections the Art. 21 paragraph points at, per
+        // language: (heading of the section, phrase that cites its number).
+        const headings = {
+          Lang.en: [
+            'Controller',
+            'Hosting',
+            'No access logs, no storage of IP addresses',
+            'No cookies, no tracking, no analytics',
+            'Fonts',
+            'Links to other websites',
+            'Contact by email',
+            'No automated decision-making',
+            'Data protection officer',
+            'Your rights',
+          ],
+          Lang.de: [
+            'Verantwortlicher',
+            'Hosting',
+            'Keine Zugriffsprotokolle, keine Speicherung von IP-Adressen',
+            'Keine Cookies, kein Tracking, keine Analyse',
+            'Schriftarten',
+            'Links zu anderen Websites',
+            'Kontakt per E-Mail',
+            'Keine automatisierte Entscheidungsfindung',
+            'Datenschutzbeauftragter',
+            'Ihre Rechte',
+          ],
+        };
+        const crossRef = {
+          Lang.en: '(sections 3 and 7)',
+          Lang.de: '(Abschnitte 3 und 7)',
+        };
+        const updated = {Lang.en: '3 October 2026', Lang.de: '3. Oktober 2026'};
+        for (final lang in Lang.values) {
+          final html = read(pathFor(PageKey.datenschutz, lang));
+          final found = [
+            for (final m in RegExp(
+              r'<h2[^>]*>(\d+)\. ([^<]*)</h2>',
+            ).allMatches(html))
+              (int.parse(m[1]!), m[2]!),
+          ];
+          expect(found, [
+            for (var i = 0; i < headings[lang]!.length; i++)
+              (i + 1, headings[lang]![i]),
+          ], reason: lang.code);
+          // The cross-reference names the logs section (3) and the contact
+          // section (7), the two that rest on Art. 6(1)(f).
+          expect(html, contains(crossRef[lang]));
+          expect(html, contains(updated[lang]));
+          expect(html, isNot(contains('2 October 2026')));
+          expect(html, isNot(contains('2. Oktober 2026')));
+        }
+      },
+    );
+
+    test(
+      'the section on links names exactly the providers of the allow-list',
+      () {
+        // Provider as the section names it, per registrable domain of
+        // [outboundUrls]; a new link needs a new entry here and a new sentence
+        // in the section, or this test fails.
+        const named = {
+          'kevinscheeren.de': 'kevinscheeren.de',
+          'github.com': 'GitHub',
+          'linkedin.com': 'LinkedIn',
+        };
+        String registrable(String host) =>
+            host.split('.').reversed.take(2).toList().reversed.join('.');
+        final hosts = {
+          for (final u in outboundUrls) registrable(Uri.parse(u).host),
+        };
+        expect(hosts, named.keys.toSet());
+        for (final lang in Lang.values) {
+          final html = read(pathFor(PageKey.datenschutz, lang));
+          final start = html.indexOf(
+            lang == Lang.en
+                ? 'Links to other websites'
+                : 'Links zu anderen Websites',
+          );
+          final end = html.indexOf(
+            lang == Lang.en ? '7. Contact by email' : '7. Kontakt per E-Mail',
+          );
+          expect(start, greaterThan(-1));
+          expect(end, greaterThan(start));
+          final section = html.substring(start, end);
+          for (final name in named.values) {
+            expect(section, contains(name));
+          }
+          // Plain text: the section itself links nothing.
+          expect(section, isNot(contains('<a ')));
+          // No host of the allow-list may be named outside it by name, and no
+          // other host-like name may appear in it.
+          final domains = RegExp(r'\b[a-z0-9-]+\.(?:de|com|org|net|io)\b');
+          expect(
+            {for (final m in domains.allMatches(section)) m[0]},
+            {'kevinscheeren.de'},
+          );
+        }
+      },
+    );
 
     test('only the English page says the German text is authoritative', () {
       expect(read('/datenschutz/'), isNot(contains('legally authoritative')));
@@ -461,16 +657,12 @@ void main() {
     // The footer is the brand copy (home.md "Footer"), character for character.
     const footer = {
       Lang.en: (
-        tagline:
-            'Cube Algos, Heinsberg. Apps, tools and automation at fixed '
-            'prices.',
+        tagline: 'Cube Algos, Heinsberg. Software studio since 2023.',
         links: ['Home', 'About', 'Contact'],
         skip: 'Skip to content',
       ),
       Lang.de: (
-        tagline:
-            'Cube Algos, Heinsberg. Apps, Tools und Automatisierung zum '
-            'Festpreis.',
+        tagline: 'Cube Algos, Heinsberg. Softwarestudio seit 2023.',
         links: ['Start', 'Über', 'Kontakt'],
         skip: 'Zum Inhalt springen',
       ),

@@ -230,7 +230,18 @@ const _datenschutzDe = LegalDoc(
             'Verbindung zu Google Fonts oder einem anderen Dritten her.',
       ]),
     ]),
-    Section('6. Kontakt per E-Mail', [
+    Section('6. Links zu anderen Websites', [
+      Para([
+        'Diese Website enthält Links auf Seiten Dritter, namentlich auf '
+            'kevinscheeren.de, GitHub und LinkedIn. Es sind gewöhnliche '
+            'Links: Erst wenn Sie einen anklicken, verlässt Ihr Browser '
+            'diese Website und ruft die verlinkte Seite auf; vorher werden '
+            'keine Daten an diese Anbieter übertragen. Was dort mit Ihren '
+            'Daten geschieht, richtet sich nach deren eigenen '
+            'Datenschutzhinweisen.',
+      ]),
+    ]),
+    Section('7. Kontakt per E-Mail', [
       Para([
         'Die Website bietet kein Kontaktformular, sondern nur die Adresse ',
         _mail,
@@ -255,13 +266,13 @@ const _datenschutzDe = LegalDoc(
             'verlangen.',
       ]),
     ]),
-    Section('7. Keine automatisierte Entscheidungsfindung', [
+    Section('8. Keine automatisierte Entscheidungsfindung', [
       Para([
         'Wir setzen im Zusammenhang mit dieser Website keine automatisierte '
             'Entscheidungsfindung und kein Profiling ein.',
       ]),
     ]),
-    Section('8. Datenschutzbeauftragter', [
+    Section('9. Datenschutzbeauftragter', [
       Para([
         'Wir haben keinen Datenschutzbeauftragten bestellt. Das ist nach '
             '§ 38 BDSG nicht erforderlich, da in der Regel weniger als 20 '
@@ -269,7 +280,7 @@ const _datenschutzDe = LegalDoc(
             'personenbezogener Daten beschäftigt sind.',
       ]),
     ]),
-    Section('9. Ihre Rechte', [
+    Section('10. Ihre Rechte', [
       Para([
         'Sie haben das Recht auf Auskunft (Art. 15 DSGVO), Berichtigung '
             '(Art. 16), Löschung (Art. 17), Einschränkung der Verarbeitung '
@@ -281,7 +292,7 @@ const _datenschutzDe = LegalDoc(
       ]),
       Para([
         'Widerspruchsrecht: Soweit wir Daten auf Grundlage von Art. 6 '
-            'Abs. 1 lit. f DSGVO verarbeiten (Abschnitte 3 und 6), können Sie '
+            'Abs. 1 lit. f DSGVO verarbeiten (Abschnitte 3 und 7), können Sie '
             'dieser Verarbeitung aus Gründen, die sich aus Ihrer besonderen '
             'Situation ergeben, jederzeit widersprechen (Art. 21 Abs. 1 '
             'DSGVO).',
@@ -295,7 +306,7 @@ const _datenschutzDe = LegalDoc(
       ]),
     ]),
     Section('Stand', [
-      Para(['2. Oktober 2026']),
+      Para(['3. Oktober 2026']),
     ]),
   ],
 );
@@ -364,7 +375,17 @@ const _datenschutzEn = LegalDoc(
             'other third party for them.',
       ]),
     ]),
-    Section('6. Contact by email', [
+    Section('6. Links to other websites', [
+      Para([
+        'This website contains links to pages of third parties, namely '
+            'kevinscheeren.de, GitHub and LinkedIn. They are plain links: '
+            'only when you click one does your browser leave this website '
+            'and request the linked page; before that, no data is sent to '
+            'these providers. What happens to your data there is governed by '
+            'their own privacy notices.',
+      ]),
+    ]),
+    Section('7. Contact by email', [
       Para([
         'The website has no contact form, only the address ',
         _mail,
@@ -387,20 +408,20 @@ const _datenschutzEn = LegalDoc(
             'demand.',
       ]),
     ]),
-    Section('7. No automated decision-making', [
+    Section('8. No automated decision-making', [
       Para([
         'We use no automated decision-making and no profiling in connection '
             'with this website.',
       ]),
     ]),
-    Section('8. Data protection officer', [
+    Section('9. Data protection officer', [
       Para([
         'We have not appointed a data protection officer. Under § 38 BDSG '
             'this is not required, because as a rule fewer than 20 people are '
             'constantly engaged in the automated processing of personal data.',
       ]),
     ]),
-    Section('9. Your rights', [
+    Section('10. Your rights', [
       Para([
         'You have the right of access (Art. 15 GDPR), rectification '
             '(Art. 16), erasure (Art. 17), restriction of processing '
@@ -411,7 +432,7 @@ const _datenschutzEn = LegalDoc(
       ]),
       Para([
         'Right to object: where we process data on the basis of Art. 6(1)(f) '
-            'GDPR (sections 3 and 6), you may object to this processing at '
+            'GDPR (sections 3 and 7), you may object to this processing at '
             'any time on grounds relating to your particular situation '
             '(Art. 21(1) GDPR).',
       ]),
@@ -426,7 +447,7 @@ const _datenschutzEn = LegalDoc(
       ]),
     ]),
     Section('Last updated', [
-      Para(['2 October 2026']),
+      Para(['3 October 2026']),
     ]),
   ],
 );

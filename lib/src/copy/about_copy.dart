@@ -5,6 +5,7 @@
 // ignore_for_file: unnecessary_parenthesis
 library;
 
+import 'package:website/src/outbound.dart';
 import 'package:website/src/routes.dart';
 
 /// All copy of the about page in one language.
@@ -13,8 +14,21 @@ typedef AboutCopy = ({
   String lede,
   String whoTitle,
   List<String> who,
+
+  /// The line before the founder's links, and the links, each a
+  /// `[label](url)` to a URL of `outbound.dart`.
+  String linksIntro,
+  List<String> links,
+
+  /// The alternative text of the founder's portrait.
+  String photoAlt,
   String oneTitle,
   String one,
+  String ownTitle,
+  String own,
+
+  /// The pointer to the studio's public code, with a `[label](url)` link.
+  String ownCode,
   String howTitle,
   List<String> how,
   String whereTitle,
@@ -42,19 +56,32 @@ const Map<Lang, AboutCopy> aboutCopy = {
           'terms: carefully, creatively, and for people who will actually '
           'use it.'),
     ],
+    linksIntro: 'His CV and projects are on his own site:',
+    links: [
+      '[kevinscheeren.de]($personalSiteUrlEn)',
+      '[GitHub]($githubProfileUrl)',
+      '[LinkedIn]($linkedinProfileUrl)',
+    ],
+    photoAlt: 'Kevin Scheeren',
     oneTitle: 'One person, on purpose',
     one:
         'Cube Algos is run by one person. You talk directly to the '
         'person who builds your project, with no account manager in '
         'between and nothing lost in handover. Capacity is limited, so '
         'you get an honest start date before you sign.',
+    ownTitle: 'Software of its own',
+    own:
+        'Cube Algos builds software of its own, and software for '
+        'businesses and founders. The first product of its own is in '
+        'development.',
+    ownCode:
+        'The code of this website and the Cube Algos brand are public on '
+        '[GitHub]($githubOrgUrl|The Cube Algos GitHub organisation).',
     howTitle: 'How Cube Algos works',
     how: [
-      'Fixed prices, in writing, before the build.',
       'You see progress as it happens.',
       'Every build is accessible from the start.',
-      ('A free first call, then a written scope in about 3 working '
-          "days. If you don't go ahead, it costs nothing."),
+      'A free first call, then a written offer in about 3 working days.',
       ('AI tools are used every day, because they make the work '
           'faster. Kevin is also a trained developer, so he reads and '
           'understands every line before it ships. AI helps write the '
@@ -84,20 +111,34 @@ const Map<Lang, AboutCopy> aboutCopy = {
           'liebsten baut: sorgfältig, mit eigenen Ideen und für Menschen, die '
           'sie wirklich nutzen.'),
     ],
+    linksIntro: 'Lebenslauf und Projekte stehen auf Kevins eigener Website:',
+    links: [
+      '[kevinscheeren.de]($personalSiteUrl)',
+      '[GitHub]($githubProfileUrl)',
+      '[LinkedIn]($linkedinProfileUrl)',
+    ],
+    photoAlt: 'Kevin Scheeren',
     oneTitle: 'Eine Person, mit Absicht',
     one:
         'Bei Cube Algos sprechen Sie direkt mit dem Menschen, der Ihr '
         'Projekt baut. Es gibt keinen Account-Manager dazwischen, und bei '
         'keiner Übergabe geht etwas verloren. Weil die Zeit begrenzt ist, '
         'erhalten Sie vor Vertragsabschluss einen ehrlichen Starttermin.',
+    ownTitle: 'Eigene Software',
+    own:
+        'Cube Algos entwickelt eigene Software und baut Software für '
+        'Betriebe und Gründungsteams. Das erste eigene Produkt ist in '
+        'Entwicklung.',
+    ownCode:
+        'Der Code dieser Website und die Marke von Cube Algos liegen '
+        'öffentlich auf '
+        '[GitHub]($githubOrgUrl|GitHub-Organisation von Cube Algos).',
     howTitle: 'So arbeitet Cube Algos',
     how: [
-      'Feste Preise, schriftlich vereinbart, bevor gebaut wird.',
       'Den Fortschritt sehen Sie laufend.',
       'Jedes Projekt ist von Anfang an barrierearm.',
       ('Zuerst ein kostenloses Gespräch, dann innerhalb von etwa drei '
-          'Werktagen ein schriftliches Angebot. Wenn Sie nicht beauftragen, '
-          'entstehen Ihnen keine Kosten.'),
+          'Werktagen ein schriftliches Angebot.'),
       ('KI-Werkzeuge gehören zum Alltag, weil sie die Arbeit schneller '
           'machen. Kevin ist ausgebildeter Entwickler und liest und versteht '
           'jede Zeile, bevor sie live geht. Die KI hilft beim Schreiben, die '
