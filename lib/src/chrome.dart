@@ -3,6 +3,7 @@
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/server.dart';
 import 'package:website/src/chrome_text.dart';
+import 'package:website/src/outbound.dart';
 import 'package:website/src/routes.dart';
 
 /// The id of the `<main>` element the skip link targets.
@@ -185,6 +186,13 @@ class SiteFooter extends StatelessComponent {
           ),
           const p(classes: 'footer-contact', [
             a([Component.text(contactEmail)], href: 'mailto:$contactEmail'),
+          ]),
+          p(classes: 'footer-contact', [
+            a(
+              [Component.text(t.linkedin)],
+              href: linkedinCompanyUrl,
+              attributes: const {'rel': 'noreferrer'},
+            ),
           ]),
         ]),
         div(classes: 'bottom', [

@@ -21,6 +21,7 @@ typedef ChromeText = ({
   String contact,
   String impressum,
   String datenschutz,
+  String linkedin,
   String bottom,
 });
 
@@ -43,6 +44,7 @@ const Map<Lang, ChromeText> chromeText = {
     contact: 'Contact',
     impressum: 'Impressum',
     datenschutz: 'Datenschutz',
+    linkedin: 'Cube Algos on LinkedIn',
     bottom: '© 2026 Cube Algos UG (haftungsbeschränkt)',
   ),
   Lang.de: (
@@ -59,6 +61,7 @@ const Map<Lang, ChromeText> chromeText = {
     contact: 'Kontakt',
     impressum: 'Impressum',
     datenschutz: 'Datenschutz',
+    linkedin: 'Cube Algos auf LinkedIn',
     bottom: '© 2026 Cube Algos UG (haftungsbeschränkt)',
   ),
 };

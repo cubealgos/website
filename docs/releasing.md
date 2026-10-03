@@ -22,6 +22,8 @@ section; a tag with a `-suffix` is marked pre-release) with two assets:
 - `site-vX.Y.Z.tar.gz.sha256`: `<hash>  site-vX.Y.Z.tar.gz`, verify with
   `shasum -a 256 -c site-vX.Y.Z.tar.gz.sha256`.
 
+A tag runs one release at a time (`concurrency: release-<ref>`, queued, never cancelled), and the create step is idempotent. If the release for the tag already exists, for example because the same tag push started the workflow twice, the run compares the published `site-vX.Y.Z.tar.gz.sha256` with the rebuilt one: equal means it succeeds without changing anything; different (or the asset is missing) means it fails loudly. It never overwrites or re-uploads a published archive. A failure of the second kind is a real discrepancy: do not delete the release to "fix" it, open a bug issue.
+
 The workflow refuses a tag whose commit is not on `production`, so a stray tag on another branch fails instead of publishing a release.
 
 ## Reproducibility

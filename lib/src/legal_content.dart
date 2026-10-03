@@ -233,8 +233,9 @@ const _datenschutzDe = LegalDoc(
     Section('6. Links zu anderen Websites', [
       Para([
         'Diese Website enthält Links auf Seiten Dritter, namentlich auf '
-            'kevinscheeren.de, GitHub und LinkedIn. Es sind gewöhnliche '
-            'Links: Erst wenn Sie einen anklicken, verlässt Ihr Browser '
+            'kevinscheeren.de, GitHub und LinkedIn (darunter die '
+            'LinkedIn-Seite von Cube Algos). Es sind gewöhnliche Links: '
+            'Erst wenn Sie einen anklicken, verlässt Ihr Browser '
             'diese Website und ruft die verlinkte Seite auf; vorher werden '
             'keine Daten an diese Anbieter übertragen. Was dort mit Ihren '
             'Daten geschieht, richtet sich nach deren eigenen '
@@ -378,8 +379,9 @@ const _datenschutzEn = LegalDoc(
     Section('6. Links to other websites', [
       Para([
         'This website contains links to pages of third parties, namely '
-            'kevinscheeren.de, GitHub and LinkedIn. They are plain links: '
-            'only when you click one does your browser leave this website '
+            'kevinscheeren.de, GitHub and LinkedIn (including the LinkedIn '
+            'page of Cube Algos). They are plain links: only when you '
+            'click one does your browser leave this website '
             'and request the linked page; before that, no data is sent to '
             'these providers. What happens to your data there is governed by '
             'their own privacy notices.',

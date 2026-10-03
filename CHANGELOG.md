@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## 0.3.0
+
+- The LinkedIn company page, `https://www.linkedin.com/company/cubealgos/`, is linked from the footer of every page, labelled „Cube Algos auf LinkedIn" / "Cube Algos on LinkedIn" (Kevin's own LinkedIn link on About keeps its "LinkedIn" label). It is a plain `<a href>` and the sixth URL of the allow-list in `lib/src/outbound.dart`, so `html-check` and the built-output test accept it as a link only and still fail on any other LinkedIn URL or any request to it; no widget, script or embed. The Organization JSON-LD of the home pages lists it as `sameAs` (the seo check rejects a `sameAs` URL that is not on the allow-list). Datenschutz section 6 names it („darunter die LinkedIn-Seite von Cube Algos" / "including the LinkedIn page of Cube Algos"); the provider list is unchanged (LinkedIn), the "Stand" date stays 3 October 2026 (#82).
+- Release workflow: runs queue per tag (`concurrency`) and the create step is idempotent: a second run for a tag whose release exists succeeds when the published `.sha256` equals the rebuilt one and fails loudly when it differs, never overwriting a published archive; documented in `docs/releasing.md` (#73).
+
 ## 0.2.0
 
 - Datenschutz: a new section 6, „Links zu anderen Websites" / "Links to other websites" (after Schriftarten / Fonts), says the outbound links (kevinscheeren.de, GitHub, LinkedIn) are plain links and that no data goes to those providers before a click; the following sections move up by one (Kontakt per E-Mail is now 7, Ihre Rechte 10) and the Art. 21 cross-reference reads „Abschnitte 3 und 7"; dated 3 October 2026. A test fails if the hosts of `lib/src/outbound.dart` and the providers named in the section differ (#76).

@@ -7,6 +7,7 @@ import 'dart:io';
 
 import 'package:test/test.dart';
 import 'package:website/src/copy/not_found_copy.dart';
+import 'package:website/src/outbound.dart';
 import 'package:website/src/page_meta.dart';
 import 'package:website/src/routes.dart';
 
@@ -55,6 +56,8 @@ void main() {
             url.startsWith('/') ||
                 url.startsWith('#') ||
                 url.startsWith('mailto:') ||
+                // The footer's company page is the one external link here.
+                url == linkedinCompanyUrl ||
                 url.startsWith('https://cubealgos.de/'),
             isTrue,
             reason: url,
