@@ -6,6 +6,7 @@
 library;
 
 import 'package:website/src/legal_facts.dart';
+import 'package:website/src/outbound.dart';
 import 'package:website/src/routes.dart';
 
 /// Width of a share image in pixels.
@@ -44,6 +45,8 @@ Map<String, Object> organizationJsonLd() => {
     'addressLocality': 'Heinsberg',
     'addressCountry': 'DE',
   },
+  // The studio's own profiles, from the outbound allow-list.
+  'sameAs': [linkedinCompanyUrl],
 };
 
 /// `sitemap.xml`: every indexable page in both languages, each with its
