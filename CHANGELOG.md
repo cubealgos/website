@@ -3,6 +3,7 @@
 ## Unreleased
 
 - Release workflow: runs queue per tag (`concurrency`) and the create step is idempotent: a second run for a tag whose release exists succeeds when the published `.sha256` equals the rebuilt one and fails loudly when it differs, never overwriting a published archive; documented in `docs/releasing.md` (#73).
+
 ## 0.2.0
 
 - Datenschutz: a new section 6, „Links zu anderen Websites" / "Links to other websites" (after Schriftarten / Fonts), says the outbound links (kevinscheeren.de, GitHub, LinkedIn) are plain links and that no data goes to those providers before a click; the following sections move up by one (Kontakt per E-Mail is now 7, Ihre Rechte 10) and the Art. 21 cross-reference reads „Abschnitte 3 und 7"; dated 3 October 2026. A test fails if the hosts of `lib/src/outbound.dart` and the providers named in the section differ (#76).
