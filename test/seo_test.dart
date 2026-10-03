@@ -40,13 +40,13 @@ void main() {
   test(
     'an Organization sameAs outside the outbound allow-list is rejected',
     () {
+      const other = 'https://www.linkedin.com/in/someone';
       final bad = {
         ...organizationJsonLd(),
-        'sameAs': [linkedinCompanyUrl, 'https://www.linkedin.com/in/someone'],
+        'sameAs': [linkedinCompanyUrl, other],
       };
       expect(organizationProblems(bad), [
-        'sameAs https://www.linkedin.com/in/someone is not on the outbound '
-            'allow-list',
+        'sameAs $other is not on the outbound allow-list',
       ]);
     },
   );
