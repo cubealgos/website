@@ -205,6 +205,10 @@ void main() {
     for (final url in [
       'https://github.com/other',
       'https://www.linkedin.com/in/someone',
+      'https://www.linkedin.com/company/other/',
+      '${linkedinCompanyUrl}about/',
+      linkedinCompanyUrl.substring(0, linkedinCompanyUrl.length - 1),
+      '$linkedinCompanyUrl?ref=x',
       '$githubOrgUrl?ref=x',
     ]) {
       expect(foreignReferences('<a href="$url">x</a>'), [url]);
@@ -382,8 +386,9 @@ void main() {
         'Your browser makes no request to Google Fonts or to any other '
             'third party for them.',
         'This website contains links to pages of third parties, namely '
-            'kevinscheeren.de, GitHub and LinkedIn. They are plain links: '
-            'only when you click one does your browser leave this website '
+            'kevinscheeren.de, GitHub and LinkedIn (including the LinkedIn '
+            'page of Cube Algos). They are plain links: only when you '
+            'click one does your browser leave this website '
             'and request the linked page; before that, no data is sent to '
             'these providers. What happens to your data there is governed by '
             'their own privacy notices.',
@@ -408,8 +413,9 @@ void main() {
         'Ihr Browser stellt dafür keine Verbindung zu Google Fonts oder '
             'einem anderen Dritten her.',
         'Diese Website enthält Links auf Seiten Dritter, namentlich auf '
-            'kevinscheeren.de, GitHub und LinkedIn. Es sind gewöhnliche '
-            'Links: Erst wenn Sie einen anklicken, verlässt Ihr Browser '
+            'kevinscheeren.de, GitHub und LinkedIn (darunter die '
+            'LinkedIn-Seite von Cube Algos). Es sind gewöhnliche Links: '
+            'Erst wenn Sie einen anklicken, verlässt Ihr Browser '
             'diese Website und ruft die verlinkte Seite auf; vorher werden '
             'keine Daten an diese Anbieter übertragen. Was dort mit Ihren '
             'Daten geschieht, richtet sich nach deren eigenen '
@@ -659,11 +665,13 @@ void main() {
       Lang.en: (
         tagline: 'Cube Algos, Heinsberg. Software studio since 2023.',
         links: ['Home', 'About', 'Contact'],
+        linkedin: 'Cube Algos on LinkedIn',
         skip: 'Skip to content',
       ),
       Lang.de: (
         tagline: 'Cube Algos, Heinsberg. Softwarestudio seit 2023.',
         links: ['Start', 'Über', 'Kontakt'],
+        linkedin: 'Cube Algos auf LinkedIn',
         skip: 'Zum Inhalt springen',
       ),
     };
@@ -708,7 +716,18 @@ void main() {
             'Impressum',
             'Datenschutz',
             'hello@cubealgos.de',
+            f.linkedin,
           ]);
+          // The company page: a plain link to the allow-listed URL, labelled
+          // apart from Kevin's own "LinkedIn" link on About.
+          expect(
+            footerHtml,
+            contains(
+              '<a rel="noreferrer" href="$linkedinCompanyUrl">'
+              '${f.linkedin}</a>',
+            ),
+          );
+          expect(footerHtml, isNot(contains(linkedinProfileUrl)));
           // Header nav and the language switch (header and footer).
           final switchLinks = [
             for (final m in anchor.allMatches(html))

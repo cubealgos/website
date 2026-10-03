@@ -229,6 +229,7 @@ void main() {
         'https://github.com/other',
         'https://github.com/cubealgos/website',
         'https://www.linkedin.com/in/someone',
+        'https://www.linkedin.com/company/other/',
         'https://kevinscheeren.de/kontakt/',
         'https://example.com/',
       ]) {
@@ -240,6 +241,9 @@ void main() {
       for (final url in [
         '$githubOrgUrl?ref=site',
         '$githubOrgUrl#top',
+        '$linkedinCompanyUrl?trk=site',
+        '$linkedinCompanyUrl#top',
+        'http://www.linkedin.com/company/cubealgos/',
         'http://github.com/cubealgos',
         personalSiteUrl.replaceFirst('https://', '//'),
       ]) {
@@ -252,6 +256,8 @@ void main() {
         '<img src="$githubOrgUrl" alt="x"/>',
         '<script src="$githubProfileUrl"></script>',
         '<form action="$linkedinProfileUrl"></form>',
+        '<iframe src="$linkedinCompanyUrl"></iframe>',
+        '<script src="$linkedinCompanyUrl"></script>',
         '<a href="/" src="$personalSiteUrl">x</a>',
       ]) {
         final dir = _site({'index.html': _page(body: body)});
