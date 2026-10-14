@@ -354,6 +354,24 @@ void main() {
       });
     }
 
+    test('names who is responsible for the content under § 18(2) MStV', () {
+      // Typed here independently of lib/src/legal_facts.dart.
+      expect(
+        read('/impressum/'),
+        contains(
+          'Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV: '
+          'Kevin Scheeren, An der Maar 19, 52525 Heinsberg',
+        ),
+      );
+      expect(
+        read('/en/impressum/'),
+        contains(
+          'Responsible for the content under § 18(2) MStV: '
+          'Kevin Scheeren, An der Maar 19, 52525 Heinsberg',
+        ),
+      );
+    });
+
     test('only the English page says the German text is authoritative', () {
       const line = 'The German version of this page is legally authoritative.';
       expect(read('/en/impressum/'), contains(line));

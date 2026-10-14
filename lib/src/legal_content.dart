@@ -67,6 +67,12 @@ const _impressumDe = LegalDoc(
         ),
       ]),
     ]),
+    Section('Inhaltlich verantwortlich', [
+      Para([
+        'Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV: '
+            '$managingDirector, $addressStreet, $addressCity',
+      ]),
+    ]),
     Section('Haftung für Inhalte', [
       Para([
         'Als Diensteanbieter sind wir gemäß § 7 Abs. 1 DDG für eigene Inhalte '
@@ -139,6 +145,12 @@ const _impressumEn = LegalDoc(
             [vatId],
           ],
         ),
+      ]),
+    ]),
+    Section('Responsible for the content', [
+      Para([
+        'Responsible for the content under § 18(2) MStV: '
+            '$managingDirector, $addressStreet, $addressCity',
       ]),
     ]),
     Section('Liability for content', [
