@@ -6,7 +6,9 @@
 /// plain `<a href>` links and nothing else: `html_check` and the built-output
 /// test allow exactly these URLs as the `href` of an `<a>`
 /// and still fail on any other foreign link, and on any foreign `src`,
-/// `srcset`, `url()` or form action (a link is not a request).
+/// `srcset`, `url()` or form action (a link is not a request). The links of
+/// the works and the posts in `content/` (`SiteContent.outboundAllowed`) are
+/// allowed the same way, and only as links.
 library;
 
 /// Kevin's own site, German.

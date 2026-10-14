@@ -7,7 +7,8 @@ import 'package:website/src/copy/contact_copy.dart';
 import 'package:website/src/routes.dart';
 import 'package:website/src/widgets.dart';
 
-/// The contact page body: mailto only, no form.
+/// The contact page body: mailto only, no form. Collaboration, integrations,
+/// grants and press at hello@; vulnerability reports at security@.
 class ContactPage extends StatelessComponent {
   /// Creates the contact page in [lang].
   const new({required this.lang, super.key});
@@ -34,23 +35,30 @@ class ContactPage extends StatelessComponent {
               attrs: const {'data-i': '2'},
               [const MailButton(label: contactEmail)],
             ),
+            p(
+              classes: 'note rise',
+              attributes: const {'data-i': '3'},
+              [t(c.note)],
+            ),
           ]),
           el(
             'section',
             classes: 'ledger rise',
-            attrs: const {'data-i': '2', 'aria-labelledby': 'include-title'},
+            attrs: const {'data-i': '2', 'aria-labelledby': 'topics-title'},
             [
               div(classes: 'ledger-head', [
-                h2(id: 'include-title', classes: 'ledger-label', [
-                  t(c.includeTitle),
+                h2(id: 'topics-title', classes: 'ledger-label', [
+                  t(c.topicsTitle),
                 ]),
                 const div(classes: 'ledger-fish', [Fish(pose: 'idle')]),
               ]),
-              p([t(c.includeIntro)]),
-              ul(classes: 'note-list', [
-                for (final item in c.include) li([t(item)]),
+              ul(classes: 'note-list topic-list', [
+                for (final topic in c.topics)
+                  li([
+                    strong([t(topic.lead)]),
+                    t(' ${topic.text}'),
+                  ]),
               ]),
-              p(classes: 'note-outro', [t(c.includeOutro)]),
             ],
           ),
         ]),
@@ -58,18 +66,15 @@ class ContactPage extends StatelessComponent {
       el(
         'section',
         classes: 'sec sec--first sec--last',
-        id: 'next',
-        attrs: const {'aria-labelledby': 'next-title'},
+        attrs: const {'aria-labelledby': 'security-title'},
         [
-          el('div', classes: 'wrap', [
-            h2(id: 'next-title', classes: 'sec-h2 reveal', [t(c.nextTitle)]),
-            el('div', classes: 'rail-wrap rail-wrap--plain', [
-              ol(classes: 'rail reveal', [
-                for (var i = 0; i < c.next.length; i++)
-                  li(classes: i == 2 ? 'is-call' : null, [t(c.next[i])]),
-              ]),
+          div(classes: 'wrap split', [
+            h2(id: 'security-title', classes: 'split-h2 reveal', [
+              t(c.securityTitle),
             ]),
-            p(classes: 'next-note', [t(c.nextNote)]),
+            div(classes: 'split-body reveal', [
+              p(classes: 'split-lede', inlineLinks(c.security)),
+            ]),
           ]),
         ],
       ),

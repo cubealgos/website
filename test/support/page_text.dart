@@ -8,14 +8,28 @@ import 'dart:io';
 import 'package:path/path.dart' as p;
 import 'package:website/src/routes.dart';
 
-/// The built file of [key] in [lang] under `build/jaspr`.
-String builtHtml(PageKey key, Lang lang) {
-  final path = pathFor(key, lang);
+/// The built file of [key] in [lang] under `build/jaspr` (a page without a
+/// slug).
+String builtHtml(PageKey key, Lang lang) => builtHtmlAt(pathFor(key, lang));
+
+/// The built file of the page at [path] under `build/jaspr`.
+String builtHtmlAt(String path) {
   final file = path.endsWith('/') ? '${path}index.html' : path;
   return File(p.join('build/jaspr', file.substring(1))).readAsStringSync();
 }
 
-const _inline = {'span', 'strong', 'em', 'a', 'b', 'i', 'mark', 'small'};
+const _inline = {
+  'span',
+  'strong',
+  'em',
+  'a',
+  'b',
+  'i',
+  'mark',
+  'small',
+  'code',
+  'time',
+};
 
 String _decode(String s) => s
     .replaceAllMapped(

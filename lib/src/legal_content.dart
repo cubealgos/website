@@ -8,6 +8,7 @@ library;
 // Long paragraphs are written as adjacent string literals for line length.
 // ignore_for_file: no_adjacent_strings_in_list
 
+import 'package:website/src/copy/contact_copy.dart' show securityEmail;
 import 'package:website/src/legal_facts.dart';
 import 'package:website/src/legal_model.dart';
 import 'package:website/src/routes.dart';
@@ -17,6 +18,7 @@ const authoritativeNotice =
     'The German version of this page is legally authoritative.';
 
 const _mail = Link(email, 'mailto:$email');
+const _securityMail = Link(securityEmail, 'mailto:$securityEmail');
 const _tel = Link(phone, phoneUri);
 
 const _impressumDe = LegalDoc(
@@ -232,7 +234,7 @@ const _datenschutzDe = LegalDoc(
     ]),
     Section('6. Links zu anderen Websites', [
       Para([
-        'Diese Website enthält Links auf Seiten Dritter, namentlich auf '
+        'Diese Website enthält Links auf Seiten Dritter, unter anderem auf '
             'kevinscheeren.de, GitHub und LinkedIn (darunter die '
             'LinkedIn-Seite von Cube Algos). Es sind gewöhnliche Links: '
             'Erst wenn Sie einen anklicken, verlässt Ihr Browser '
@@ -244,27 +246,50 @@ const _datenschutzDe = LegalDoc(
     ]),
     Section('7. Kontakt per E-Mail', [
       Para([
-        'Die Website bietet kein Kontaktformular, sondern nur die Adresse ',
+        'Die Website bietet kein Kontaktformular, sondern nur die Adressen ',
         _mail,
+        ' und ',
+        _securityMail,
         ' als „mailto:“-Link. Beim Anklicken überträgt die Website selbst '
             'keine Daten; Ihr E-Mail-Programm versendet die Nachricht.',
       ]),
       Para([
-        'Wenn Sie uns schreiben, verarbeiten wir Ihre Nachricht und Ihre '
+        'Anfragen an ',
+        _mail,
+        ' (Zusammenarbeit, Integrationen, Förderprogramme, Presse): Wenn '
+            'Sie uns schreiben, verarbeiten wir Ihre Nachricht und Ihre '
             'E-Mail-Adresse, um Ihre Anfrage zu beantworten. Rechtsgrundlage '
-            'ist Art. 6 Abs. 1 lit. b DSGVO, wenn Ihre Anfrage auf einen '
-            'Vertrag zielt, sonst Art. 6 Abs. 1 lit. f DSGVO (berechtigtes '
-            'Interesse an der Beantwortung von Anfragen). Ihre Angaben sind '
-            'freiwillig; ohne sie können wir Ihre Anfrage aber nicht '
-            'beantworten.',
+            'ist in der Regel Art. 6 Abs. 1 lit. f DSGVO (berechtigtes '
+            'Interesse an der Beantwortung von Anfragen), da die meisten '
+            'Anfragen im Namen einer Organisation kommen. Wenn Sie als '
+            'Einzelperson einen Vertrag mit uns schließen wollen, ist es '
+            'Art. 6 Abs. 1 lit. b DSGVO. Ihre Angaben sind freiwillig; ohne '
+            'sie können wir Ihre Anfrage aber nicht beantworten.',
       ]),
       Para([
-        'Das Postfach stellt Proton AG (Schweiz) bereit, die dabei als '
+        'Meldungen an ',
+        _securityMail,
+        ' (Schwachstellen): Wir verarbeiten die Meldung und die '
+            'E-Mail-Adresse der meldenden Person, um die Schwachstelle zu '
+            'prüfen und zu beheben. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f '
+            'DSGVO (berechtigtes Interesse an der Sicherheit unserer '
+            'Software und ihrer Nutzerinnen und Nutzer) und, soweit uns der '
+            'Cyber Resilience Act als Hersteller dazu verpflichtet, Art. 6 '
+            'Abs. 1 lit. c DSGVO. Empfänger: Wird eine Schwachstelle aktiv '
+            'ausgenutzt, geben wir den Inhalt der Meldung über die '
+            'einheitliche Meldeplattform der ENISA an den '
+            'CSIRT-Koordinator (CERT-Bund) weiter; betrifft sie eine fremde '
+            'Komponente, melden wir sie deren Betreuern. Ihre Identität '
+            'brauchen wir dafür nicht und geben sie nur mit Ihrer Zustimmung '
+            'weiter.',
+      ]),
+      Para([
+        'Die Postfächer stellt Proton AG (Schweiz) bereit, die dabei als '
             'Auftragsverarbeiterin für uns tätig ist. Für die Schweiz besteht '
             'ein Angemessenheitsbeschluss der Europäischen Kommission. Wir '
-            'speichern die Nachrichten so lange, wie es für Ihre Anfrage '
-            'erforderlich ist und gesetzliche Aufbewahrungspflichten es '
-            'verlangen.',
+            'speichern Anfragen und Meldungen so lange, wie es für ihre '
+            'Bearbeitung erforderlich ist und gesetzliche '
+            'Aufbewahrungspflichten es verlangen.',
       ]),
     ]),
     Section('8. Keine automatisierte Entscheidungsfindung', [
@@ -307,7 +332,7 @@ const _datenschutzDe = LegalDoc(
       ]),
     ]),
     Section('Stand', [
-      Para(['3. Oktober 2026']),
+      Para(['14. Oktober 2026']),
     ]),
   ],
 );
@@ -378,8 +403,8 @@ const _datenschutzEn = LegalDoc(
     ]),
     Section('6. Links to other websites', [
       Para([
-        'This website contains links to pages of third parties, namely '
-            'kevinscheeren.de, GitHub and LinkedIn (including the LinkedIn '
+        'This website contains links to pages of third parties, for example '
+            'to kevinscheeren.de, GitHub and LinkedIn (including the LinkedIn '
             'page of Cube Algos). They are plain links: only when you '
             'click one does your browser leave this website '
             'and request the linked page; before that, no data is sent to '
@@ -389,25 +414,46 @@ const _datenschutzEn = LegalDoc(
     ]),
     Section('7. Contact by email', [
       Para([
-        'The website has no contact form, only the address ',
+        'The website has no contact form, only the addresses ',
         _mail,
-        ' as a "mailto:" link. Clicking it transmits no data from the '
+        ' and ',
+        _securityMail,
+        ' as "mailto:" links. Clicking one transmits no data from the '
             'website itself; your email program sends the message.',
       ]),
       Para([
-        'If you write to us, we process your message and your email address '
-            'to answer your request. The legal basis is Art. 6(1)(b) GDPR if '
-            'your request aims at a contract, otherwise Art. 6(1)(f) GDPR '
-            '(legitimate interest in answering enquiries). Providing your '
-            'details is voluntary, but without them we cannot answer your '
-            'request.',
+        'Enquiries to ',
+        _mail,
+        ' (collaboration, integrations, grant programmes, press): if you '
+            'write to us, we process your message and your email address to '
+            'answer your request. The legal basis is, as a rule, Art. '
+            '6(1)(f) GDPR (legitimate interest in answering enquiries), '
+            'because most enquiries come on behalf of an organisation. If '
+            'you are an individual who wants to enter into a contract with '
+            'us, it is Art. 6(1)(b) GDPR. Providing your details is '
+            'voluntary, but without them we cannot answer your request.',
       ]),
       Para([
-        'The mailbox is provided by Proton AG (Switzerland), which acts for '
-            'us as a processor. The European Commission has issued an '
-            'adequacy decision for Switzerland. We keep messages as long as '
-            'your request requires and statutory retention obligations '
-            'demand.',
+        'Reports to ',
+        _securityMail,
+        ' (vulnerabilities): we process the report and the email address of '
+            'the person reporting to check and fix the vulnerability. The '
+            'legal basis is Art. 6(1)(f) GDPR (legitimate interest in the '
+            'security of our software and its users) and, where the Cyber '
+            'Resilience Act obliges us as a manufacturer, Art. 6(1)(c) '
+            'GDPR. Recipients: if a vulnerability is being actively '
+            'exploited, we pass the content of the report to the CSIRT '
+            "coordinator (CERT-Bund) through ENISA's single reporting "
+            'platform; if it concerns a third-party component, we report it '
+            'to its maintainers. We do not need your identity for this and '
+            'pass it on only with your consent.',
+      ]),
+      Para([
+        'The mailboxes are provided by Proton AG (Switzerland), which acts '
+            'for us as a processor. The European Commission has issued an '
+            'adequacy decision for Switzerland. We keep enquiries and '
+            'reports as long as their handling requires and statutory '
+            'retention obligations demand.',
       ]),
     ]),
     Section('8. No automated decision-making', [
@@ -449,7 +495,7 @@ const _datenschutzEn = LegalDoc(
       ]),
     ]),
     Section('Last updated', [
-      Para(['3 October 2026']),
+      Para(['14 October 2026']),
     ]),
   ],
 );

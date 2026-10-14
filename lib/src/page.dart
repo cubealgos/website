@@ -3,38 +3,64 @@
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/server.dart';
 import 'package:website/src/chrome.dart';
+import 'package:website/src/content/site_content.dart';
 import 'package:website/src/icons.dart';
 import 'package:website/src/legal_content.dart';
 import 'package:website/src/legal_view.dart';
 import 'package:website/src/page_meta.dart';
 import 'package:website/src/pages/about_page.dart';
+import 'package:website/src/pages/blog_pages.dart';
 import 'package:website/src/pages/contact_page.dart';
 import 'package:website/src/pages/home_page.dart';
 import 'package:website/src/pages/not_found_page.dart';
+import 'package:website/src/pages/works_pages.dart';
 import 'package:website/src/routes.dart';
 import 'package:website/src/seo.dart';
 import 'package:website/src/sting.dart';
 
 /// The pages whose sections rise in on scroll (`reveal.js`).
-const Set<PageKey> revealPages = {PageKey.home, PageKey.about, PageKey.contact};
+const Set<PageKey> revealPages = {
+  PageKey.home,
+  PageKey.about,
+  PageKey.contact,
+  PageKey.works,
+  PageKey.blog,
+};
+
+/// The pages whose sections run edge to edge (`main.flush`): the ledger pages.
+/// The legal pages and the 404 pages keep the padded `<main>`.
+const Set<PageKey> flushPages = {
+  PageKey.home,
+  PageKey.about,
+  PageKey.contact,
+  PageKey.works,
+  PageKey.work,
+  PageKey.blog,
+  PageKey.post,
+};
 
 /// The page shell: `<html lang>`, title, description, canonical and hreflang
 /// links derived from the route table, the skip link, header and footer, and
-/// an H1 placeholder in `<main>`.
+/// the body of the page.
 class PageShell extends StatelessComponent {
-  /// Creates the shell of [pageKey] in [lang].
-  const new({required this.pageKey, required this.lang, super.key});
+  /// Creates the shell of [route] over [content].
+  const new({required this.route, required this.content, super.key});
 
   /// Which page this is.
-  final PageKey pageKey;
+  final Route route;
 
-  /// The page's language.
-  final Lang lang;
+  /// The works and posts of the site.
+  final SiteContent content;
 
   @override
   Component build(BuildContext context) {
-    final meta = pageMeta[pageKey]![lang]!;
-    final canonical = urlFor(pageKey, lang);
+    final key = route.key;
+    final lang = route.lang;
+    final meta = metaFor(route, content);
+    final canonical = route.url;
+    final alternates = route.alternates(content);
+    final xDefault =
+        '$siteOrigin${route.pathIn(route.xDefault(content), content)}';
 
     return Component.fragment([
       Document.html(attributes: {'lang': lang.code}),
@@ -68,65 +94,79 @@ class PageShell extends StatelessComponent {
           const link(href: '/site.css', rel: 'stylesheet'),
           // The sting's keyframes, extracted from the vendored SVG by the
           // build.
-          if (pageKey == PageKey.home)
+          if (key == PageKey.home)
             const link(href: stingCssPath, rel: 'stylesheet'),
           // The sting plays on arrival, not from a page of this site.
-          if (pageKey == PageKey.home) const script(src: '/sting.js'),
+          if (key == PageKey.home) const script(src: '/sting.js'),
           // Sections rise in as they scroll into view; content pages only.
-          if (revealPages.contains(pageKey)) const script(src: '/reveal.js'),
+          if (revealPages.contains(key)) const script(src: '/reveal.js'),
           // The 404 pages are not indexed and are no equivalents of each other:
           // noindex, and neither a canonical nor hreflang alternates.
-          if (pageKey == PageKey.notFound)
+          if (key == PageKey.notFound)
             const Component.element(
               tag: 'meta',
               attributes: {'name': 'robots', 'content': 'noindex'},
             )
           else ...[
             link(href: canonical, rel: 'canonical'),
-            for (final alt in Lang.values)
+            // Only the languages the page exists in (a post may exist in one).
+            for (final alt in alternates)
               link(
-                href: urlFor(pageKey, alt),
+                href: '$siteOrigin${route.pathIn(alt, content)}',
                 rel: 'alternate',
                 attributes: {'hreflang': alt.code},
               ),
             link(
-              href: urlFor(pageKey, Lang.de),
+              href: xDefault,
               rel: 'alternate',
               attributes: const {'hreflang': 'x-default'},
             ),
-            ..._shareTags(meta, canonical),
+            ..._shareTags(meta, canonical, alternates.length > 1),
           ],
         ],
       ),
       SkipLink(lang: lang),
-      SiteHeader(pageKey: pageKey, lang: lang),
+      SiteHeader(route: route, content: content),
       main_(
         id: mainId,
-        classes: revealPages.contains(pageKey) ? 'flush' : null,
+        classes: flushPages.contains(key) ? 'flush' : null,
         attributes: const {'tabindex': '-1'},
         [
-          if (legalDocs[pageKey]?[lang] case final doc?)
+          if (legalDocs[key]?[lang] case final doc?)
             LegalPage(heading: meta.h1, doc: doc)
-          else if (pageKey == PageKey.home)
-            HomePage(lang: lang)
-          else if (pageKey == PageKey.about)
-            AboutPage(lang: lang)
-          else if (pageKey == PageKey.contact)
-            ContactPage(lang: lang)
-          else if (pageKey == PageKey.notFound)
-            NotFoundPage(lang: lang)
           else
-            div(classes: 'wrap', [
-              h1(classes: 'rise', [Component.text(meta.h1)]),
-            ]),
+            switch (key) {
+              PageKey.home => HomePage(lang: lang, content: content),
+              PageKey.about => AboutPage(lang: lang, content: content),
+              PageKey.contact => ContactPage(lang: lang),
+              PageKey.works => WorksIndexPage(lang: lang, content: content),
+              PageKey.work => WorkPage(
+                lang: lang,
+                work: content.workBySlug(route.slug!)!,
+              ),
+              PageKey.blog => BlogIndexPage(lang: lang, content: content),
+              PageKey.post => PostPage(
+                post: content.postBySlug(lang, route.slug!)!,
+                content: content,
+              ),
+              PageKey.notFound => NotFoundPage(lang: lang),
+              PageKey.impressum || PageKey.datenschutz => div(classes: 'wrap', [
+                h1(classes: 'rise', [Component.text(meta.h1)]),
+              ]),
+            },
         ],
       ),
-      SiteFooter(pageKey: pageKey, lang: lang),
+      SiteFooter(route: route, content: content),
     ]);
   }
 
   /// Open Graph and Twitter card tags: one share image per language.
-  List<Component> _shareTags(PageMeta meta, String canonical) {
+  List<Component> _shareTags(
+    PageMeta meta,
+    String canonical,
+    bool hasAlternate,
+  ) {
+    final lang = route.lang;
     final image = shareImageUrl(lang);
     final alt = '${pageMeta[PageKey.home]![lang]!.h1} (Cube Algos)';
     Component tag(String key, String value, {bool property = true}) =>
@@ -141,7 +181,7 @@ class PageShell extends StatelessComponent {
       tag('og:description', meta.description),
       tag('og:url', canonical),
       tag('og:locale', ogLocale(lang)),
-      tag('og:locale:alternate', ogLocale(lang.other)),
+      if (hasAlternate) tag('og:locale:alternate', ogLocale(lang.other)),
       tag('og:image', image),
       tag('og:image:type', 'image/png'),
       tag('og:image:width', '$shareImageWidth'),

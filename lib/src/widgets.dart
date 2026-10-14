@@ -6,6 +6,7 @@ library;
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/server.dart';
 import 'package:website/src/chrome_text.dart';
+import 'package:website/src/content/markdown.dart';
 import 'package:website/src/outbound.dart';
 
 /// A plain element: [tag] with optional [classes], [id] and [attrs].
@@ -22,6 +23,31 @@ Component el(
   attributes: attrs,
   children: children,
 );
+
+/// The "back" link above a work or a post: a drawn arrow (inline SVG, no glyph:
+/// the arrow `←` is not in the self-hosted font subsets) and the label. The
+/// arrow is decorative.
+class BackLink extends StatelessComponent {
+  /// Creates the link labelled [label] (without the arrow) to [href].
+  const new({required this.label, required this.href, super.key});
+
+  /// The link text.
+  final String label;
+
+  /// The target path.
+  final String href;
+
+  @override
+  Component build(BuildContext context) => p(classes: 'back', [
+    a(href: href, [
+      const RawText(
+        '<svg class="back-arrow" viewBox="0 0 16 16" aria-hidden="true" '
+        'focusable="false"><path d="M14 8H3M7.5 3.5L3 8l4.5 4.5"/></svg>',
+      ),
+      t(label),
+    ]),
+  ]);
+}
 
 /// A text node.
 Component t(String value) => Component.text(value);
@@ -81,52 +107,66 @@ class MailButton extends StatelessComponent {
   ]);
 }
 
-/// A chamfered button that links to [href] (an internal path).
+/// A chamfered button that links to [href] (an internal path or an in-page
+/// anchor).
 class LinkButton extends StatelessComponent {
   /// Creates a button labelled [label] leading to [href].
-  const new({required this.label, required this.href, super.key});
+  const new({
+    required this.label,
+    required this.href,
+    this.inverse = false,
+    super.key,
+  });
 
   /// The button text.
   final String label;
 
-  /// The root-absolute target path.
+  /// The target: a root-absolute path or an in-page anchor.
   final String href;
+
+  /// Ink button for amber panels.
+  final bool inverse;
 
   @override
   Component build(BuildContext context) => span(classes: 'btn-wrap', [
-    a([Component.text(label)], href: href, classes: 'btn'),
+    a(
+      [Component.text(label)],
+      href: href,
+      classes: inverse ? 'btn btn--inverse' : 'btn',
+    ),
   ]);
 }
 
-final _markdownLink = RegExp(r'\[([^\]]+)\]\(([^)|]+)(?:\|([^)]+))?\)');
-
-/// [text] with `[label](url)` links turned into `<a>` elements; the URLs must
-/// be in [outboundUrls] (asserted), so a typo cannot ship a stray link. A
-/// `[label](url|name)` link also carries `name` as its accessible name (it
-/// must contain the label), for two links of one label to different targets.
-List<Component> inlineLinks(String text, {String? linkClass}) {
-  final out = <Component>[];
-  var at = 0;
-  for (final m in _markdownLink.allMatches(text)) {
-    assert(
-      outboundUrls.contains(m[2]),
-      'not an allowed outbound link: ${m[2]}',
-    );
-    if (m.start > at) out.add(t(text.substring(at, m.start)));
-    out.add(
-      a(
-        [t(m[1]!)],
-        href: m[2]!,
+/// [inlines] as elements: `code`, `strong` and links. A link to another site
+/// carries `rel="noreferrer"`; [linkClass] is added to every link.
+List<Component> inlineComponents(List<Inline> inlines, {String? linkClass}) => [
+  for (final i in inlines)
+    switch (i) {
+      TextRun(:final text) => t(text),
+      CodeSpan(:final text) => code([t(text)]),
+      Strong(:final text) => strong([t(text)]),
+      LinkRun(:final label, :final url) => a(
+        [t(label)],
+        href: url,
         classes: linkClass,
-        attributes: {'rel': 'noreferrer', 'aria-label': ?m[3]},
+        attributes: {if (url.startsWith('https://')) 'rel': 'noreferrer'},
       ),
+    },
+];
+
+/// [text] with `code`, `**bold**` and `[label](url)` turned into elements. A
+/// link must lead to a URL of [outboundUrls] or be a `mailto:` address
+/// (asserted), so a typo cannot ship a stray link.
+List<Component> inlineLinks(String text, {String? linkClass}) {
+  final inlines = parseInline(text);
+  for (final link in inlines.whereType<LinkRun>()) {
+    assert(
+      outboundUrls.contains(link.url) || link.url.startsWith('mailto:'),
+      'not an allowed outbound link: ${link.url}',
     );
-    at = m.end;
   }
-  if (at < text.length) out.add(t(text.substring(at)));
-  return out;
+  return inlineComponents(inlines, linkClass: linkClass);
 }
 
-/// [text] as read aloud: the labels of its `[label](url)` links, no URLs.
-String plainText(String text) =>
-    text.replaceAllMapped(_markdownLink, (m) => m[1]!);
+/// [text] as read aloud: the labels of its links, no URLs or markup.
+String plainText(String text) => plain(parseInline(text));

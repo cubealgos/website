@@ -9,6 +9,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:path/path.dart' as p;
+import 'package:website/src/content/site_content.dart';
 import 'package:website/src/outbound.dart';
 import 'package:website/src/page_meta.dart';
 import 'package:website/src/routes.dart';
@@ -63,39 +64,41 @@ List<String> organizationProblems(Object? data) {
   return out;
 }
 
-/// Runs every SEO and sharing check over the built site in [buildDir].
-List<Finding> checkSeo(Directory buildDir) {
+/// Runs every SEO and sharing check over the built site in [buildDir];
+/// [content] is what the site was built from (default: the shipped content).
+List<Finding> checkSeo(Directory buildDir, {SiteContent? content}) {
+  final site = content ?? shippedContent;
   final root = buildDir.path;
   final out = <Finding>[];
-  for (final entry in paths.entries) {
-    if (entry.key == PageKey.notFound) continue;
-    for (final lang in Lang.values) {
-      final path = pathFor(entry.key, lang);
-      final file = File(
-        p.join(
-          root,
-          '${path.substring(1)}${path.endsWith('/') ? 'index.html' : ''}',
-        ),
-      );
-      if (!file.existsSync()) continue; // html_check reports missing pages
-      _checkPage(file.readAsStringSync(), entry.key, lang, root, path, out);
-    }
+  for (final route in routesFor(site)) {
+    if (route.key == PageKey.notFound) continue;
+    final path = route.path;
+    final file = File(
+      p.join(
+        root,
+        '${path.substring(1)}${path.endsWith('/') ? 'index.html' : ''}',
+      ),
+    );
+    if (!file.existsSync()) continue; // html_check reports missing pages
+    _checkPage(file.readAsStringSync(), route, site, root, out);
   }
-  _checkSitemap(root, out);
+  _checkSitemap(root, site, out);
   _checkRobots(root, out);
   return out;
 }
 
 void _checkPage(
   String html,
-  PageKey key,
-  Lang lang,
+  Route route,
+  SiteContent content,
   String root,
-  String page,
   List<Finding> out,
 ) {
+  final key = route.key;
+  final lang = route.lang;
+  final page = route.path;
   void add(String rule, String msg) => out.add(Finding(rule, page, msg));
-  final meta = pageMeta[key]![lang]!;
+  final meta = metaFor(route, content);
   final tags = <String, String>{};
   for (final m in _metaTag.allMatches(html)) {
     final a = _attrs(m[1]!);
@@ -104,14 +107,14 @@ void _checkPage(
       tags[name] = _unescape(a['content']!);
     }
   }
-  final canonical = urlFor(key, lang);
+  final canonical = route.url;
+  final hasAlternate = route.alternates(content).length > 1;
   final expected = <String, String>{
     'og:type': 'website',
     'og:title': meta.title,
     'og:description': meta.description,
     'og:url': canonical,
     'og:locale': ogLocale(lang),
-    'og:locale:alternate': ogLocale(lang.other),
     'og:image': shareImageUrl(lang),
     'og:image:width': '$shareImageWidth',
     'og:image:height': '$shareImageHeight',
@@ -124,6 +127,14 @@ void _checkPage(
     if (tags[e.key] != e.value) {
       add('share', '${e.key} is "${tags[e.key]}", expected "${e.value}"');
     }
+  }
+  if (tags['og:locale:alternate'] !=
+      (hasAlternate ? ogLocale(lang.other) : null)) {
+    add(
+      'share',
+      'og:locale:alternate is "${tags['og:locale:alternate']}", expected '
+          '${hasAlternate ? ogLocale(lang.other) : 'none'}',
+    );
   }
   for (final k in ['og:image:alt', 'twitter:image:alt']) {
     if ((tags[k] ?? '').isEmpty) add('share', 'missing $k');
@@ -160,26 +171,27 @@ void _checkPage(
     for (final problem in organizationProblems(orgs.firstOrNull)) {
       add('json-ld', 'Organization: $problem');
     }
-    if (!lds.any((d) => d['@type'] == 'FAQPage')) {
-      add('json-ld', 'FAQPage block is missing');
-    }
   } else if (orgs.isNotEmpty) {
     add('json-ld', 'Organization belongs on the home pages only');
   }
+  if (lds.any((d) => d['@type'] == 'FAQPage')) {
+    add('json-ld', 'the site has no FAQ: a FAQPage block must not be built');
+  }
 }
 
-void _checkSitemap(String root, List<Finding> out) {
+void _checkSitemap(String root, SiteContent content, List<Finding> out) {
   void add(String msg) => out.add(Finding('sitemap', 'sitemap.xml', msg));
   final file = File(p.join(root, 'sitemap.xml'));
   if (!file.existsSync()) return; // html_check reports it
   final xml = file.readAsStringSync();
   if (xml.contains('404')) add('lists a 404 page');
   final blocks = RegExp('<url>(.*?)</url>', dotAll: true).allMatches(xml);
-  final indexable = paths.keys.where((k) => k != PageKey.notFound).length;
-  if (blocks.length != indexable * Lang.values.length) {
-    add(
-      'has ${blocks.length} URLs, expected ${indexable * Lang.values.length}',
-    );
+  final indexable = [
+    for (final r in routesFor(content))
+      if (r.key != PageKey.notFound) r,
+  ];
+  if (blocks.length != indexable.length) {
+    add('has ${blocks.length} URLs, expected ${indexable.length}');
   }
   for (final b in blocks) {
     final loc = RegExp('<loc>(.*?)</loc>').firstMatch(b[1]!)?[1];
@@ -187,20 +199,23 @@ void _checkSitemap(String root, List<Finding> out) {
       for (final m in RegExp(r'<xhtml:link\b([^>]*)/>').allMatches(b[1]!))
         _attrs(m[1]!)['hreflang']: _attrs(m[1]!)['href'],
     };
-    final r = resolve(Uri.parse(loc ?? '').path);
+    final r = resolve(Uri.parse(loc ?? '').path, content: content);
     if (r == null) {
       add('$loc is no page of the route table');
       continue;
     }
     final want = {
-      'de': urlFor(r.key, Lang.de),
-      'en': urlFor(r.key, Lang.en),
-      'x-default': urlFor(r.key, Lang.de),
+      for (final lang in r.alternates(content))
+        lang.code: '$siteOrigin${r.pathIn(lang, content)}',
+      'x-default': '$siteOrigin${r.pathIn(r.xDefault(content), content)}',
     };
     for (final e in want.entries) {
       if (alts[e.key] != e.value) {
         add('$loc: alternate ${e.key} is ${alts[e.key]}, expected ${e.value}');
       }
+    }
+    for (final k in alts.keys) {
+      if (!want.containsKey(k)) add('$loc: unexpected alternate $k');
     }
   }
 }

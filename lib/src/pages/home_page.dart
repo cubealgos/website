@@ -4,46 +4,40 @@ import 'dart:convert';
 
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/server.dart';
-import 'package:website/src/copy/common_copy.dart';
+import 'package:website/src/content/post.dart';
+import 'package:website/src/content/site_content.dart';
+import 'package:website/src/copy/blog_copy.dart';
 import 'package:website/src/copy/home_copy.dart';
+import 'package:website/src/pages/work_widgets.dart';
 import 'package:website/src/routes.dart';
 import 'package:website/src/seo.dart';
 import 'package:website/src/sting.dart';
 import 'package:website/src/widgets.dart';
 
-/// The `FAQPage` JSON-LD of [lang], generated from the same data as the
-/// visible FAQ.
-Map<String, Object> faqJsonLd(Lang lang) => {
-  '@context': 'https://schema.org',
-  '@type': 'FAQPage',
-  'mainEntity': [
-    for (final q in homeCopy[lang]!.faq)
-      {
-        '@type': 'Question',
-        'name': q.question,
-        'acceptedAnswer': {'@type': 'Answer', 'text': q.answer},
-      },
-  ],
-};
+/// Rooms the home page shows before it links to the rest.
+const homeRooms = 2;
 
-/// The home page body: hero with the stack card, the studio's own software,
-/// client projects, the studio facts, FAQ, final call to action.
+/// The home page body: hero with the stack card, the works (only with a
+/// work), the studio in the ink band, one post (only with a post), the closing
+/// panel.
 class HomePage extends StatelessComponent {
-  /// Creates the home page in [lang].
-  const new({required this.lang, super.key});
+  /// Creates the home page in [lang] showing [content].
+  const new({required this.lang, required this.content, super.key});
 
   /// The page's language.
   final Lang lang;
+
+  /// The works and posts of the site.
+  final SiteContent content;
 
   @override
   Component build(BuildContext context) {
     final c = homeCopy[lang]!;
     return Component.fragment([
       _hero(c),
-      _own(c),
-      _projects(c),
+      if (content.hasWorks) _works(c),
       _studio(c),
-      _faq(c),
+      if (content.newestPostFor(lang) case final post?) _teaser(c, post),
       _cta(c),
     ]);
   }
@@ -80,10 +74,15 @@ class HomePage extends StatelessComponent {
             classes: 'actions rise',
             attrs: const {'data-i': '3'},
             [
-              MailButton(label: startProject[lang]!),
+              // With a work the button leads to the work; with none, to the
+              // studio.
+              LinkButton(
+                label: content.hasWorks ? c.buttonWork : c.buttonStudio,
+                href: '#${content.hasWorks ? c.workAnchor : c.studioAnchor}',
+              ),
               a(
                 [t(c.secondaryCta)],
-                href: '#${c.ownAnchor}',
+                href: pathFor(PageKey.contact, lang),
                 classes: 'text-link',
               ),
             ],
@@ -95,8 +94,7 @@ class HomePage extends StatelessComponent {
   }
 
   /// The tech stack beside the headline: label and value rows on a route
-  /// line, the free first call last, the note on client projects beneath. The
-  /// mark sting plays in the card head.
+  /// line. The mark sting plays in the card head.
   Component _stack(HomeCopy c) => el('div', classes: 'stack-col', [
     el(
       'aside',
@@ -108,111 +106,71 @@ class HomePage extends StatelessComponent {
           div(classes: 'ledger-mark', [RawText(stingSvg())]),
         ]),
         dl(classes: 'stack', [
-          for (var i = 0; i < c.stack.length; i++)
-            div(classes: i == c.stack.length - 1 ? 'is-call' : null, [
-              dt([t(c.stack[i].label)]),
-              dd([t(c.stack[i].value)]),
+          for (final row in c.stack)
+            div([
+              dt([t(row.label)]),
+              dd([t(row.value)]),
             ]),
         ]),
       ],
     ),
-    el(
-      'p',
-      classes: 'note stack-note rise',
-      attrs: const {'data-i': '3'},
-      [t(c.stackNote)],
-    ),
   ]);
 
-  Component _own(HomeCopy c) => el(
+  /// The works as rooms: the newest [homeRooms], then the link to all.
+  Component _works(HomeCopy c) => el(
     'section',
-    classes: 'band',
-    id: c.ownAnchor,
-    attrs: const {'aria-labelledby': 'own-title'},
+    classes: 'works works--c',
+    id: c.workAnchor,
+    attrs: const {'aria-labelledby': 'works-title'},
     [
-      el('div', classes: 'wrap band-grid', [
-        h2(id: 'own-title', classes: 'band-title reveal', [t(c.ownTitle)]),
-        p(
-          classes: 'band-text reveal',
-          attributes: const {'data-i': '1'},
-          [t(c.ownText)],
-        ),
-      ]),
-    ],
-  );
-
-  Component _projects(HomeCopy c) => el(
-    'section',
-    classes: 'sec projects',
-    id: c.projectsAnchor,
-    attrs: const {'aria-labelledby': 'projects-title'},
-    [
-      el('div', classes: 'wrap', [
+      div(classes: 'wrap works-head', [
         el('div', classes: 'sec-head reveal', [
-          h2(id: 'projects-title', [t(c.projectsTitle)]),
-          p(classes: 'measure', [t(c.projectsIntro)]),
-        ]),
-        el('div', classes: 'lanes lanes--eg', [
-          for (var i = 0; i < c.lanes.length; i++)
-            el(
-              'div',
-              classes: 'lane reveal',
-              attrs: {'data-i': '$i'},
-              [
-                h3([t(c.lanes[i].title)]),
-                p([t(c.lanes[i].text)]),
-                div(classes: 'lane-eg', [
-                  p(classes: 'eyebrow-muted', [t(c.examplesLabel)]),
-                  ul(classes: 'eg-list', [
-                    for (final e in c.lanes[i].examples) li([t(e)]),
-                  ]),
-                ]),
-              ],
-            ),
-        ]),
-        el('div', classes: 'route-block', [
-          h3(classes: 'reveal', [t(c.routeTitle)]),
-          el('div', classes: 'rail-wrap', [
-            ol(classes: 'rail reveal', [
-              for (var i = 0; i < c.steps.length; i++)
-                li(classes: i == 0 ? 'is-call' : null, [
-                  strong([t(c.steps[i].title)]),
-                  t(' ${c.steps[i].text}'),
-                ]),
-            ]),
-            const div(classes: 'rail-fish', [Fish(pose: 'swimming')]),
-          ]),
-          el('div', classes: 'route-close reveal', [
-            MailButton(label: startProject[lang]!),
-            p(classes: 'note', [t(c.routeNote)]),
-          ]),
+          h2(id: 'works-title', [t(c.workTitle)]),
+          p(classes: 'measure', [t(c.workIntro)]),
         ]),
       ]),
+      for (final (i, work) in content.works.take(homeRooms).indexed)
+        Room(work: work, lang: lang, odd: i.isEven, level: 3),
+      if (content.works.length > homeRooms)
+        div(classes: 'wrap rooms-more', [
+          a(
+            [t(c.allWorks.replaceAll('{n}', '${content.works.length}'))],
+            href: pathFor(PageKey.works, lang),
+            classes: 'text-link',
+          ),
+        ]),
     ],
   );
 
+  /// The studio in the ink band: six items in two columns.
   Component _studio(HomeCopy c) => el(
     'section',
-    classes: 'sheet studio-sheet',
+    classes: 'band studio-band',
+    id: c.studioAnchor,
     attrs: const {'aria-labelledby': 'studio-title'},
     [
-      el('div', classes: 'wrap sheet-grid', [
-        h2(id: 'studio-title', classes: 'sheet-title reveal', [
+      div(classes: 'wrap band-grid', [
+        h2(id: 'studio-title', classes: 'band-title reveal', [
           t(c.studioTitle),
         ]),
-        ul(classes: 'studio-items', [
-          for (var i = 0; i < c.studio.length; i++)
+        ul(classes: 'studio-list', [
+          for (final (i, item) in c.studio.indexed)
             li(
               classes: 'reveal',
               attributes: {'data-i': '${i < 5 ? i : 5}'},
               [
-                strong([t(c.studio[i].lead)]),
+                strong([t(item.lead)]),
                 t(' '),
-                ...inlineLinks(c.studio[i].text),
-                if (c.studio[i].aside case final aside?) ...[
-                  t(' '),
-                  ...inlineLinks(aside, linkClass: 'item-link'),
-                ],
+                ...inlineLinks(item.text),
+                if (item.postId case final id?)
+                  if (content.postById(lang, id) case final post?) ...[
+                    t(' '),
+                    a(
+                      [t(post.title)],
+                      href: routePath(PageKey.post, lang, post.slug),
+                      classes: 'item-link',
+                    ),
+                  ],
               ],
             ),
         ]),
@@ -220,39 +178,61 @@ class HomePage extends StatelessComponent {
     ],
   );
 
-  Component _faq(HomeCopy c) => el(
-    'section',
-    classes: 'sec',
-    attrs: const {'aria-labelledby': 'faq-title'},
-    [
-      el('div', classes: 'wrap faq-grid', [
-        h2(id: 'faq-title', classes: 'reveal', [t(c.faqTitle)]),
-        el('div', classes: 'faq', [
-          for (final q in c.faq)
-            details(classes: 'reveal', [
-              summary([t(q.question)]),
-              p([t(q.answer)]),
-            ]),
-        ]),
-        for (final data in [faqJsonLd(lang), organizationJsonLd()])
+  /// One post: the newest one for this language.
+  Component _teaser(HomeCopy c, Post post) {
+    final b = blogCopy[lang]!;
+    final foreign = post.lang != lang;
+    return el(
+      'section',
+      classes: 'sec teaser',
+      attrs: const {'aria-labelledby': 'teaser-title'},
+      [
+        div(classes: 'wrap teaser-grid', [
+          h2(id: 'teaser-title', classes: 'teaser-h2 reveal', [t(c.blogTitle)]),
           el(
-            'script',
-            attrs: const {'type': 'application/ld+json'},
+            'div',
+            classes: 'teaser-body reveal',
+            attrs: const {'data-i': '1'},
             [
-              // `<` is escaped so the JSON can never close the script element.
-              RawText(jsonEncode(data).replaceAll('<', r'\u003c')),
+              p(classes: 'post-meta', [
+                el(
+                  'time',
+                  attrs: {'datetime': _isoDate(post.date)},
+                  [t(formatDate(post.date, lang))],
+                ),
+                if (foreign) t(' · ${b.otherLanguageOnly}'),
+              ]),
+              h3(classes: 'teaser-title', [
+                a(
+                  [t(post.title)],
+                  href: routePath(PageKey.post, post.lang, post.slug),
+                  attributes: {
+                    if (foreign) ...{
+                      'lang': post.lang.code,
+                      'hreflang': post.lang.code,
+                    },
+                  },
+                ),
+              ]),
+              p(classes: 'teaser-desc', [t(post.description)]),
+              a(
+                [t(c.allPosts)],
+                href: pathFor(PageKey.blog, lang),
+                classes: 'text-link',
+              ),
             ],
           ),
-      ]),
-    ],
-  );
+        ]),
+      ],
+    );
+  }
 
   Component _cta(HomeCopy c) => el(
     'section',
     classes: 'cta-sec',
     attrs: const {'aria-labelledby': 'cta-title'},
     [
-      el('div', classes: 'wrap', [
+      div(classes: 'wrap', [
         el('div', classes: 'cta reveal', [
           el('div', classes: 'cta-text', [
             h2(id: 'cta-title', [t(c.ctaTitle)]),
@@ -261,7 +241,19 @@ class HomePage extends StatelessComponent {
           ]),
           const div(classes: 'cta-fish', [Fish(pose: 'happy', onAmber: true)]),
         ]),
+        el(
+          'script',
+          attrs: const {'type': 'application/ld+json'},
+          [
+            // `<` is escaped so the JSON can never close the script element.
+            RawText(
+              jsonEncode(organizationJsonLd()).replaceAll('<', r'\u003c'),
+            ),
+          ],
+        ),
       ]),
     ],
   );
 }
+
+String _isoDate(DateTime d) => d.toIso8601String().substring(0, 10);
