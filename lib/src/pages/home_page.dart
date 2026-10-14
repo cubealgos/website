@@ -65,7 +65,13 @@ class HomePage extends StatelessComponent {
             classes: 'hero-sublines rise',
             attributes: const {'data-i': '2'},
             [
-              p(classes: 'hero-sub hero-sub--full', [t(c.subline)]),
+              p(classes: 'hero-sub hero-sub--full', [
+                t(
+                  content.hasPublicSource
+                      ? '${c.subline} ${c.sublineSource}'
+                      : c.subline,
+                ),
+              ]),
               p(classes: 'hero-sub hero-sub--short', [t(c.sublineShort)]),
             ],
           ),
@@ -154,7 +160,10 @@ class HomePage extends StatelessComponent {
           t(c.studioTitle),
         ]),
         ul(classes: 'studio-list', [
-          for (final (i, item) in c.studio.indexed)
+          for (final (i, item) in [
+            for (final item in c.studio)
+              if (!item.needsSource || content.hasPublicSource) item,
+          ].indexed)
             li(
               classes: 'reveal',
               attributes: {'data-i': '${i < 5 ? i : 5}'},

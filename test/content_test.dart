@@ -344,6 +344,16 @@ void main() {
       );
     });
 
+    test('only a work with a source link says the source is public', () {
+      final c = fixtureContent();
+      expect(c.hasPublicSource, isTrue);
+      expect(fixtureContent(works: 0).hasPublicSource, isFalse);
+      expect(
+        SiteContent(works: [c.workBySlug('fixture-app')!]).hasPublicSource,
+        isFalse,
+      );
+    });
+
     test('with nothing there is nothing to show', () {
       final c = SiteContent();
       expect(c.hasWorks, isFalse);

@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 /// The only links to other sites the built pages may carry (decision 39 and
-/// 47, and the studio's LinkedIn page): Kevin's own site, the studio's GitHub
-/// organisation and LinkedIn company page, and Kevin's two profiles. They are
+/// 47, and the studio's LinkedIn page): the founder's own site, the studio's
+/// GitHub organisation and LinkedIn company page, and the founder's two
+/// profiles. They are
 /// plain `<a href>` links and nothing else: `html_check` and the built-output
 /// test allow exactly these URLs as the `href` of an `<a>`
 /// and still fail on any other foreign link, and on any foreign `src`,
@@ -11,19 +12,19 @@
 /// allowed the same way, and only as links.
 library;
 
-/// Kevin's own site, German.
+/// The founder's own site, German.
 const personalSiteUrl = 'https://kevinscheeren.de/';
 
-/// Kevin's own site, English.
+/// The founder's own site, English.
 const personalSiteUrlEn = 'https://kevinscheeren.de/en/';
 
 /// The studio's GitHub organisation.
 const githubOrgUrl = 'https://github.com/cubealgos';
 
-/// Kevin's GitHub profile.
+/// The founder's GitHub profile.
 const githubProfileUrl = 'https://github.com/kevinscheeren';
 
-/// Kevin's LinkedIn profile.
+/// The founder's LinkedIn profile.
 const linkedinProfileUrl = 'https://www.linkedin.com/in/kevinscheeren';
 
 /// The studio's LinkedIn company page.

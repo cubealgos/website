@@ -8,6 +8,7 @@ import 'package:website/src/chrome.dart';
 import 'package:website/src/content/site_content.dart';
 import 'package:website/src/content/work.dart';
 import 'package:website/src/copy/home_copy.dart';
+import 'package:website/src/outbound.dart';
 import 'package:website/src/page.dart';
 import 'package:website/src/pages/about_page.dart';
 import 'package:website/src/pages/blog_pages.dart';
@@ -630,6 +631,45 @@ void main() {
         ),
       );
     });
+  });
+
+  group('the source claims (decision 54)', () {
+    final all = fixtureContent();
+    final inDevelopment = SiteContent(works: [all.workBySlug('fixture-app')!]);
+
+    for (final lang in Lang.values) {
+      final c = homeCopy[lang]!;
+      final claim = c.sublineSource;
+      final item = c.studio.singleWhere((i) => i.needsSource);
+
+      test(
+        '${lang.code}: with no work and with only an unpublished one',
+        () async {
+          for (final content in [fixtureContent(works: 0), inDevelopment]) {
+            expect(content.hasPublicSource, isFalse);
+            final home = await renderHtml(
+              HomePage(lang: lang, content: content),
+            );
+            // The subline stops before the claim; the item is not shown.
+            expect(home, contains('>${c.subline}<'));
+            expect(home, isNot(contains(claim)));
+            expect(home, isNot(contains(item.lead)));
+            expect(home, isNot(contains(githubOrgUrl)));
+            expect('<li class="reveal"'.allMatches(home), hasLength(5));
+          }
+        },
+      );
+
+      test('${lang.code}: with a work that links its source', () async {
+        final content = fixtureContent(works: 1);
+        expect(content.hasPublicSource, isTrue);
+        final home = await renderHtml(HomePage(lang: lang, content: content));
+        expect(home, contains('${c.subline} $claim'));
+        expect(home, contains('<strong>${item.lead}</strong>'));
+        expect(home, contains('href="$githubOrgUrl"'));
+        expect('<li class="reveal"'.allMatches(home), hasLength(6));
+      });
+    }
   });
 
   group('the AI line', () {

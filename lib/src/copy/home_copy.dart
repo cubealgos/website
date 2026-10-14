@@ -15,8 +15,14 @@ typedef StackRow = ({String label, String value});
 /// One item of the studio section: a bold `lead` and its `text`, which may
 /// carry `[label](url)` links to the URLs of `outbound.dart`. An item with a
 /// `postId` ends with a link to that blog post (left out while the post does
-/// not exist).
-typedef StudioItem = ({String lead, String text, String? postId});
+/// not exist). An item that `needsSource` is shown only while a work links its
+/// source code (it says the source is linked).
+typedef StudioItem = ({
+  String lead,
+  String text,
+  String? postId,
+  bool needsSource,
+});
 
 /// All copy of the home page in one language.
 typedef HomeCopy = ({
@@ -26,6 +32,10 @@ typedef HomeCopy = ({
   /// The part of `h1` that carries the drawn underline.
   String h1Mark,
   String subline,
+
+  /// The sentence after `subline` that says the contracts are published with
+  /// their source: shown only while a work links its source code.
+  String sublineSource,
 
   /// The shorter subline shown on phones (below 30rem) instead of `subline`.
   String sublineShort,
@@ -70,8 +80,9 @@ const Map<Lang, HomeCopy> homeCopy = {
     h1Mark: 'our own',
     subline:
         'Smart contracts in Solidity, apps in Dart and Flutter, from a '
-        'small studio in Heinsberg. We publish our contracts with their '
-        'source code and their licence.',
+        'small studio in Heinsberg.',
+    sublineSource:
+        'We publish our contracts with their source code and their licence.',
     sublineShort:
         'Smart contracts in Solidity, apps in Flutter. From Heinsberg.',
     buttonWork: 'See the work',
@@ -109,6 +120,7 @@ const Map<Lang, HomeCopy> homeCopy = {
             'We build what we publish ourselves, and we take no client '
             'projects.',
         postId: null,
+        needsSource: false,
       ),
       (
         lead: 'Fixed once deployed.',
@@ -116,6 +128,7 @@ const Map<Lang, HomeCopy> homeCopy = {
             'Our contracts have no admin, pause or upgrade key. A fix is a '
             'new version at a new address.',
         postId: null,
+        needsSource: false,
       ),
       (
         lead: 'We hold nothing for others.',
@@ -123,6 +136,7 @@ const Map<Lang, HomeCopy> homeCopy = {
             'We keep no money or tokens for others, and no key that could '
             "reach anyone else's wallet.",
         postId: null,
+        needsSource: false,
       ),
       (
         lead: 'Code you can read.',
@@ -131,6 +145,7 @@ const Map<Lang, HomeCopy> homeCopy = {
             'code of this website and our brand are public on '
             '[GitHub]($githubOrgUrl), too.',
         postId: null,
+        needsSource: true,
       ),
       (
         lead: 'No cookies, no tracking.',
@@ -138,11 +153,13 @@ const Map<Lang, HomeCopy> homeCopy = {
             'This website runs on a server we operate ourselves and stores '
             'nothing on your device.',
         postId: null,
+        needsSource: false,
       ),
       (
         lead: 'New tools.',
         text: 'We love working with modern technology, AI included.',
         postId: aiPostId,
+        needsSource: false,
       ),
     ],
     blogTitle: 'From the blog',
@@ -159,8 +176,9 @@ const Map<Lang, HomeCopy> homeCopy = {
     h1Mark: 'eigene',
     subline:
         'Smart Contracts in Solidity, Apps in Dart und Flutter, aus einem '
-        'kleinen Studio in Heinsberg. Unsere Smart Contracts '
-        'veröffentlichen wir mit Quelltext und Lizenz.',
+        'kleinen Studio in Heinsberg.',
+    sublineSource:
+        'Unsere Smart Contracts veröffentlichen wir mit Quelltext und Lizenz.',
     sublineShort:
         'Smart Contracts in Solidity, Apps in Flutter. Aus Heinsberg.',
     buttonWork: 'Arbeiten ansehen',
@@ -206,6 +224,7 @@ const Map<Lang, HomeCopy> homeCopy = {
             'Wir bauen, was wir selbst veröffentlichen, und nehmen keine '
             'Kundenprojekte an.',
         postId: null,
+        needsSource: false,
       ),
       (
         lead: 'Nach der Bereitstellung unveränderlich.',
@@ -214,6 +233,7 @@ const Map<Lang, HomeCopy> homeCopy = {
             'Upgrade-Schlüssel. Eine Korrektur ist eine neue Version unter '
             'einer neuen Adresse.',
         postId: null,
+        needsSource: false,
       ),
       (
         lead: 'Wir verwahren nichts für andere.',
@@ -221,6 +241,7 @@ const Map<Lang, HomeCopy> homeCopy = {
             'Wir halten weder Geld noch Token für andere und keinen '
             'Schlüssel, mit dem wir auf fremde Wallets zugreifen könnten.',
         postId: null,
+        needsSource: false,
       ),
       (
         lead: 'Quelltext zum Nachlesen.',
@@ -229,6 +250,7 @@ const Map<Lang, HomeCopy> homeCopy = {
             'Quelltext. Auch der Code dieser Website und unsere Marke liegen '
             'öffentlich auf [GitHub]($githubOrgUrl).',
         postId: null,
+        needsSource: true,
       ),
       (
         lead: 'Ohne Cookies, ohne Tracking.',
@@ -236,11 +258,13 @@ const Map<Lang, HomeCopy> homeCopy = {
             'Diese Website läuft auf einem Server, den wir selbst '
             'betreiben, und legt nichts auf Ihrem Gerät ab.',
         postId: null,
+        needsSource: false,
       ),
       (
         lead: 'Neue Werkzeuge.',
         text: 'Wir arbeiten gern mit moderner Technik, auch mit KI.',
         postId: aiPostId,
+        needsSource: false,
       ),
     ],
     blogTitle: 'Aus dem Blog',

@@ -32,7 +32,7 @@ List<String> expectedBlocks(Lang lang) {
     c.stackTitle,
     for (final row in c.stack) ...[row.label, row.value],
     c.studioTitle,
-    for (final i in c.studio)
+    for (final i in c.studio.where((i) => !i.needsSource))
       [i.lead, plainText(i.text), if (i.postId != null) post.title].join(' '),
     c.blogTitle,
     formatDate(post.date, lang),
@@ -88,6 +88,16 @@ void main() {
         expect(html, isNot(contains('class="room')));
       });
 
+      test(
+        'no claim that contracts are published with source, none is yet',
+        () {
+          final c = homeCopy[lang]!;
+          expect(html, isNot(contains(c.sublineSource)));
+          expect(html, isNot(contains(c.studio[3].text.split('[').first)));
+          expect(shippedContent.hasPublicSource, isFalse);
+        },
+      );
+
       test('the secondary link leads to the contact page', () {
         expect(
           html,
@@ -125,13 +135,18 @@ void main() {
         expect(html, contains('hero-sub hero-sub--short'));
       });
 
-      test('six stack rows, six studio items, no note under the card', () {
-        final c = homeCopy[lang]!;
-        expect(c.stack, hasLength(6));
-        expect(c.studio, hasLength(6));
-        expect(html, isNot(contains('stack-note')));
-        expect('<dt>'.allMatches(html), hasLength(6));
-      });
+      test(
+        'six stack rows, five studio items shown, no note under the card',
+        () {
+          final c = homeCopy[lang]!;
+          expect(c.stack, hasLength(6));
+          expect(c.studio, hasLength(6));
+          expect(c.studio.where((i) => i.needsSource), hasLength(1));
+          expect(html, isNot(contains(c.studio[3].lead)));
+          expect(html, isNot(contains('stack-note')));
+          expect('<dt>'.allMatches(html), hasLength(6));
+        },
+      );
 
       test(
         'no client work: no lanes, rail, FAQ, project button or first call',
@@ -200,7 +215,9 @@ void main() {
           ).allMatches(html))
             m[1]!,
         };
-        expect(hrefs, {githubOrgUrl, linkedinCompanyUrl});
+        // No work links its source yet, so the item that links the code on
+        // GitHub is not shown: only the footer's company page remains.
+        expect(hrefs, {linkedinCompanyUrl});
         expect(html, contains('rel="noreferrer"'));
       });
     });

@@ -281,7 +281,9 @@ void main() {
       expect(about, isNot(contains(own[lang.other])));
       expect(about.toSet().difference(outboundUrls), isEmpty);
       final home = external(PageKey.home);
-      expect(home, contains(githubOrgUrl), reason: lang.code);
+      // The item that links the code on GitHub waits for a work with a
+      // source link (decision 54): none ships yet.
+      expect(home, isNot(contains(githubOrgUrl)), reason: lang.code);
       expect(home, isNot(contains(own[lang])), reason: lang.code);
       expect(home.toSet().difference(outboundUrls), isEmpty);
     }
@@ -823,7 +825,7 @@ void main() {
             f.linkedin,
           ]);
           // The company page: a plain link to the allow-listed URL, labelled
-          // apart from Kevin's own "LinkedIn" link on About.
+          // apart from the founder's own "LinkedIn" link on About.
           expect(
             footerHtml,
             contains(

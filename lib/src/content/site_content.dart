@@ -66,6 +66,11 @@ class SiteContent {
   /// Whether the works pages, the nav and footer items exist.
   bool get hasWorks => works.isNotEmpty;
 
+  /// Whether any work links its source code: only then may the site say that
+  /// its contracts are published with their source (decision 54).
+  bool get hasPublicSource =>
+      works.any((w) => w.links.containsKey(WorkLink.source));
+
   /// Whether the blog pages, the nav and footer items exist.
   bool get hasPosts => posts.isNotEmpty;
 

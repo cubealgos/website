@@ -8,7 +8,7 @@ cannot back fails the build instead of rendering. This directory is page copy: a
 **Nothing renders without a file.** With no work in `works/` there is no works section on Home, no
 "Arbeiten" / "Work" item in the header or the footer, no `/arbeiten/` or `/en/work/` page (the path
 answers with the 404 page), no sitemap entry, and the hero button reads "Mehr erfahren" /
-"Learn more". The same holds for `posts/` and the blog.
+"Learn more". The same holds for `posts/` and the blog. The home page's claim that the studio's contracts are published with their source (the hero's second sentence and the studio item about readable code) renders only while at least one work has a `links.source` URL.
 
 ## A work: `works/<number>-<slug>.json`
 
