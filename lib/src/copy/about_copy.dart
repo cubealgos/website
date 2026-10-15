@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
-/// The about page copy, EN and DE side by side (copy v2, option A with the
-/// founder section; all rights reserved).
+/// The about page copy, EN and DE side by side (copy v3, brand decisions 56
+/// and 57, with the founder section; all rights reserved).
 // Long paragraphs are written as adjacent string literals for line length.
 // ignore_for_file: no_adjacent_strings_in_list
 library;
@@ -41,29 +41,29 @@ const Map<Lang, AboutCopy> aboutCopy = {
     h1: 'About the studio',
     lede:
         'Cube Algos is a small software studio in Heinsberg, founded in '
-        '2023. We build our own applications for decentralised finance and '
-        'show them here once they are published.',
+        '2023. We build our own software for decentralised finance, mostly '
+        'smart contracts and apps.',
     workTitle: 'What we work on',
     work: [
-      'For us, decentralised finance means software that runs on public '
-          'blockchains, and contracts that nobody holds an admin key to, '
-          'including us.',
-      'Our focus is smart contracts and apps that let wallets do more on '
-          'their own: read prices, pay for gas in another token, convert the '
-          'tokens they receive. All of it is still in development.',
+      'For us, decentralised finance means smart contracts on public '
+          'blockchains. Once ours are deployed, their code is fixed, for '
+          'everyone, us included.',
+      'What we are working on now: contracts and apps that let a wallet '
+          'read prices, pay for gas in another token and convert incoming '
+          'tokens by itself.',
     ],
     howTitle: 'How we work',
     how: [
       (
         text:
-            'Our contracts have no admin, pause or upgrade key. A fix is a '
-            'new version.',
+            'Our contracts stay as they are once deployed; a fix is a new '
+            'version. They have no admin, pause or upgrade key.',
         postLabel: null,
       ),
       (
         text:
-            'We call existing protocols through our own interfaces instead '
-            'of copying their code.',
+            'We call existing protocols such as Safe and CoW Protocol '
+            'through our own interfaces, exactly as they are deployed.',
         postLabel: null,
       ),
       (
@@ -78,7 +78,7 @@ const Map<Lang, AboutCopy> aboutCopy = {
             'against the specification, and a person confirms every merge.',
         postLabel: 'More on the blog',
       ),
-      (text: 'Deploying and publishing are done by hand.', postLabel: null),
+      (text: 'We deploy and publish by hand, every time.', postLabel: null),
     ],
     whoTitle: 'Who is behind it',
     who:
@@ -104,30 +104,30 @@ const Map<Lang, AboutCopy> aboutCopy = {
     h1: 'Über das Studio',
     lede:
         'Cube Algos ist ein kleines Softwarestudio in Heinsberg, gegründet '
-        '2023. Wir bauen eigene Anwendungen für dezentrale Finanzen und '
-        'zeigen sie hier, sobald sie veröffentlicht sind.',
+        '2023. Wir bauen eigene Software für dezentrale Finanzen, vor allem '
+        'Smart Contracts und Apps.',
     workTitle: 'Woran wir arbeiten',
     work: [
-      'Dezentrale Finanzen heißt für uns: Software, die auf öffentlichen '
-          'Blockchains läuft, und Smart Contracts, zu denen niemand einen '
-          'Admin-Schlüssel hat, auch wir nicht.',
-      'Unser Schwerpunkt sind Smart Contracts und Apps, mit denen Wallets '
-          'mehr selbst erledigen: Preise lesen, Gas in einem anderen Token '
-          'bezahlen, eingehende Token umwandeln. Alles davon ist noch in '
-          'Entwicklung.',
+      'Dezentrale Finanzen heißt für uns: Smart Contracts auf öffentlichen '
+          'Blockchains. Sobald unsere bereitgestellt sind, steht ihr Code '
+          'fest, für alle und auch für uns.',
+      'Daran arbeiten wir gerade: Smart Contracts und Apps, mit denen eine '
+          'Wallet Preise liest, Gas in einem anderen Token bezahlt und '
+          'eingehende Token selbst umwandelt.',
     ],
     howTitle: 'So arbeiten wir',
     how: [
       (
         text:
-            'Unsere Smart Contracts haben keinen Admin-, Pausen- oder '
-            'Upgrade-Schlüssel. Eine Korrektur ist eine neue Version.',
+            'Unsere Smart Contracts bleiben nach der Bereitstellung, wie sie '
+            'sind; eine Korrektur ist eine neue Version. Einen Admin-, '
+            'Pausen- oder Upgrade-Schlüssel haben sie nicht.',
         postLabel: null,
       ),
       (
         text:
-            'Bestehende Protokolle rufen wir über eigene Schnittstellen auf, '
-            'statt ihren Code zu kopieren.',
+            'Bestehende Protokolle wie Safe und CoW Protocol rufen wir über '
+            'eigene Schnittstellen auf, so wie sie bereitgestellt sind.',
         postLabel: null,
       ),
       (
@@ -144,7 +144,9 @@ const Map<Lang, AboutCopy> aboutCopy = {
         postLabel: 'Mehr dazu im Blog',
       ),
       (
-        text: 'Bereitstellen und veröffentlichen tun wir von Hand.',
+        text:
+            'Jede Bereitstellung und jede Veröffentlichung machen wir von '
+            'Hand.',
         postLabel: null,
       ),
     ],

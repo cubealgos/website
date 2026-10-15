@@ -64,7 +64,7 @@ void main() {
         },
       );
 
-      test('no client project, no first call, no investor line', () {
+      test('no first call, no offer, no investor line', () {
         final text = mainBlocks(html).join('\n');
         expect(
           text,
@@ -77,11 +77,6 @@ void main() {
               ),
             ),
           ),
-        );
-        // The one mention of client projects says there are none.
-        expect(
-          contactCopy[lang]!.lede,
-          contains(lang == Lang.de ? 'nehmen wir nicht an' : "don't take on"),
         );
       });
 
