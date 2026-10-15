@@ -3,12 +3,14 @@
 import 'dart:io';
 
 import 'package:test/test.dart';
+import 'package:website/src/content/site_content.dart';
 import 'package:website/src/outbound.dart';
 import 'package:website/src/routes.dart';
 import 'package:website/src/seo.dart';
 
 import '../tool/src/og_images.dart';
 import '../tool/src/seo_check.dart';
+import 'support/fixtures.dart';
 
 void main() {
   test('the Organization JSON-LD has the required fields', () {
@@ -51,10 +53,13 @@ void main() {
     },
   );
 
-  test('the sitemap lists 10 URLs with alternates and no 404', () {
-    final xml = sitemapXml();
-    expect('<url>'.allMatches(xml).length, 10);
+  test('the sitemap lists the shipped pages with alternates and no 404', () {
+    final xml = sitemapXml(shippedContent);
+    // Five pages and the blog index in two languages, and the first post in
+    // each: no work ships, so no works page.
+    expect('<url>'.allMatches(xml).length, 14);
     expect(xml, isNot(contains('404')));
+    expect(xml, isNot(contains('arbeiten')));
     expect(
       xml,
       contains(
@@ -62,10 +67,28 @@ void main() {
         'href="https://cubealgos.de/"/>',
       ),
     );
-    for (final key in PageKey.values.where((k) => k != PageKey.notFound)) {
+    for (final key in [
+      PageKey.home,
+      PageKey.about,
+      PageKey.contact,
+      PageKey.blog,
+      PageKey.impressum,
+      PageKey.datenschutz,
+    ]) {
       for (final lang in Lang.values) {
         expect(xml, contains('<loc>${urlFor(key, lang)}</loc>'));
       }
+    }
+  });
+
+  test('the sitemap of a site with works and posts lists them all', () {
+    final content = fixtureContent();
+    final xml = sitemapXml(content);
+    // 5 fixed pages x 2, 2 work indexes, 8 works, 2 blog indexes, 3 posts.
+    expect('<url>'.allMatches(xml).length, 10 + 2 + 8 + 2 + 3);
+    for (final r in routesFor(content)) {
+      if (r.key == PageKey.notFound) continue;
+      expect(xml, contains('<loc>${r.url}</loc>'));
     }
   });
 

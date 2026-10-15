@@ -8,13 +8,14 @@
 // Run: `fvm dart run tool/build.dart`.
 import 'dart:io';
 
+import 'package:website/src/content/site_content.dart';
 import 'package:website/src/icons.dart';
 import 'package:website/src/seo.dart';
 
 const _outDir = 'build/jaspr';
 // The sitemap with hreflang alternates, from the route table.
 void _writeSitemap() =>
-    File('$_outDir/sitemap.xml').writeAsStringSync(sitemapXml());
+    File('$_outDir/sitemap.xml').writeAsStringSync(sitemapXml(shippedContent));
 
 // The web manifest, with the paper token as theme and background colour.
 void _writeManifest() {

@@ -29,6 +29,8 @@
 // Run: `fvm dart run tool/browser_check.dart [--screenshots <dir>]`.
 import 'dart:io';
 
+import 'package:website/src/content/site_content.dart';
+import 'package:website/src/page.dart' show revealPages;
 import 'package:website/src/routes.dart';
 
 import 'src/chrome.dart';
@@ -37,13 +39,34 @@ import 'src/static_server.dart';
 const _widths = [320, 375, 768, 1280];
 
 /// The pages `--screenshots` writes (EN and DE, 375 and 1280 px, light and
-/// dark).
+/// dark): the pages without a slug, plus the newest work and post.
 const List<PageKey> _shotPages = [
   PageKey.home,
+  PageKey.works,
+  PageKey.work,
+  PageKey.blog,
+  PageKey.post,
   PageKey.about,
   PageKey.contact,
   PageKey.notFound,
 ];
+
+/// Header on phones: the navigation sits on a second row below the logo, the
+/// language switch on the first, and there is no menu button.
+const _headerProbe = '''
+(() => {
+  const h = document.querySelector('.site-header');
+  const brand = h.querySelector('.brand').getBoundingClientRect();
+  const nav = h.querySelector('.primary').getBoundingClientRect();
+  const sw = h.querySelector('.lang-switch').getBoundingClientRect();
+  return {
+    buttons: h.querySelectorAll('button, [role="button"], summary').length,
+    navBelowBrand: nav.top >= brand.bottom - 0.5,
+    switchOnBrandRow: sw.top < brand.bottom,
+    navHeight: nav.height,
+  };
+})()
+''';
 
 const _overflowProbe = '''
 (() => {
@@ -51,6 +74,14 @@ const _overflowProbe = '''
   const bad = [];
   for (const e of document.querySelectorAll('body *')) {
     if (e.classList.contains('skip')) continue;
+    // Inside a block that scrolls by itself (a code block), overflow is the
+    // point: only the block's own box has to fit.
+    let scrolled = false;
+    for (let p = e.parentElement; p && p !== document.body; p = p.parentElement) {
+      const ox = getComputedStyle(p).overflowX;
+      if (ox === 'auto' || ox === 'scroll') { scrolled = true; break; }
+    }
+    if (scrolled) continue;
     const r = e.getBoundingClientRect();
     if (r.width && (r.right > w + 0.5 || r.left < -0.5)) {
       bad.push(e.tagName.toLowerCase() + '.' + e.className + ' right=' + Math.round(r.right));
@@ -107,9 +138,17 @@ Future<void> main(List<String> args) async {
   final page = await chrome.newPage();
   final failures = <String>[];
 
-  final all = [
-    for (final key in PageKey.values)
-      for (final lang in Lang.values) (key: key, lang: lang),
+  final content = shippedContent;
+  final all = routesFor(content);
+  // The first page of each kind and language is the one shot.
+  final shotRoutes = [
+    for (final key in _shotPages)
+      for (final lang in Lang.values)
+        ...all.where((r) => r.key == key && r.lang == lang).take(1),
+  ];
+  final revealRoutes = [
+    for (final r in all)
+      if (revealPages.contains(r.key)) r,
   ];
 
   try {
@@ -117,9 +156,17 @@ Future<void> main(List<String> args) async {
     for (final width in _widths) {
       await page.setViewport(width, 800);
       for (final r in all) {
-        await page.goto('$base${pathFor(r.key, r.lang)}');
+        await page.goto('$base${r.path}');
         final m = await page.evalMap(_overflowProbe);
-        final where = '${pathFor(r.key, r.lang)} @$width';
+        final where = '${r.path} @$width';
+        if (width == 320) {
+          final h = await page.evalMap(_headerProbe);
+          if (h['buttons'] != 0 ||
+              h['navBelowBrand'] != true ||
+              h['switchOnBrandRow'] != true) {
+            failures.add('header at 320 px is not two rows without a menu: $h');
+          }
+        }
         if ((m['scrollWidth']! as num) > (m['innerWidth']! as num)) {
           failures.add(
             'horizontal scroll: $where '
@@ -197,7 +244,7 @@ Future<void> main(List<String> args) async {
     // 3. The language switch lands on the same page in the other language.
     await page.setMedia();
     for (final r in all) {
-      await page.goto('$base${pathFor(r.key, r.lang)}');
+      await page.goto('$base${r.path}');
       final loaded = page.waitForLoad();
       await page.eval(
         "document.querySelector('.site-header .lang-switch "
@@ -206,32 +253,39 @@ Future<void> main(List<String> args) async {
       await loaded;
       final path = await page.eval('location.pathname');
       final lang = await page.eval('document.documentElement.lang');
-      final want = switchPath(r.key, r.lang.other);
+      final want = r.switchPath(r.lang.other, content);
       if (path != want || lang != r.lang.other.code) {
         failures.add(
-          'language switch: ${pathFor(r.key, r.lang)} -> $path ($lang), '
+          'language switch: ${r.path} -> $path ($lang), '
           'expected $want (${r.lang.other.code})',
         );
       }
     }
 
     // 4. UI motion.
-    failures.addAll(await _motionChecks(chrome, base, reduced: false));
+    failures.addAll(await _motionChecks(chrome, base, all, reduced: false));
     final calm = await Chrome.launch(args: ['--force-prefers-reduced-motion']);
     try {
-      failures.addAll(await _motionChecks(calm, base, reduced: true));
+      failures.addAll(await _motionChecks(calm, base, all, reduced: true));
     } finally {
       await calm.close();
     }
 
     // 4a. Reveal on scroll: scrolled through, with reduced motion, JS off.
-    failures.addAll(await _revealChecks(chrome, base, mode: _Reveal.scroll));
+    failures.addAll(
+      await _revealChecks(chrome, base, revealRoutes, mode: _Reveal.scroll),
+    );
     final calmReveal = await Chrome.launch(
       args: ['--force-prefers-reduced-motion'],
     );
     try {
       failures.addAll(
-        await _revealChecks(calmReveal, base, mode: _Reveal.reduced),
+        await _revealChecks(
+          calmReveal,
+          base,
+          revealRoutes,
+          mode: _Reveal.reduced,
+        ),
       );
     } finally {
       await calmReveal.close();
@@ -240,7 +294,9 @@ Future<void> main(List<String> args) async {
       args: ['--blink-settings=scriptEnabled=false'],
     );
     try {
-      failures.addAll(await _revealChecks(noJs, base, mode: _Reveal.noScript));
+      failures.addAll(
+        await _revealChecks(noJs, base, revealRoutes, mode: _Reveal.noScript),
+      );
     } finally {
       await noJs.close();
     }
@@ -256,6 +312,11 @@ Future<void> main(List<String> args) async {
       ),
       (path: '/en/xyz', h1: 'This page swam off.'),
       (path: '/en/some/deep/missing/path', h1: 'This page swam off.'),
+      // With no work the works pages do not exist: a request gets the 404.
+      if (!content.hasWorks) ...[
+        (path: '/arbeiten/', h1: 'Diese Seite ist davongeschwommen.'),
+        (path: '/en/work/', h1: 'This page swam off.'),
+      ],
     ]) {
       await page.setViewport(1280, 800);
       await page.goto('$base${probe.path}');
@@ -279,8 +340,10 @@ Future<void> main(List<String> args) async {
 
     // 5. Screenshots for review (optional).
     if (shots != null) {
-      for (final key in _shotPages) {
-        for (final lang in Lang.values) {
+      for (final route in shotRoutes) {
+        final key = route.key;
+        final lang = route.lang;
+        {
           for (final width in [375, 1280]) {
             for (final dark in [false, true]) {
               // A fresh tab has no referrer: the home sting plays once the
@@ -289,7 +352,7 @@ Future<void> main(List<String> args) async {
               final shot = await chrome.newPage();
               await shot.setViewport(width, 800);
               await shot.setMedia(dark: dark);
-              await shot.goto('$base${pathFor(key, lang)}');
+              await shot.goto('$base${route.path}');
               final mode = dark ? 'dark' : 'light';
               final name = '${key.name}-${lang.code}-$width-$mode';
               if (key == PageKey.home) {
@@ -356,20 +419,21 @@ const _revealState = '''
 
 Future<List<String>> _revealChecks(
   Chrome chrome,
-  String base, {
+  String base,
+  List<Route> pages, {
   required _Reveal mode,
 }) async {
   final out = <String>[];
-  for (final key in [PageKey.home, PageKey.about, PageKey.contact]) {
-    for (final lang in Lang.values) {
+  for (final route in pages) {
+    {
       for (final width in [375, 1280]) {
-        final where = '${pathFor(key, lang)} @$width (${mode.name})';
+        final where = '${route.path} @$width (${mode.name})';
         final page = await chrome.newPage();
         await page.setViewport(width, 800);
         await page.setMedia(
           reducedMotion: mode == _Reveal.scroll ? false : null,
         );
-        await page.goto('$base${pathFor(key, lang)}');
+        await page.goto('$base${route.path}');
         await Future<void>.delayed(const Duration(milliseconds: 600));
         final first = await page.evalMap(_revealState);
         if ((first['count']! as int) == 0) {
@@ -383,13 +447,14 @@ Future<List<String>> _revealChecks(
           continue;
         }
         if (first['on'] != true) out.add('$where: reveal-on missing: $first');
-        // Content below the fold waits for its first view.
-        if ((first['hidden']! as int) == 0) {
+        final height =
+            (await page.eval('document.documentElement.scrollHeight'))! as num;
+        // Content below the fold waits for its first view (a page that fits
+        // in the first screen or so has none).
+        if (height > 1600 && (first['hidden']! as int) == 0) {
           out.add('$where: nothing waits below the fold: $first');
         }
         // Scroll through in steps, as a visitor does.
-        final height =
-            (await page.eval('document.documentElement.scrollHeight'))! as num;
         for (var y = 0; y < height; y += 300) {
           await page.eval('scrollTo(0, $y)');
           await Future<void>.delayed(const Duration(milliseconds: 60));
@@ -540,36 +605,6 @@ const _stingState = '''
 })()
 ''';
 
-const _faqProbe = '''
-(() => {
-  const d = document.querySelector('.faq details');
-  const summary = d.querySelector('summary');
-  const answer = d.querySelector('p');
-  const icon = getComputedStyle(summary, '::after');
-  const props = new Set();
-  for (const a of answer.getAnimations()) {
-    for (const k of a.effect.getKeyframes()) {
-      for (const p of Object.keys(k)) {
-        if (!['offset', 'computedOffset', 'easing', 'composite'].includes(p)) props.add(p);
-      }
-    }
-  }
-  const style = getComputedStyle(answer);
-  return {
-    open: d.open,
-    answerAnimations: answer.getAnimations().length,
-    answerProps: [...props].sort(),
-    answerName: style.animationName,
-    answerDuration: style.animationDuration,
-    answerEasing: style.animationTimingFunction,
-    iconDuration: icon.transitionDuration,
-    iconEasing: icon.transitionTimingFunction,
-    iconProperty: icon.transitionProperty,
-    iconMatrix: icon.transform,
-  };
-})()
-''';
-
 const _motionProbe = '''
 (() => {
   const css = (el, prop, pseudo) => getComputedStyle(el, pseudo)[prop];
@@ -605,7 +640,8 @@ const _motionProbe = '''
 
 Future<List<String>> _motionChecks(
   Chrome chrome,
-  String base, {
+  String base,
+  List<Route> routes, {
   required bool reduced,
 }) async {
   final out = <String>[];
@@ -729,58 +765,17 @@ Future<List<String>> _motionChecks(
       }
     }
     // Every other page has no sting, whatever the session.
-    for (final key in PageKey.values.where((k) => k != PageKey.home)) {
+    for (final route in routes.where(
+      (r) => r.lang == lang && r.key != PageKey.home,
+    )) {
       final page = await session();
-      await page.goto('$base${pathFor(key, lang)}');
+      await page.goto('$base${route.path}');
       final s = await page.evalMap(_stingState);
       // The content pages carry reveal.js (one script), the rest none.
-      final scripts = {PageKey.about, PageKey.contact}.contains(key) ? 1 : 0;
+      final scripts = revealPages.contains(route.key) ? 1 : 0;
       if (s['marks'] != 0 || s['scripts'] != scripts) {
-        out.add('${pathFor(key, lang)} ($mode): sting on a non-home page: $s');
+        out.add('${route.path} ($mode): sting on a non-home page: $s');
       }
-    }
-  }
-
-  // FAQ: the answer fades in and rises (opacity/transform, base, settle) and
-  // the "+" turns a quarter (quick, settle); none of it with reduced motion.
-  for (final lang in Lang.values) {
-    final page = await session();
-    await page.goto('$base${pathFor(PageKey.home, lang)}');
-    await page.eval("document.querySelector('.faq details').scrollIntoView()");
-    await Future<void>.delayed(const Duration(milliseconds: 700));
-    await page.eval("document.querySelector('.faq summary').click()");
-    final mid = await page.evalMap(_faqProbe);
-    await Future<void>.delayed(const Duration(milliseconds: 600));
-    final done = await page.evalMap(_faqProbe);
-    final where = '${pathFor(PageKey.home, lang)} FAQ ($mode)';
-    final turned = ((done['iconMatrix'] as String?) ?? '').startsWith(
-      'matrix(0.70',
-    );
-    if (done['open'] != true || !turned) {
-      out.add('$where: the opened item is not settled with a ×: $done');
-    }
-    if (reduced) {
-      if (mid['answerAnimations'] != 0 ||
-          mid['answerName'] != 'none' ||
-          mid['iconDuration'] != '0s') {
-        out.add('$where: the opening still animates: $mid');
-      }
-      continue;
-    }
-    if (mid['answerAnimations'] != 1 ||
-        '${mid['answerProps']}' != '[opacity, transform]') {
-      out.add('$where: answer animation is not opacity/transform only: $mid');
-    }
-    if (mid['answerDuration'] != _seconds(_token('--duration-base')) ||
-        mid['answerEasing'] != _bezier(_token('--ease-settle'))) {
-      out.add('$where: answer motion is not base/settle: $mid');
-    }
-    if (mid['iconDuration'] != _seconds(_token('--duration-quick')) ||
-        mid['iconEasing'] != _bezier(_token('--ease-settle'))) {
-      out.add('$where: icon motion is not quick/settle: $mid');
-    }
-    if (mid['iconProperty'] != 'transform') {
-      out.add('$where: icon transitions ${mid['iconProperty']}: $mid');
     }
   }
 
@@ -826,9 +821,8 @@ Future<List<String>> _motionChecks(
   }
   if (!(p['animations']! as int > 0)) out.add('motion: nothing animates');
   final delays = (p['staggerDelays']! as List<dynamic>).join(' ');
-  // Eyebrow, headline, subline, buttons; then the stack card (data-i 2) and
-  // its note (data-i 3).
-  if (delays != '0s 0.06s 0.12s 0.18s 0.12s 0.18s') {
+  // Eyebrow, headline, subline, buttons; then the stack card (data-i 2).
+  if (delays != '0s 0.06s 0.12s 0.18s 0.12s') {
     out.add('motion: stagger delays $delays');
   }
 

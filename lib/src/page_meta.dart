@@ -1,73 +1,105 @@
 // SPDX-License-Identifier: Apache-2.0
 
-/// Title, meta description and H1 placeholder of every page shell.
+/// Title, meta description and H1 of every page.
 ///
-/// Titles and descriptions come from the brand copy; the real page content
-/// arrives in #10 to #16.
+/// Titles and descriptions come from the brand copy (copy v2, final).
 library;
 
+import 'package:website/src/content/site_content.dart';
 import 'package:website/src/routes.dart';
 
 /// The head and heading text of one page in one language.
 typedef PageMeta = ({String title, String description, String h1});
 
-/// Every page's [PageMeta] per language.
+/// Every page's [PageMeta] per language. The pages of a work and of a post
+/// take theirs from their data file ([metaFor]).
 const Map<PageKey, Map<Lang, PageMeta>> pageMeta = {
   PageKey.home: {
     Lang.en: (
-      title: 'Cube Algos | Software studio in Heinsberg',
+      title: 'Cube Algos | Studio for decentralised finance',
       description:
-          'Cube Algos is a small software studio in Heinsberg: software of '
-          'its own, and apps, internal tools and automations for businesses '
-          'and founders.',
-      h1:
-          'Cube Algos is a small studio that builds software of its own, and '
-          'yours.',
+          'Cube Algos is a small studio in Heinsberg. We build our own '
+          'applications for decentralised finance: smart contracts in '
+          'Solidity, apps in Dart and Flutter.',
+      h1: 'We build our own applications for decentralised finance.',
     ),
     Lang.de: (
-      title: 'Cube Algos | Softwarestudio aus Heinsberg',
+      title: 'Cube Algos | Studio für dezentrale Finanzanwendungen',
       description:
-          'Cube Algos ist ein kleines Softwarestudio aus Heinsberg: eigene '
-          'Software und Apps, interne Tools und Automatisierungen für '
-          'Betriebe und Gründungsteams.',
-      h1:
-          'Cube Algos ist ein kleines Studio, das eigene Software baut, und '
-          'Ihre.',
+          'Cube Algos ist ein kleines Studio aus Heinsberg. Wir bauen eigene '
+          'Anwendungen für dezentrale Finanzen: Smart Contracts in Solidity, '
+          'Apps in Dart und Flutter.',
+      h1: 'Wir bauen eigene Anwendungen für dezentrale Finanzen.',
     ),
   },
   PageKey.about: {
     Lang.en: (
       title: 'About | Cube Algos',
       description:
-          'Cube Algos is a software studio in Heinsberg, founded in 2023 by '
-          'Kevin Scheeren. Apps, internal tools, automation, and software of '
-          'its own.',
-      h1: 'The studio and its founder',
+          'Cube Algos is a small studio in Heinsberg, founded in 2023. We '
+          'build our own applications for decentralised finance, mostly '
+          'smart contracts and apps.',
+      h1: 'About the studio',
     ),
     Lang.de: (
       title: 'Über Cube Algos | Cube Algos',
       description:
-          'Cube Algos ist ein Softwarestudio aus Heinsberg, 2023 von Kevin '
-          'Scheeren gegründet. Apps, interne Tools, Automatisierung und '
-          'eigene Software.',
-      h1: 'Das Studio und sein Gründer',
+          'Cube Algos ist ein kleines Studio aus Heinsberg, gegründet 2023. '
+          'Wir bauen eigene Anwendungen für dezentrale Finanzen, vor allem '
+          'Smart Contracts und Apps.',
+      h1: 'Über das Studio',
     ),
   },
   PageKey.contact: {
     Lang.en: (
       title: 'Contact | Cube Algos',
       description:
-          'Write to Cube Algos in Heinsberg at hello@cubealgos.de. Tell Kevin '
-          'what you need and book a free first call about your app or tool.',
-      h1: 'Write to Kevin.',
+          'Write to Cube Algos at hello@cubealgos.de about collaborations, '
+          'integrations, grants or press. Report vulnerabilities to '
+          'security@cubealgos.de.',
+      h1: 'Write to us.',
     ),
     Lang.de: (
       title: 'Kontakt | Cube Algos',
       description:
-          'Schreiben Sie Cube Algos in Heinsberg an hello@cubealgos.de: kurz '
-          'beschreiben, was Sie brauchen, und ein kostenloses Erstgespräch '
-          'vereinbaren.',
-      h1: 'Schreiben Sie Kevin eine E-Mail.',
+          'Schreiben Sie Cube Algos an hello@cubealgos.de, zu Zusammenarbeit, '
+          'Integrationen, Förderprogrammen und Presse. Schwachstellen bitte '
+          'an security@cubealgos.de.',
+      h1: 'Schreiben Sie uns.',
+    ),
+  },
+  PageKey.works: {
+    Lang.en: (
+      title: 'Work | Cube Algos',
+      description:
+          'The published work of Cube Algos: smart contracts and apps for '
+          'decentralised finance, each with its status, licence and source '
+          'code.',
+      h1: 'Work',
+    ),
+    Lang.de: (
+      title: 'Arbeiten | Cube Algos',
+      description:
+          'Die veröffentlichten Arbeiten von Cube Algos: Smart Contracts und '
+          'Apps für dezentrale Finanzen, jeweils mit Status, Lizenz und '
+          'Quelltext.',
+      h1: 'Arbeiten',
+    ),
+  },
+  PageKey.blog: {
+    Lang.en: (
+      title: 'Blog | Cube Algos',
+      description:
+          'Notes from the Cube Algos studio: how we work and what we learn '
+          'along the way.',
+      h1: 'Blog',
+    ),
+    Lang.de: (
+      title: 'Blog | Cube Algos',
+      description:
+          'Notizen aus dem Studio von Cube Algos: wie wir arbeiten und was '
+          'wir dabei lernen.',
+      h1: 'Blog',
     ),
   },
   PageKey.impressum: {
@@ -116,3 +148,37 @@ const Map<PageKey, Map<Lang, PageMeta>> pageMeta = {
     ),
   },
 };
+
+/// The suffix of the title of a work or a post.
+const siteTitleSuffix = ' | Cube Algos';
+
+/// The head and heading text of [route]: the fixed table for the fixed pages,
+/// the data file for a work or a post.
+PageMeta metaFor(Route route, SiteContent content) {
+  switch (route.key) {
+    case PageKey.work:
+      final work = content.workBySlug(route.slug!)!;
+      final name = work.nameIn(route.lang);
+      return (
+        title: '$name$siteTitleSuffix',
+        description: work.line[route.lang]!.replaceAll('`', ''),
+        h1: name,
+      );
+    case PageKey.post:
+      final post = content.postBySlug(route.lang, route.slug!)!;
+      return (
+        title: '${post.seoTitle}$siteTitleSuffix',
+        description: post.description,
+        h1: post.title,
+      );
+    case PageKey.home ||
+        PageKey.about ||
+        PageKey.contact ||
+        PageKey.works ||
+        PageKey.blog ||
+        PageKey.impressum ||
+        PageKey.datenschutz ||
+        PageKey.notFound:
+      return pageMeta[route.key]![route.lang]!;
+  }
+}

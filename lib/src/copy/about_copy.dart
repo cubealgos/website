@@ -1,155 +1,170 @@
 // SPDX-License-Identifier: Apache-2.0
 
-/// The about page copy, EN and DE side by side (final brand copy, character
-/// for character; all rights reserved).
-// ignore_for_file: unnecessary_parenthesis
+/// The about page copy, EN and DE side by side (copy v2, option A with the
+/// founder section; all rights reserved).
+// Long paragraphs are written as adjacent string literals for line length.
+// ignore_for_file: no_adjacent_strings_in_list
 library;
 
 import 'package:website/src/outbound.dart';
 import 'package:website/src/routes.dart';
 
+/// One item of "how we work": its text and, for the AI item, the label of the
+/// link to the blog post (left out while the post does not exist).
+typedef HowItem = ({String text, String? postLabel});
+
 /// All copy of the about page in one language.
 typedef AboutCopy = ({
   String h1,
   String lede,
+  String workTitle,
+  List<String> work,
+  String howTitle,
+  List<HowItem> how,
   String whoTitle,
-  List<String> who,
+  String who,
 
-  /// The line before the founder's links, and the links, each a
-  /// `[label](url)` to a URL of `outbound.dart`.
-  String linksIntro,
+  /// The founder's links, each a `[label](url)` to a URL of `outbound.dart`.
   List<String> links,
 
   /// The alternative text of the founder's portrait.
   String photoAlt,
-  String oneTitle,
-  String one,
-  String ownTitle,
-  String own,
-
-  /// The pointer to the studio's public code, with a `[label](url)` link.
-  String ownCode,
-  String howTitle,
-  List<String> how,
   String whereTitle,
   String where,
   String ctaTitle,
+  String ctaButton,
 });
 
 /// The about copy per language.
 const Map<Lang, AboutCopy> aboutCopy = {
   Lang.en: (
-    h1: 'The studio and its founder',
+    h1: 'About the studio',
     lede:
-        'Cube Algos is a software studio in Heinsberg, founded in 2023 '
-        'and run by Kevin Scheeren.',
-    whoTitle: 'The founder',
-    who: [
-      ('Kevin Scheeren has been writing code since 2016, first at '
-          'school and in his spare time, and professionally since 2019. '
-          'He is a trained developer: he completed the apprenticeship as '
-          'a Mathematisch-technischer Softwareentwickler (MATSE), a '
-          'German IT qualification built on mathematics and software '
-          'engineering.'),
-      ('He founded Cube Algos in 2023 to build apps, SaaS and internal '
-          'tools. He loves building software and wants to do it on his own '
-          'terms: carefully, creatively, and for people who will actually '
-          'use it.'),
+        'Cube Algos is a small software studio in Heinsberg, founded in '
+        '2023. We build our own applications for decentralised finance and '
+        'show them here once they are published.',
+    workTitle: 'What we work on',
+    work: [
+      'For us, decentralised finance means software that runs on public '
+          'blockchains, and contracts that nobody holds an admin key to, '
+          'including us.',
+      'Our focus is smart contracts and apps that let wallets do more on '
+          'their own: read prices, pay for gas in another token, convert the '
+          'tokens they receive. All of it is still in development.',
     ],
-    linksIntro: 'His CV and projects are on his own site:',
+    howTitle: 'How we work',
+    how: [
+      (
+        text:
+            'Our contracts have no admin, pause or upgrade key. A fix is a '
+            'new version.',
+        postLabel: null,
+      ),
+      (
+        text:
+            'We call existing protocols through our own interfaces instead '
+            'of copying their code.',
+        postLabel: null,
+      ),
+      (
+        text:
+            'Our tests also run against copies of real chains, with the '
+            'contracts that are actually deployed there.',
+        postLabel: null,
+      ),
+      (
+        text:
+            'AI agents implement single tasks. Every change is reviewed '
+            'against the specification, and a person confirms every merge.',
+        postLabel: 'More on the blog',
+      ),
+      (text: 'Deploying and publishing are done by hand.', postLabel: null),
+    ],
+    whoTitle: 'Who is behind it',
+    who:
+        'Kevin Scheeren founded Cube Algos in 2023 and runs it as managing '
+        'director. He has been writing code since 2016, professionally '
+        'since 2019, and completed the apprenticeship as a '
+        'Mathematisch-technischer Softwareentwickler (MATSE), a German '
+        'qualification in mathematics and software engineering.',
     links: [
       '[kevinscheeren.de]($personalSiteUrlEn)',
       '[GitHub]($githubProfileUrl)',
       '[LinkedIn]($linkedinProfileUrl)',
     ],
     photoAlt: 'Kevin Scheeren',
-    oneTitle: 'One person, on purpose',
-    one:
-        'Cube Algos is run by one person. You talk directly to the '
-        'person who builds your project, with no account manager in '
-        'between and nothing lost in handover. Capacity is limited, so '
-        'you get an honest start date before you sign.',
-    ownTitle: 'Software of its own',
-    own:
-        'Cube Algos builds software of its own, and software for '
-        'businesses and founders. The first product of its own is in '
-        'development.',
-    ownCode:
-        'The code of this website and the Cube Algos brand are public on '
-        '[GitHub]($githubOrgUrl|The Cube Algos GitHub organisation).',
-    howTitle: 'How Cube Algos works',
-    how: [
-      'You see progress as it happens.',
-      'Every build is accessible from the start.',
-      'A free first call, then a written offer in about 3 working days.',
-      ('AI tools are used every day, because they make the work '
-          'faster. Kevin is also a trained developer, so he reads and '
-          'understands every line before it ships. AI helps write the '
-          'code; Kevin decides what goes live.'),
-    ],
-    whereTitle: 'Where Cube Algos is based',
+    whereTitle: 'Where we are',
     where:
-        'Cube Algos UG (haftungsbeschränkt) is based in Heinsberg, in '
-        'North Rhine-Westphalia, Germany. Most of the work happens '
-        'remotely. Where it helps and fits, Kevin can also meet you in '
-        'person around Heinsberg and Aachen. Just ask.',
-    ctaTitle: 'Want to talk?',
+        'Cube Algos UG (haftungsbeschränkt) is based in Heinsberg, in North '
+        'Rhine-Westphalia, Germany.',
+    ctaTitle: 'Collaboration, grants or press?',
+    ctaButton: 'Write to us',
   ),
   Lang.de: (
-    h1: 'Das Studio und sein Gründer',
+    h1: 'Über das Studio',
     lede:
-        'Cube Algos ist ein Softwarestudio aus Heinsberg. Kevin Scheeren hat '
-        'es 2023 gegründet und führt es bis heute selbst.',
-    whoTitle: 'Der Gründer',
-    who: [
-      ('Kevin Scheeren programmiert seit 2016, erst in der Schule und in der '
-          'Freizeit, seit 2019 beruflich. Seine Ausbildung zum '
-          'Mathematisch-technischen Softwareentwickler (MATSE) hat er '
-          'abgeschlossen.'),
-      ('2023 hat er Cube Algos gegründet, um Apps, interne Tools und '
-          'Automatisierungen zu bauen, und zwar so, wie er Software am '
-          'liebsten baut: sorgfältig, mit eigenen Ideen und für Menschen, die '
-          'sie wirklich nutzen.'),
+        'Cube Algos ist ein kleines Softwarestudio in Heinsberg, gegründet '
+        '2023. Wir bauen eigene Anwendungen für dezentrale Finanzen und '
+        'zeigen sie hier, sobald sie veröffentlicht sind.',
+    workTitle: 'Woran wir arbeiten',
+    work: [
+      'Dezentrale Finanzen heißt für uns: Software, die auf öffentlichen '
+          'Blockchains läuft, und Smart Contracts, zu denen niemand einen '
+          'Admin-Schlüssel hat, auch wir nicht.',
+      'Unser Schwerpunkt sind Smart Contracts und Apps, mit denen Wallets '
+          'mehr selbst erledigen: Preise lesen, Gas in einem anderen Token '
+          'bezahlen, eingehende Token umwandeln. Alles davon ist noch in '
+          'Entwicklung.',
     ],
-    linksIntro: 'Lebenslauf und Projekte stehen auf Kevins eigener Website:',
+    howTitle: 'So arbeiten wir',
+    how: [
+      (
+        text:
+            'Unsere Smart Contracts haben keinen Admin-, Pausen- oder '
+            'Upgrade-Schlüssel. Eine Korrektur ist eine neue Version.',
+        postLabel: null,
+      ),
+      (
+        text:
+            'Bestehende Protokolle rufen wir über eigene Schnittstellen auf, '
+            'statt ihren Code zu kopieren.',
+        postLabel: null,
+      ),
+      (
+        text:
+            'Unsere Tests laufen auch gegen Kopien echter Chains, mit den '
+            'Smart Contracts, die dort wirklich bereitgestellt sind.',
+        postLabel: null,
+      ),
+      (
+        text:
+            'KI-Agenten setzen einzelne Aufgaben um. Jede Änderung wird '
+            'gegen die Spezifikation geprüft, und jeden Merge bestätigt ein '
+            'Mensch.',
+        postLabel: 'Mehr dazu im Blog',
+      ),
+      (
+        text: 'Bereitstellen und veröffentlichen tun wir von Hand.',
+        postLabel: null,
+      ),
+    ],
+    whoTitle: 'Wer dahinter steht',
+    who:
+        'Kevin Scheeren hat Cube Algos 2023 gegründet und führt das Studio '
+        'als Geschäftsführer. Er programmiert seit 2016, seit 2019 '
+        'beruflich, und hat seine Ausbildung zum Mathematisch-technischen '
+        'Softwareentwickler (MATSE) abgeschlossen.',
     links: [
       '[kevinscheeren.de]($personalSiteUrl)',
       '[GitHub]($githubProfileUrl)',
       '[LinkedIn]($linkedinProfileUrl)',
     ],
     photoAlt: 'Kevin Scheeren',
-    oneTitle: 'Eine Person, mit Absicht',
-    one:
-        'Bei Cube Algos sprechen Sie direkt mit dem Menschen, der Ihr '
-        'Projekt baut. Es gibt keinen Account-Manager dazwischen, und bei '
-        'keiner Übergabe geht etwas verloren. Weil die Zeit begrenzt ist, '
-        'erhalten Sie vor Vertragsabschluss einen ehrlichen Starttermin.',
-    ownTitle: 'Eigene Software',
-    own:
-        'Cube Algos entwickelt eigene Software und baut Software für '
-        'Betriebe und Gründungsteams. Das erste eigene Produkt ist in '
-        'Entwicklung.',
-    ownCode:
-        'Der Code dieser Website und die Marke von Cube Algos liegen '
-        'öffentlich auf '
-        '[GitHub]($githubOrgUrl|GitHub-Organisation von Cube Algos).',
-    howTitle: 'So arbeitet Cube Algos',
-    how: [
-      'Den Fortschritt sehen Sie laufend.',
-      'Jedes Projekt ist von Anfang an barrierearm.',
-      ('Zuerst ein kostenloses Gespräch, dann innerhalb von etwa drei '
-          'Werktagen ein schriftliches Angebot.'),
-      ('KI-Werkzeuge gehören zum Alltag, weil sie die Arbeit schneller '
-          'machen. Kevin ist ausgebildeter Entwickler und liest und versteht '
-          'jede Zeile, bevor sie live geht. Die KI hilft beim Schreiben, die '
-          'Entscheidung trifft Kevin.'),
-    ],
     whereTitle: 'Standort',
     where:
         'Die Cube Algos UG (haftungsbeschränkt) sitzt in Heinsberg in '
-        'Nordrhein-Westfalen. Die meiste Arbeit läuft remote. Wenn es hilft '
-        'und passt, trifft Kevin Sie auch persönlich, rund um Heinsberg und '
-        'Aachen.',
-    ctaTitle: 'Interesse an einem Gespräch?',
+        'Nordrhein-Westfalen.',
+    ctaTitle: 'Zusammenarbeit, Förderprogramme oder Presse?',
+    ctaButton: 'Schreiben Sie uns',
   ),
 };

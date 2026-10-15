@@ -1,0 +1,27 @@
+{
+  "number": 1,
+  "name": "fixture-price-oracle-contracts",
+  "slug": "fixture-price-oracle-contracts",
+  "line": {
+    "de": "Beispiel-Orakel, die für jedes Paar ihrer Konfiguration einen Preis unter einer Adresse liefern, mit `AggregatorV3Interface` auf einem Standardpaar.",
+    "en": "Example oracles that answer every pair their configuration covers from one address, with `AggregatorV3Interface` on a default pair."
+  },
+  "about": {
+    "de": "Die Adresse ergibt sich aus der Konfiguration. Jeder Lesezugriff prüft jeden Feed neu und wird verweigert, wenn ein Feed veraltet ist.",
+    "en": "The address follows from the configuration. Every read re-checks every leg and refuses when a leg is stale."
+  },
+  "notice": {
+    "de": "Die Beispiel-Orakel sind unveränderlich, die Feeds, die sie lesen, sind es nicht.",
+    "en": "The example oracles are immutable; the feeds they read are not."
+  },
+  "status": "deployed",
+  "chains": ["Chain A", "Chain B", "Chain C"],
+  "licence": "apache-2.0",
+  "links": {
+    "source": "https://example.org/fixtures/fixture-price-oracle-contracts",
+    "docs": "https://example.org/fixtures/fixture-price-oracle-contracts/docs",
+    "security": "https://example.org/fixtures/fixture-price-oracle-contracts/security",
+    "audit": "https://example.org/fixtures/fixture-price-oracle-contracts/audit.pdf",
+    "release": "https://example.org/fixtures/fixture-price-oracle-contracts/releases"
+  }
+}

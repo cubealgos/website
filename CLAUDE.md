@@ -12,6 +12,7 @@ VAT ID, email, phone) (see `NOTICE`).
 | install the git hooks | `README.md` Scripts: `fvm dart run tool/hooks.dart` (once per clone) |
 | start work on an issue | Branches below: new worktree, never the main checkout |
 | add a dependency | its licence must be on the allow list of the licence gate (`tool/licence_check.dart`, added in #5); copyleft is denied |
+| add a work or a post | `content/README.md`: one data file each, validated at build time; with no work nothing about works renders, and a work's links are the allow-listed outbound links |
 | touch brand assets or page copy | they are all rights reserved, not covered by Apache-2.0 (`NOTICE`, README "Licence") |
 
 ## Toolchain

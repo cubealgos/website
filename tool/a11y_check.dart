@@ -21,6 +21,7 @@
 // Run: `fvm dart run tool/a11y_check.dart`.
 import 'dart:io';
 
+import 'package:website/src/content/site_content.dart';
 import 'package:website/src/routes.dart';
 
 import 'src/a11y_probes.dart';
@@ -48,6 +49,7 @@ Future<void> main() async {
   final chrome = await Chrome.launch();
   final page = await chrome.newPage();
   final failures = <String>[];
+  final routes = routesFor(shippedContent);
   var stops = 0;
   var texts = 0;
   var skipped = 0;
@@ -58,62 +60,61 @@ Future<void> main() async {
       // the final colours.
       await page.setMedia(dark: dark, reducedMotion: true);
       final theme = dark ? 'dark' : 'light';
-      for (final entry in paths.entries) {
-        for (final lang in Lang.values) {
-          final path = pathFor(entry.key, lang);
-          final where = '$path ($theme)';
-          await page.goto('$base$path');
+      for (final route in routes) {
+        final lang = route.lang;
+        final path = route.path;
+        final where = '$path ($theme)';
+        await page.goto('$base$path');
 
-          final structure = await page.eval(
-            structureProbe.replaceAll('%LANG%', lang.code),
-          );
-          if (!dark) {
-            for (final f in (structure! as List<dynamic>)) {
-              failures.add('structure: $where: $f');
-            }
+        final structure = await page.eval(
+          structureProbe.replaceAll('%LANG%', lang.code),
+        );
+        if (!dark) {
+          for (final f in (structure! as List<dynamic>)) {
+            failures.add('structure: $where: $f');
           }
+        }
 
-          final contrast = await page.evalMap(contrastProbe);
-          texts += contrast['checked']! as int;
-          skipped += contrast['skipped']! as int;
-          for (final f in contrast['findings']! as List<dynamic>) {
-            failures.add('contrast: $where: $f');
+        final contrast = await page.evalMap(contrastProbe);
+        texts += contrast['checked']! as int;
+        skipped += contrast['skipped']! as int;
+        for (final f in contrast['findings']! as List<dynamic>) {
+          failures.add('contrast: $where: $f');
+        }
+
+        final focus = await page.eval(_focusToken);
+        final count = (await page.eval(stopsProbe))! as int;
+        for (var i = 0; i < count; i++) {
+          await page.press('Tab');
+          final s = await page.evalMap(focusProbe);
+          stops++;
+          if (s['index'] != i) {
+            failures.add(
+              'tab order: $where: stop $i focused ${s['label']} '
+              '(#${s['index']})',
+            );
+            break;
           }
-
-          final focus = await page.eval(_focusToken);
-          final count = (await page.eval(stopsProbe))! as int;
-          for (var i = 0; i < count; i++) {
-            await page.press('Tab');
-            final s = await page.evalMap(focusProbe);
-            stops++;
-            if (s['index'] != i) {
-              failures.add(
-                'tab order: $where: stop $i focused ${s['label']} '
-                '(#${s['index']})',
-              );
-              break;
-            }
-            final label = '${s['label']}';
-            final ring =
-                s['outlineStyle'] == 'solid' &&
-                s['outlineWidth'] == '2px' &&
-                s['outlineColor'] == focus;
-            // A chamfered button clips an outline: its ring is a drop-shadow
-            // on the wrapper (see browser_check).
-            final shadowRing = '${s['parentFilter']}'.contains('$focus');
-            if (!ring && !shadowRing) {
-              failures.add(
-                'focus ring: $where: $label has ${s['outlineStyle']} '
-                '${s['outlineWidth']} ${s['outlineColor']} '
-                '(filter ${s['parentFilter']}), expected solid 2px $focus',
-              );
-            }
-            if (s['inView'] != true) {
-              failures.add('focus out of view: $where: $label');
-            }
-            if (s['obscured'] == true) {
-              failures.add('focus obscured by another element: $where: $label');
-            }
+          final label = '${s['label']}';
+          final ring =
+              s['outlineStyle'] == 'solid' &&
+              s['outlineWidth'] == '2px' &&
+              s['outlineColor'] == focus;
+          // A chamfered button clips an outline: its ring is a drop-shadow
+          // on the wrapper (see browser_check).
+          final shadowRing = '${s['parentFilter']}'.contains('$focus');
+          if (!ring && !shadowRing) {
+            failures.add(
+              'focus ring: $where: $label has ${s['outlineStyle']} '
+              '${s['outlineWidth']} ${s['outlineColor']} '
+              '(filter ${s['parentFilter']}), expected solid 2px $focus',
+            );
+          }
+          if (s['inView'] != true) {
+            failures.add('focus out of view: $where: $label');
+          }
+          if (s['obscured'] == true) {
+            failures.add('focus obscured by another element: $where: $label');
           }
         }
       }
@@ -128,7 +129,7 @@ Future<void> main() async {
     exit(1);
   }
   stdout.writeln(
-    'a11y_check: ${paths.length * Lang.values.length} pages x 2 themes ok: '
+    'a11y_check: ${routes.length} pages x 2 themes ok: '
     'structure, $stops focus stops, $texts text contrasts '
     '($skipped over images or gradients not judged).',
   );

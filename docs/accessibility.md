@@ -8,12 +8,12 @@ legal conformance**; the copy says "from the start" (EN) and "barrierearm" (DE),
 
 ## Automated, every build (`a11y` workflow)
 
-| check | what it covers | result, 2026-10-02 (Claude) |
+| check | what it covers | result, 2026-10-14 (Claude, #87) |
 | --- | --- | --- |
-| Lighthouse accessibility audits (`tool/a11y/lighthouse_a11y.mjs`) | every built page (12), phone and desktop emulation, any failed audit fails | 24 runs, score 100 everywhere, no failed audit |
-| `tool/a11y_check.dart` structure | one banner, main and contentinfo landmark, named navigation landmarks, nothing outside a landmark but the skip link, skip link first and leading to `<main>`, exactly one H1 inside `<main>`, no skipped heading level, `<html lang>` as the route table says, accessible name on every link, button and FAQ summary, no generic link text, alt text, inline SVG hidden or named, unique ids, no positive `tabindex`, no conformance claim in the text | 12 pages ok |
-| `tool/a11y_check.dart` focus | Tab through every interactive element (skip link, navigation, language switches, buttons, FAQ summaries, footer links): document order, a solid 2px ring in the focus token, in view, not covered; light and dark | 464 stops ok |
-| `tool/a11y_check.dart` contrast | rendered text against its effective background in the light and the dark theme, reduced motion on so reveals are at rest (4.5:1, 3:1 for large text); text over an image or gradient is counted, not judged | 1020 texts ok, 4 not judged |
+| Lighthouse accessibility audits (`tool/a11y/lighthouse_a11y.mjs`) | every built page (16), phone and desktop emulation, any failed audit fails | 32 runs, score 100 everywhere, no failed audit |
+| `tool/a11y_check.dart` structure | one banner, main and contentinfo landmark, named navigation landmarks, nothing outside a landmark but the skip link, skip link first and leading to `<main>`, exactly one H1 inside `<main>`, no skipped heading level, `<html lang>` as the route table says, accessible name on every link and button, no generic link text, alt text, inline SVG hidden or named, unique ids, no positive `tabindex`, no conformance claim in the text | 16 pages ok |
+| `tool/a11y_check.dart` focus | Tab through every interactive element (skip link, navigation, language switches, buttons, footer links, and a post's code blocks, which take focus so the keyboard can scroll them): document order, a solid 2px ring in the focus token, in view, not covered; light and dark | 712 stops ok |
+| `tool/a11y_check.dart` contrast | rendered text against its effective background in the light and the dark theme, reduced motion on so reveals are at rest (4.5:1, 3:1 for large text); text over an image or gradient is counted, not judged | 1404 texts ok, 4 not judged |
 | `tool/browser_check.dart` | no horizontal scroll or off-screen element at 320 / 375 / 768 / 1280 px (320 px is 400% zoom of a 1280 px window, 640 px is 200%), keyboard walkthrough of header and footer, language switch, reduced motion (sting still, UI motion off, reveals visible), content visible with JavaScript off | ok |
 | Tokens contrast test (`test/tokens_contrast_test.dart`) | text and UI-boundary contrast of the brand tokens | ok |
 
@@ -33,11 +33,11 @@ How to test:
 - **Keyboard**: no mouse. Tab and Shift+Tab from the skip link to the footer: order follows the
   reading order, the focus ring is visible on every stop, no keyboard trap, the skip link moves
   focus into `<main>`, the language switch and the `mailto:` links are reachable and Enter opens
-  them, FAQ items (Home) open and close with Enter and Space.
+  them, a code block in a post takes focus and scrolls with the arrow keys.
 - **VoiceOver** (macOS, Safari, Control+Option): the landmarks (banner, navigations by name,
   main, contentinfo) are listed in the rotor; the headings rotor shows one H1 and an orderly
-  outline; links read with a meaningful name; FAQ items are announced as disclosures with their
-  expanded state; the idle fish is hidden or announced sensibly; the page language is announced
+  outline; links read with a meaningful name; the contents list of a post is a named navigation
+  landmark and the back arrow is hidden; the idle fish is hidden or announced sensibly; the page language is announced
   and German pages are read with a German voice (`lang="de"`), English pages with an English
   one, the language switch links with their own language.
 - **Zoom 200% and 400%** (browser zoom on a 1280 px wide window, Chrome and Safari): no loss of
@@ -45,7 +45,7 @@ How to test:
 - **Reduced motion** (System Settings, Accessibility, Display, Reduce motion): the home sting
   shows the still mark, no rise-in or press animation, all content visible without scrolling.
 - **Forced colours** (Windows High Contrast, or Chrome DevTools, Rendering, Emulate
-  `forced-colors: active`): text, focus ring, buttons, the FAQ markers and the logo stay
+  `forced-colors: active`): text, focus ring, buttons, the status markers of a work and the logo stay
   visible; nothing relies on a background colour alone.
 
 | Page | Lang | Path | Auto | Keyboard | VoiceOver | Zoom 200% | Zoom 400% | Reduced motion | Forced colours |
@@ -79,7 +79,7 @@ How to test:
   the first home view, not again after About and back, plays again in a new session, and there
   is no motion with reduced motion on (automated in `browser_check`).
 - [ ] pending: Kevin. Keyboard-only and VoiceOver run of Home (EN) and Home (DE) from the skip
-  link to the footer, opening and closing every FAQ item, without a dead end.
+  link to the footer, without a dead end.
 
 ## Findings
 

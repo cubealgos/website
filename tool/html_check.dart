@@ -4,6 +4,8 @@
 // `fvm dart run tool/build.dart`. Run: `fvm dart run tool/html_check.dart`.
 import 'dart:io';
 
+import 'package:website/src/content/site_content.dart';
+
 import 'src/html_check.dart';
 import 'src/seo_check.dart';
 
@@ -13,7 +15,11 @@ void main(List<String> args) {
     stderr.writeln('html_check: ${dir.path} does not exist; build first.');
     exit(2);
   }
-  final findings = [...checkSite(dir), ...checkSeo(dir)];
+  final content = shippedContent;
+  final findings = [
+    ...checkSite(dir, content: content),
+    ...checkSeo(dir, content: content),
+  ];
   if (findings.isNotEmpty) {
     findings.forEach(stderr.writeln);
     stderr.writeln('html_check: ${findings.length} finding(s).');

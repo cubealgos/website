@@ -2,24 +2,29 @@
 
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/server.dart';
+import 'package:website/src/content/site_content.dart';
 import 'package:website/src/copy/about_copy.dart';
 import 'package:website/src/copy/common_copy.dart';
+import 'package:website/src/copy/home_copy.dart';
 import 'package:website/src/routes.dart';
 import 'package:website/src/widgets.dart';
 
-/// The about page body: hero, the founder with the portrait, one person, the
-/// studio's own software, how the studio works, where, closing call to
-/// action.
+/// The about page body: hero, what the studio works on, how it works, who is
+/// behind it with the portrait, where it is, closing call to action.
 class AboutPage extends StatelessComponent {
-  /// Creates the about page in [lang].
-  const new({required this.lang, super.key});
+  /// Creates the about page in [lang] showing [content].
+  const new({required this.lang, required this.content, super.key});
 
   /// The page's language.
   final Lang lang;
 
+  /// The works and posts of the site (the AI item links to its post).
+  final SiteContent content;
+
   @override
   Component build(BuildContext context) {
     final c = aboutCopy[lang]!;
+    final post = content.postById(lang, aiPostId);
     return Component.fragment([
       el('section', classes: 'hero hero--page', [
         el('div', classes: 'wrap hero-grid gridlines', [
@@ -35,7 +40,47 @@ class AboutPage extends StatelessComponent {
       ]),
       el(
         'section',
-        classes: 'sec sec--first',
+        classes: 'sheet',
+        attrs: const {'aria-labelledby': 'work-title'},
+        [
+          el('div', classes: 'wrap sheet-grid', [
+            h2(id: 'work-title', classes: 'sheet-title reveal', [
+              t(c.workTitle),
+            ]),
+            el('div', classes: 'sheet-body reveal', [
+              for (var i = 0; i < c.work.length; i++)
+                p(classes: i == 0 ? 'sheet-lede' : null, [t(c.work[i])]),
+            ]),
+          ]),
+        ],
+      ),
+      el(
+        'section',
+        classes: 'sec sec--after-band',
+        attrs: const {'aria-labelledby': 'how-title'},
+        [
+          el('div', classes: 'wrap', [
+            h2(id: 'how-title', classes: 'sec-h2 reveal', [t(c.howTitle)]),
+            ul(classes: 'ticks reveal', [
+              for (final item in c.how)
+                li([
+                  t(item.text),
+                  if (item.postLabel case final label? when post != null) ...[
+                    t(' '),
+                    a(
+                      [t(label)],
+                      href: routePath(PageKey.post, lang, post.slug),
+                      classes: 'item-link',
+                    ),
+                  ],
+                ]),
+            ]),
+          ]),
+        ],
+      ),
+      el(
+        'section',
+        classes: 'sec',
         attrs: const {'aria-labelledby': 'who-title'},
         [
           el('div', classes: 'wrap split', [
@@ -44,57 +89,13 @@ class AboutPage extends StatelessComponent {
               _portrait(c),
             ]),
             el('div', classes: 'split-body reveal', [
-              for (var i = 0; i < c.who.length; i++)
-                p(classes: i == 0 ? 'split-lede' : null, [t(c.who[i])]),
+              p(classes: 'split-lede', [t(c.who)]),
               p(classes: 'links-line', [
-                t('${c.linksIntro} '),
                 for (var i = 0; i < c.links.length; i++) ...[
                   if (i > 0) t(' · '),
                   ...inlineLinks(c.links[i]),
                 ],
               ]),
-            ]),
-          ]),
-        ],
-      ),
-      el(
-        'section',
-        classes: 'band',
-        attrs: const {'aria-labelledby': 'one-title'},
-        [
-          el('div', classes: 'wrap band-grid', [
-            h2(id: 'one-title', classes: 'band-title reveal', [t(c.oneTitle)]),
-            p(
-              classes: 'band-text reveal',
-              attributes: const {'data-i': '1'},
-              [t(c.one)],
-            ),
-          ]),
-        ],
-      ),
-      el(
-        'section',
-        classes: 'sheet sheet--after-band',
-        attrs: const {'aria-labelledby': 'own-title'},
-        [
-          el('div', classes: 'wrap sheet-grid', [
-            h2(id: 'own-title', classes: 'sheet-title reveal', [t(c.ownTitle)]),
-            el('div', classes: 'sheet-body reveal', [
-              p(classes: 'sheet-lede', [t(c.own)]),
-              p(inlineLinks(c.ownCode)),
-            ]),
-          ]),
-        ],
-      ),
-      el(
-        'section',
-        classes: 'sec',
-        attrs: const {'aria-labelledby': 'how-title'},
-        [
-          el('div', classes: 'wrap', [
-            h2(id: 'how-title', classes: 'sec-h2 reveal', [t(c.howTitle)]),
-            ul(classes: 'ticks ticks--even reveal', [
-              for (final item in c.how) li([t(item)]),
             ]),
           ]),
         ],
@@ -119,11 +120,15 @@ class AboutPage extends StatelessComponent {
         classes: 'cta-sec cta-sec--gap',
         attrs: const {'aria-labelledby': 'cta-title'},
         [
-          el('div', classes: 'wrap', [
+          div(classes: 'wrap', [
             el('div', classes: 'cta cta--slim reveal', [
               el('div', classes: 'cta-text', [
                 h2(id: 'cta-title', [t(c.ctaTitle)]),
-                MailButton(label: writeToKevin[lang]!, inverse: true),
+                LinkButton(
+                  label: writeToUs[lang]!,
+                  href: pathFor(PageKey.contact, lang),
+                  inverse: true,
+                ),
               ]),
             ]),
           ]),

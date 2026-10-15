@@ -1,0 +1,12 @@
+{
+  "number": 4,
+  "name": "Fixture-App",
+  "nameEn": "Fixture app",
+  "slug": "fixture-app",
+  "kind": "app",
+  "line": {
+    "de": "Eine Beispiel-App auf einer eigenen Wallet. Wir halten keinen Schlüssel dazu.",
+    "en": "An example app on your own wallet. We hold no key to it."
+  },
+  "status": "in-development"
+}

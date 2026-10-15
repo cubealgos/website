@@ -1,0 +1,27 @@
+{
+  "number": 3,
+  "name": "Fixture Sweep",
+  "nameNote": {"de": "Arbeitstitel", "en": "working title"},
+  "slug": "fixture-sweep",
+  "line": {
+    "de": "Beispiel-Contracts, mit denen eine Wallet eingehende Token automatisch in einen Token ihrer Wahl umwandelt.",
+    "en": "Example contracts that let a wallet convert incoming tokens automatically into one token of its owner's choice."
+  },
+  "about": {
+    "de": "Was ankommt, wandelt die Wallet selbst um; wir halten weder die Token noch einen Schlüssel dazu.",
+    "en": "The wallet converts what arrives by itself; we hold neither the tokens nor a key to them."
+  },
+  "status": "public",
+  "licence": "busl-1.1",
+  "changeDate": {"de": "1. Januar 2030", "en": "1 January 2030"},
+  "charges": true,
+  "fee": {
+    "de": "{Satz und Grundlage}, als Partnergebühr in jeder Order, an Cube Algos",
+    "en": "{rate and base}, as a partner fee in each order, paid to Cube Algos"
+  },
+  "licensorConfirmed": true,
+  "links": {
+    "source": "https://example.org/fixtures/fixture-sweep",
+    "security": "https://example.org/fixtures/fixture-sweep/security"
+  }
+}

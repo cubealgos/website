@@ -1,95 +1,113 @@
 // SPDX-License-Identifier: Apache-2.0
 
-/// The contact page copy, EN and DE side by side (final brand copy, character
-/// for character; all rights reserved).
-// ignore_for_file: unnecessary_parenthesis
+/// The contact page copy, EN and DE side by side (copy v2; all rights
+/// reserved). Collaboration, integrations, grants and press; no client
+/// projects, no investor line (regulatory check of 2026-10-14, C-2).
 library;
 
 import 'package:website/src/routes.dart';
+
+/// One topic: a bold `lead` and its `text`.
+typedef Topic = ({String lead, String text});
 
 /// All copy of the contact page in one language.
 typedef ContactCopy = ({
   String h1,
   String lede,
-  String includeTitle,
-  String includeIntro,
-  List<String> include,
-  String includeOutro,
-  String nextTitle,
-  List<String> next,
-  String nextNote,
+  String note,
+  String topicsTitle,
+  List<Topic> topics,
+  String securityTitle,
+
+  /// The paragraph on vulnerability reports; `[label](mailto:…)` link and
+  /// `code` span.
+  String security,
 });
+
+/// The address vulnerability reports go to.
+const securityEmail = 'security@cubealgos.de';
 
 /// The contact copy per language.
 const Map<Lang, ContactCopy> contactCopy = {
   Lang.en: (
-    h1: 'Write to Kevin.',
+    h1: 'Write to us.',
     lede:
-        'No form and no sales pitch. Tell Kevin what you need; he reads '
-        'every email himself and writes back with a suggested next '
-        'step.',
-    includeTitle: 'What to include',
-    includeIntro: 'A few lines are enough. If you can, tell Kevin:',
-    include: [
-      'What your business or project is, in a sentence.',
-      ('What you want built: a booking tool, a customer portal, a '
-          'dashboard, an MVP, an automation, or "not sure yet".'),
-      'Who will use it.',
-      "Whether there's a date it needs to be ready by.",
-      ('Roughly what you have already: nothing, a sketch, a '
-          'spreadsheet, an existing app.'),
-      "Anything you've seen that you like or don't like.",
+        'Email us about collaborations, integrations, grants or press. We '
+        "don't take on client projects.",
+    note: 'We treat your email as confidential. This page has no tracking.',
+    topicsTitle: 'What to write about',
+    topics: [
+      (
+        lead: 'Collaboration.',
+        text:
+            'You research or build something related and want to work with '
+            'us on something public.',
+      ),
+      (
+        lead: 'Integrations.',
+        text:
+            'You plan to build one of our works into your wallet, app or '
+            'protocol. Questions about using it are answered in public, in '
+            "that repository's issues, so every reader benefits.",
+      ),
+      (
+        lead: 'Grants.',
+        text:
+            'Public grant programmes and grants from foundations or '
+            'protocols that fit our work.',
+      ),
+      (lead: 'Press.', text: 'Questions about Cube Algos and our work.'),
     ],
-    includeOutro:
-        'Not sure about any of it? Write anyway. Working that out is '
-        'what the free call is for.',
-    nextTitle: 'What happens next',
-    next: [
-      'You write. Kevin reads it himself.',
-      'He writes back, with questions or a suggestion.',
-      ('If it fits, you have a free call of 30 to 45 minutes, by video '
-          'or phone.'),
-      ('Within about 3 working days after the call, you get a written '
-          'offer with the scope and a start date.'),
-      'You decide whether it gets built.',
-    ],
-    nextNote: 'Your email stays confidential. This page has no tracking.',
+    securityTitle: 'Report a vulnerability',
+    security:
+        'Please send vulnerability reports to '
+        '[$securityEmail](mailto:$securityEmail), not to hello@. What a '
+        'report should include is in the `SECURITY.md` file of each '
+        "repository. Please don't disclose anything publicly before a fix is "
+        'available. We pass on what you report only as far as a fix or a '
+        'legally required report needs it, and your name only with your '
+        'consent.',
   ),
   Lang.de: (
-    h1: 'Schreiben Sie Kevin eine E-Mail.',
+    h1: 'Schreiben Sie uns.',
     lede:
-        'Kein Formular, kein Verkaufsdruck. Beschreiben Sie kurz, was Sie '
-        'brauchen. Kevin liest jede E-Mail selbst und antwortet mit einem '
-        'Vorschlag für den nächsten Schritt.',
-    includeTitle: 'Was in die erste E-Mail gehört',
-    includeIntro:
-        'Ein paar Zeilen genügen. Hilfreich ist, wenn Sie Folgendes '
-        'erwähnen:',
-    include: [
-      ('Worum es bei Ihrem Unternehmen oder Projekt geht, in einem Satz.'),
-      ('Was entstehen soll: Terminbuchung, Kundenportal, internes Dashboard, '
-          'MVP, eine Automatisierung oder „noch unklar“.'),
-      'Wer es nutzen wird.',
-      'Ob es einen festen Termin gibt.',
-      ('Was es schon gibt: nichts, eine Skizze, eine Tabelle, eine '
-          'bestehende App.'),
-      'Was Ihnen anderswo gefällt oder nicht gefällt.',
-    ],
-    includeOutro:
-        'Noch unsicher? Schreiben Sie trotzdem. Genau dafür ist das '
-        'kostenlose Gespräch da.',
-    nextTitle: 'Wie es weitergeht',
-    next: [
-      'Sie schreiben, und Kevin liest selbst.',
-      'Er antwortet mit Rückfragen oder einem Vorschlag.',
-      ('Passt es, folgt ein kostenloses Gespräch von 30 bis 45 Minuten, per '
-          'Video oder Telefon.'),
-      ('Innerhalb von etwa drei Werktagen danach erhalten Sie ein '
-          'schriftliches Angebot mit Umfang und Starttermin.'),
-      'Sie entscheiden, ob gebaut wird.',
-    ],
-    nextNote:
-        'Ihre E-Mail bleibt vertraulich. Diese Seite verwendet kein '
+        'Per E-Mail erreichen Sie uns für Zusammenarbeit, Integrationen, '
+        'Förderprogramme und Presse. Kundenprojekte nehmen wir nicht an.',
+    note:
+        'Ihre E-Mail behandeln wir vertraulich. Diese Seite verwendet kein '
         'Tracking.',
+    topicsTitle: 'Worum es gehen kann',
+    topics: [
+      (
+        lead: 'Zusammenarbeit.',
+        text:
+            'Sie forschen oder bauen an etwas Verwandtem und möchten '
+            'gemeinsam an einer öffentlichen Arbeit ansetzen.',
+      ),
+      (
+        lead: 'Integrationen.',
+        text:
+            'Sie möchten eine unserer Arbeiten in Ihre Wallet, App oder Ihr '
+            'Protokoll einbinden. Fragen zur Nutzung beantworten wir '
+            'öffentlich, in den Issues des jeweiligen Repositorys, damit '
+            'alle etwas davon haben.',
+      ),
+      (
+        lead: 'Förderprogramme.',
+        text:
+            'Öffentliche Förderprogramme und Grants von Stiftungen oder '
+            'Protokollen, die zu unseren Arbeiten passen.',
+      ),
+      (lead: 'Presse.', text: 'Fragen zu Cube Algos und unseren Arbeiten.'),
+    ],
+    securityTitle: 'Schwachstellen melden',
+    security:
+        'Hinweise auf Schwachstellen schicken Sie bitte nicht an hello@, '
+        'sondern an [$securityEmail](mailto:$securityEmail). Was eine '
+        'Meldung enthalten sollte, steht in der Datei `SECURITY.md` des '
+        'jeweiligen Repositorys. Bitte veröffentlichen Sie nichts, bevor es '
+        'eine Korrektur gibt. Was Sie melden, geben wir nur weiter, soweit '
+        'eine Korrektur oder eine gesetzliche Meldung es verlangt; Ihren '
+        'Namen nur mit Ihrer Zustimmung.',
   ),
 };

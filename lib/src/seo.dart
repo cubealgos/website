@@ -5,6 +5,7 @@
 /// spells a URL of its own.
 library;
 
+import 'package:website/src/content/site_content.dart';
 import 'package:website/src/legal_facts.dart';
 import 'package:website/src/outbound.dart';
 import 'package:website/src/routes.dart';
@@ -49,35 +50,34 @@ Map<String, Object> organizationJsonLd() => {
   'sameAs': [linkedinCompanyUrl],
 };
 
-/// `sitemap.xml`: every indexable page in both languages, each with its
-/// `xhtml:link` alternates (German, English and `x-default` = German). The 404
-/// pages stay out.
-String sitemapXml() {
+/// `sitemap.xml`: every indexable page, each with its `xhtml:link`
+/// alternates (the languages the page exists in, and `x-default` = German
+/// where it exists). The 404 pages stay out. The pages of the works and the
+/// posts are listed only for content that exists.
+String sitemapXml(SiteContent content) {
   final buffer = StringBuffer()
     ..writeln('<?xml version="1.0" encoding="UTF-8"?>')
     ..writeln(
       '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" '
       'xmlns:xhtml="http://www.w3.org/1999/xhtml">',
     );
-  for (final entry in paths.entries) {
-    if (entry.key == PageKey.notFound) continue;
-    for (final lang in Lang.values) {
-      buffer
-        ..writeln('  <url>')
-        ..writeln('    <loc>${urlFor(entry.key, lang)}</loc>');
-      for (final alt in Lang.values) {
-        buffer.writeln(
-          '    <xhtml:link rel="alternate" hreflang="${alt.code}" '
-          'href="${urlFor(entry.key, alt)}"/>',
-        );
-      }
-      buffer
-        ..writeln(
-          '    <xhtml:link rel="alternate" hreflang="x-default" '
-          'href="${urlFor(entry.key, Lang.de)}"/>',
-        )
-        ..writeln('  </url>');
+  for (final route in routesFor(content)) {
+    if (route.key == PageKey.notFound) continue;
+    buffer
+      ..writeln('  <url>')
+      ..writeln('    <loc>${route.url}</loc>');
+    for (final alt in route.alternates(content)) {
+      buffer.writeln(
+        '    <xhtml:link rel="alternate" hreflang="${alt.code}" '
+        'href="$siteOrigin${route.pathIn(alt, content)}"/>',
+      );
     }
+    buffer
+      ..writeln(
+        '    <xhtml:link rel="alternate" hreflang="x-default" '
+        'href="$siteOrigin${route.pathIn(route.xDefault(content), content)}"/>',
+      )
+      ..writeln('  </url>');
   }
   buffer.writeln('</urlset>');
   return buffer.toString();
