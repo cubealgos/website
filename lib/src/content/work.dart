@@ -384,6 +384,24 @@ Work _parseWork(Map<String, Object?> json, String file) {
     }
   }
 
+  // MF-8 / C-13: a notice that disclaims the price providers keeps the whole
+  // notice, so the studio's "fixed once deployed" lines stay true of the
+  // oracle: the oracle is immutable, the feeds it reads are not, the consumer
+  // bears the price risk.
+  final disclaimer = notice;
+  if (disclaimer != null) {
+    for (final MapEntry(:key, :value) in disclaimer.entries) {
+      final markers = _mf8[key]!;
+      if (_providers.hasMatch(value) && !markers.every(value.contains)) {
+        fail(
+          'notice',
+          'names Chainlink or RedStone: it must keep all three sentences of '
+              'the notice (${key.code} needs ${markers.join(', ')})',
+        );
+      }
+    }
+  }
+
   return Work(
     number: number,
     name: name,
@@ -406,6 +424,15 @@ Work _parseWork(Map<String, Object?> json, String file) {
     images: images,
   );
 }
+
+final _providers = RegExp('Chainlink|RedStone');
+
+/// What the whole notice of a work that disclaims the price providers says,
+/// per language (the three sentences of MF-8 and MF-16).
+const Map<Lang, List<String>> _mf8 = {
+  Lang.de: ['ist unveränderlich', 'updatedAt', 'Preisrisiko'],
+  Lang.en: ['is immutable', 'updatedAt', 'price risk'],
+};
 
 bool _hasPlaceholder(String s) => s.contains('{') || s.contains('}');
 

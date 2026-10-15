@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 /// The copy of the blog pages (the index and the frame of a post), EN and DE
-/// (copy v2, section 7; all rights reserved). The words of a post are in its
+/// (copy v3, section 6; all rights reserved). The words of a post are in its
 /// file under `content/posts/`.
 library;
 
@@ -40,7 +40,7 @@ const Map<Lang, BlogCopy> blogCopy = {
     lede: 'Notes from the studio: how we work and what we learn along the way.',
     meta: '{date} · {n} min read',
     readLink: 'Read {title}',
-    otherLanguageOnly: 'German only',
+    otherLanguageOnly: 'In German',
     back: 'All posts',
     contentsTitle: 'Contents',
     published: 'Published {date}',
@@ -53,7 +53,7 @@ const Map<Lang, BlogCopy> blogCopy = {
     lede: 'Notizen aus dem Studio: wie wir arbeiten und was wir dabei lernen.',
     meta: '{date} · {n} Min. Lesezeit',
     readLink: '{title} lesen',
-    otherLanguageOnly: 'Nur auf Englisch',
+    otherLanguageOnly: 'Auf Englisch',
     back: 'Alle Beiträge',
     contentsTitle: 'Inhalt',
     published: 'Veröffentlicht am {date}',

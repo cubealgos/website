@@ -33,7 +33,9 @@ One JSON file per work, validated by `lib/src/content/work.dart`. Fields (both l
 | `links` | `source`, `docs`, `security`, `audit`, `release`, `app`: `https` URLs, the work's own (`source` is its repository URL; required for a public contract work). They are plain links, listed in the build's outbound allow-list. |
 | `images` | `{"src": "/img/...", "width", "height", "alt": {"de", "en"}}`, self-hosted under `web/img/`. The first is the work's plate; the rest follow as a gallery. Without an image the plate is a cover generated from the slug (decorative, no alt text). |
 
-Rules the loader enforces: a BUSL work never says "open source" (source-available, open use); a fee
+Rules the loader enforces: a BUSL work never says "open source" (source-available, open use); a notice that
+names Chainlink or RedStone keeps all three sentences of the notice (the oracle is immutable and the feeds it
+reads are not, `updatedAt` and the price risk, the non-affiliation); a fee
 needs `charges` and a licence; every text in both languages; no unknown field. The copy of each
 row (labels, status and licence texts) is in `lib/src/copy/works_copy.dart`.
 

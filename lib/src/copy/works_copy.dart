@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 /// The copy of the works pages (the work page and its facts), EN and DE (copy
-/// v2, section 5; all rights reserved). The words of a single work are in its
+/// v3, section 5; all rights reserved). The words of a single work are in its
 /// data file.
 library;
 
@@ -72,13 +72,15 @@ const Map<Lang, WorksCopy> worksCopy = {
     status: {
       WorkStatus.inDevelopment: (
         label: 'In development',
-        explanation: 'We are working on it; the source code is not public yet.',
+        explanation:
+            'We are working on it. Once it is published, its source code is '
+            'linked here.',
       ),
       WorkStatus.public: (
         label: 'Source public',
         explanation:
-            'The source code is published. We have not deployed anything '
-            'yet.',
+            'The source code is published. When we deploy the contracts, '
+            'their addresses are listed here.',
       ),
       WorkStatus.deployed: (
         label: 'Deployed',
@@ -132,13 +134,14 @@ const Map<Lang, WorksCopy> worksCopy = {
       WorkStatus.inDevelopment: (
         label: 'In Entwicklung',
         explanation:
-            'Wir arbeiten daran; der Quelltext ist noch nicht öffentlich.',
+            'Wir arbeiten daran. Ist sie veröffentlicht, steht hier ihr '
+            'Quelltext.',
       ),
       WorkStatus.public: (
         label: 'Quelltext öffentlich',
         explanation:
-            'Der Quelltext ist veröffentlicht. Bereitgestellt haben wir '
-            'noch nichts.',
+            'Der Quelltext ist veröffentlicht. Stellen wir die Smart '
+            'Contracts bereit, stehen hier ihre Adressen.',
       ),
       WorkStatus.deployed: (
         label: 'Bereitgestellt',

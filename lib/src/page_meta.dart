@@ -2,7 +2,8 @@
 
 /// Title, meta description and H1 of every page.
 ///
-/// Titles and descriptions come from the brand copy (copy v2, final).
+/// Titles and descriptions come from the brand copy (copy v3, brand
+/// decisions 56 and 57).
 library;
 
 import 'package:website/src/content/site_content.dart';
@@ -18,18 +19,18 @@ const Map<PageKey, Map<Lang, PageMeta>> pageMeta = {
     Lang.en: (
       title: 'Cube Algos | Studio for decentralised finance',
       description:
-          'Cube Algos is a small studio in Heinsberg. We build our own '
-          'applications for decentralised finance: smart contracts in '
-          'Solidity, apps in Dart and Flutter.',
-      h1: 'We build our own applications for decentralised finance.',
+          'Cube Algos is a decentralised-finance studio in Heinsberg. We build '
+          'software that lets wallets do more on their own: read prices, pay '
+          'for gas, convert tokens.',
+      h1: 'We build software that lets wallets do more on their own.',
     ),
     Lang.de: (
       title: 'Cube Algos | Studio für dezentrale Finanzanwendungen',
       description:
-          'Cube Algos ist ein kleines Studio aus Heinsberg. Wir bauen eigene '
-          'Anwendungen für dezentrale Finanzen: Smart Contracts in Solidity, '
-          'Apps in Dart und Flutter.',
-      h1: 'Wir bauen eigene Anwendungen für dezentrale Finanzen.',
+          'Studio für dezentrale Finanzen in Heinsberg. Wir bauen Software, '
+          'mit der Wallets mehr selbst erledigen: Preise lesen, Gas bezahlen, '
+          'Token umwandeln.',
+      h1: 'Wir bauen Software, mit der Wallets mehr selbst erledigen.',
     ),
   },
   PageKey.about: {
@@ -37,15 +38,15 @@ const Map<PageKey, Map<Lang, PageMeta>> pageMeta = {
       title: 'About | Cube Algos',
       description:
           'Cube Algos is a small studio in Heinsberg, founded in 2023. We '
-          'build our own applications for decentralised finance, mostly '
-          'smart contracts and apps.',
+          'build our own software for decentralised finance, mostly smart '
+          'contracts and apps.',
       h1: 'About the studio',
     ),
     Lang.de: (
       title: 'Über Cube Algos | Cube Algos',
       description:
           'Cube Algos ist ein kleines Studio aus Heinsberg, gegründet 2023. '
-          'Wir bauen eigene Anwendungen für dezentrale Finanzen, vor allem '
+          'Wir bauen eigene Software für dezentrale Finanzen, vor allem '
           'Smart Contracts und Apps.',
       h1: 'Über das Studio',
     ),

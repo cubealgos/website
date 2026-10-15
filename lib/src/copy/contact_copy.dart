@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: Apache-2.0
 
-/// The contact page copy, EN and DE side by side (copy v2; all rights
-/// reserved). Collaboration, integrations, grants and press; no client
-/// projects, no investor line (regulatory check of 2026-10-14, C-2).
+/// The contact page copy, EN and DE side by side (copy v3, brand decisions 56
+/// and 57; all rights reserved). Collaboration, integrations, grants and
+/// press; no investor line (regulatory check of 2026-10-14, C-2).
 library;
 
 import 'package:website/src/routes.dart';
@@ -31,10 +31,8 @@ const securityEmail = 'security@cubealgos.de';
 const Map<Lang, ContactCopy> contactCopy = {
   Lang.en: (
     h1: 'Write to us.',
-    lede:
-        'Email us about collaborations, integrations, grants or press. We '
-        "don't take on client projects.",
-    note: 'We treat your email as confidential. This page has no tracking.',
+    lede: 'Email us about collaborations, integrations, grants or press.',
+    note: 'We treat your email as confidential.',
     topicsTitle: 'What to write about',
     topics: [
       (
@@ -61,21 +59,18 @@ const Map<Lang, ContactCopy> contactCopy = {
     securityTitle: 'Report a vulnerability',
     security:
         'Please send vulnerability reports to '
-        '[$securityEmail](mailto:$securityEmail), not to hello@. What a '
-        'report should include is in the `SECURITY.md` file of each '
-        "repository. Please don't disclose anything publicly before a fix is "
-        'available. We pass on what you report only as far as a fix or a '
-        'legally required report needs it, and your name only with your '
-        'consent.',
+        '[$securityEmail](mailto:$securityEmail). What a report should '
+        'include is in the `SECURITY.md` file of each repository. Please '
+        'wait for a fix before you disclose anything publicly. We pass on '
+        'what you report only as far as a fix or a legally required report '
+        'needs it, and your name only with your consent.',
   ),
   Lang.de: (
     h1: 'Schreiben Sie uns.',
     lede:
         'Per E-Mail erreichen Sie uns für Zusammenarbeit, Integrationen, '
-        'Förderprogramme und Presse. Kundenprojekte nehmen wir nicht an.',
-    note:
-        'Ihre E-Mail behandeln wir vertraulich. Diese Seite verwendet kein '
-        'Tracking.',
+        'Förderprogramme und Presse.',
+    note: 'Ihre E-Mail behandeln wir vertraulich.',
     topicsTitle: 'Worum es gehen kann',
     topics: [
       (
@@ -102,10 +97,10 @@ const Map<Lang, ContactCopy> contactCopy = {
     ],
     securityTitle: 'Schwachstellen melden',
     security:
-        'Hinweise auf Schwachstellen schicken Sie bitte nicht an hello@, '
-        'sondern an [$securityEmail](mailto:$securityEmail). Was eine '
-        'Meldung enthalten sollte, steht in der Datei `SECURITY.md` des '
-        'jeweiligen Repositorys. Bitte veröffentlichen Sie nichts, bevor es '
+        'Hinweise auf Schwachstellen schicken Sie bitte an '
+        '[$securityEmail](mailto:$securityEmail). Was eine Meldung enthalten '
+        'sollte, steht in der Datei `SECURITY.md` des jeweiligen '
+        'Repositorys. Bitte veröffentlichen Sie Ihren Fund erst, wenn es '
         'eine Korrektur gibt. Was Sie melden, geben wir nur weiter, soweit '
         'eine Korrektur oder eine gesetzliche Meldung es verlangt; Ihren '
         'Namen nur mit Ihrer Zustimmung.',

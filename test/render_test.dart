@@ -23,6 +23,10 @@ import 'support/render.dart';
 
 int _count(String html, Pattern what) => what.allMatches(html).length;
 
+/// [html] with every run of whitespace as one space (the renderer wraps a
+/// long line of text).
+String _flat(String html) => html.replaceAll(RegExp(r'\s+'), ' ');
+
 /// The hrefs of the `<a>` elements of [html].
 List<String> _hrefs(String html) => [
   for (final m in RegExp('<a [^>]*href="([^"]*)"').allMatches(html)) m[1]!,
@@ -502,7 +506,7 @@ void main() {
           '/en/blog/only-english/',
           '/blog/fixture-beitrag/',
         ]);
-        expect(de, contains('Nur auf Englisch'));
+        expect(de, contains('Auf Englisch'));
         expect(
           de,
           contains(
@@ -523,7 +527,7 @@ void main() {
           '/en/blog/only-english/',
           '/en/blog/fixture-post/',
         ]);
-        expect(en, isNot(contains('German only')));
+        expect(en, isNot(contains('In German')));
         expect(en, contains('2 March 2026'));
       },
     );
@@ -647,15 +651,15 @@ void main() {
         () async {
           for (final content in [fixtureContent(works: 0), inDevelopment]) {
             expect(content.hasPublicSource, isFalse);
-            final home = await renderHtml(
-              HomePage(lang: lang, content: content),
+            final home = _flat(
+              await renderHtml(HomePage(lang: lang, content: content)),
             );
             // The subline stops before the claim; the item is not shown.
-            expect(home, contains('>${c.subline}<'));
+            expect(home, contains('> ${c.subline} <'));
             expect(home, isNot(contains(claim)));
             expect(home, isNot(contains(item.lead)));
             expect(home, isNot(contains(githubOrgUrl)));
-            expect('<li class="reveal"'.allMatches(home), hasLength(5));
+            expect('<li class="reveal"'.allMatches(home), hasLength(4));
           }
         },
       );
@@ -663,11 +667,13 @@ void main() {
       test('${lang.code}: with a work that links its source', () async {
         final content = fixtureContent(works: 1);
         expect(content.hasPublicSource, isTrue);
-        final home = await renderHtml(HomePage(lang: lang, content: content));
+        final home = _flat(
+          await renderHtml(HomePage(lang: lang, content: content)),
+        );
         expect(home, contains('${c.subline} $claim'));
         expect(home, contains('<strong>${item.lead}</strong>'));
         expect(home, contains('href="$githubOrgUrl"'));
-        expect('<li class="reveal"'.allMatches(home), hasLength(6));
+        expect('<li class="reveal"'.allMatches(home), hasLength(5));
       });
     }
   });

@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: Apache-2.0
 
-/// The home page copy, EN and DE side by side (copy v2 of the studio, final;
-/// all rights reserved). Components render it, tests compare the built pages
-/// against it. The page offers no client work, names no price and promises
-/// nothing about money.
+/// The home page copy, EN and DE side by side (copy v3 of the studio, brand
+/// decisions 56 and 57; all rights reserved). Components render it, tests
+/// compare the built pages against it. The copy says what the studio is and
+/// makes, offers no client work, names no price and promises nothing about
+/// money.
 library;
 
 import 'package:website/src/outbound.dart';
@@ -75,16 +76,17 @@ const aiPostId = 'ai-agents';
 /// The home copy per language.
 const Map<Lang, HomeCopy> homeCopy = {
   Lang.en: (
-    eyebrow: 'Software studio · Heinsberg',
-    h1: 'We build our own applications for decentralised finance.',
-    h1Mark: 'our own',
+    eyebrow: 'Decentralised finance · Heinsberg',
+    h1: 'We build software that lets wallets do more on their own.',
+    h1Mark: 'more on their own',
     subline:
-        'Smart contracts in Solidity, apps in Dart and Flutter, from a '
-        'small studio in Heinsberg.',
+        'Reading prices, paying for gas in another token, converting the '
+        'tokens that come in: we are building the smart contracts and apps '
+        'for it.',
     sublineSource:
         'We publish our contracts with their source code and their licence.',
     sublineShort:
-        'Smart contracts in Solidity, apps in Flutter. From Heinsberg.',
+        'Reading prices, paying gas in another token, converting tokens.',
     buttonWork: 'See the work',
     buttonStudio: 'Learn more',
     secondaryCta: 'Write to us',
@@ -108,33 +110,32 @@ const Map<Lang, HomeCopy> homeCopy = {
     workAnchor: 'work',
     workTitle: 'Work',
     workIntro:
-        'What we have built and published, each with its status, its '
-        'licence and its source code.',
+        'What we have built, each with its status, licence and source '
+        'code: to check, and to build on.',
     allWorks: 'All works ({n})',
     studioAnchor: 'studio',
     studioTitle: 'The studio',
     studio: [
       (
         lead: 'Our own work.',
-        text:
-            'We build what we publish ourselves, and we take no client '
-            'projects.',
+        text: 'We build the software we want to use ourselves.',
         postId: null,
         needsSource: false,
       ),
       (
         lead: 'Fixed once deployed.',
         text:
-            'Our contracts have no admin, pause or upgrade key. A fix is a '
-            'new version at a new address.',
+            'Our contracts have no admin, pause or upgrade key. The code at an '
+            'address stays as you check it; a fix is a new version at a new '
+            'address.',
         postId: null,
         needsSource: false,
       ),
       (
-        lead: 'We hold nothing for others.',
+        lead: 'Your keys stay with you.',
         text:
-            'We keep no money or tokens for others, and no key that could '
-            "reach anyone else's wallet.",
+            'We build our contracts and apps for your own wallet, which acts '
+            'on rules you sign yourself.',
         postId: null,
         needsSource: false,
       ),
@@ -148,14 +149,6 @@ const Map<Lang, HomeCopy> homeCopy = {
         needsSource: true,
       ),
       (
-        lead: 'No cookies, no tracking.',
-        text:
-            'This website runs on a server we operate ourselves and stores '
-            'nothing on your device.',
-        postId: null,
-        needsSource: false,
-      ),
-      (
         lead: 'New tools.',
         text: 'We love working with modern technology, AI included.',
         postId: aiPostId,
@@ -166,21 +159,21 @@ const Map<Lang, HomeCopy> homeCopy = {
     allPosts: 'All posts',
     ctaTitle: 'Write to us.',
     ctaText:
-        'For collaborations, integrations, grants or press, a short email '
-        'is enough.',
+        'Building something related, running a grant programme or writing '
+        'about decentralised finance? A short email is enough.',
     ctaButton: 'Write to hello@cubealgos.de',
   ),
   Lang.de: (
-    eyebrow: 'Softwarestudio · Heinsberg',
-    h1: 'Wir bauen eigene Anwendungen für dezentrale Finanzen.',
-    h1Mark: 'eigene',
+    eyebrow: 'Dezentrale Finanzen · Heinsberg',
+    h1: 'Wir bauen Software, mit der Wallets mehr selbst erledigen.',
+    h1Mark: 'mehr selbst',
     subline:
-        'Smart Contracts in Solidity, Apps in Dart und Flutter, aus einem '
-        'kleinen Studio in Heinsberg.',
+        'Preise lesen, Gas in einem anderen Token bezahlen, eingehende Token '
+        'umwandeln: Dafür bauen wir gerade Smart Contracts und Apps.',
     sublineSource:
         'Unsere Smart Contracts veröffentlichen wir mit Quelltext und Lizenz.',
     sublineShort:
-        'Smart Contracts in Solidity, Apps in Flutter. Aus Heinsberg.',
+        'Preise lesen, Gas in einem anderen Token bezahlen, Token umwandeln.',
     buttonWork: 'Arbeiten ansehen',
     buttonStudio: 'Mehr erfahren',
     secondaryCta: 'Schreiben Sie uns',
@@ -212,17 +205,15 @@ const Map<Lang, HomeCopy> homeCopy = {
     workAnchor: 'arbeiten',
     workTitle: 'Arbeiten',
     workIntro:
-        'Was wir gebaut und veröffentlicht haben, jeweils mit Status, '
-        'Lizenz und Quelltext.',
+        'Was wir gebaut haben, jeweils mit Status, Lizenz und Quelltext: '
+        'zum Prüfen und Einbinden.',
     allWorks: 'Alle Arbeiten ({n})',
     studioAnchor: 'studio',
     studioTitle: 'Das Studio',
     studio: [
       (
         lead: 'Eigene Arbeiten.',
-        text:
-            'Wir bauen, was wir selbst veröffentlichen, und nehmen keine '
-            'Kundenprojekte an.',
+        text: 'Wir bauen die Software, die wir selbst benutzen wollen.',
         postId: null,
         needsSource: false,
       ),
@@ -230,16 +221,18 @@ const Map<Lang, HomeCopy> homeCopy = {
         lead: 'Nach der Bereitstellung unveränderlich.',
         text:
             'Unsere Smart Contracts haben keinen Admin-, Pausen- oder '
-            'Upgrade-Schlüssel. Eine Korrektur ist eine neue Version unter '
-            'einer neuen Adresse.',
+            'Upgrade-Schlüssel. Der Code unter einer Adresse bleibt, wie Sie '
+            'ihn prüfen; eine Korrektur ist eine neue Version unter einer '
+            'neuen Adresse.',
         postId: null,
         needsSource: false,
       ),
       (
-        lead: 'Wir verwahren nichts für andere.',
+        lead: 'Ihre Schlüssel bleiben bei Ihnen.',
         text:
-            'Wir halten weder Geld noch Token für andere und keinen '
-            'Schlüssel, mit dem wir auf fremde Wallets zugreifen könnten.',
+            'Wir bauen unsere Smart Contracts und Apps für Ihre eigene '
+            'Wallet. Die Wallet handelt nach Regeln, die Sie selbst '
+            'signieren.',
         postId: null,
         needsSource: false,
       ),
@@ -253,14 +246,6 @@ const Map<Lang, HomeCopy> homeCopy = {
         needsSource: true,
       ),
       (
-        lead: 'Ohne Cookies, ohne Tracking.',
-        text:
-            'Diese Website läuft auf einem Server, den wir selbst '
-            'betreiben, und legt nichts auf Ihrem Gerät ab.',
-        postId: null,
-        needsSource: false,
-      ),
-      (
         lead: 'Neue Werkzeuge.',
         text: 'Wir arbeiten gern mit moderner Technik, auch mit KI.',
         postId: aiPostId,
@@ -271,8 +256,8 @@ const Map<Lang, HomeCopy> homeCopy = {
     allPosts: 'Alle Beiträge',
     ctaTitle: 'Schreiben Sie uns.',
     ctaText:
-        'Für Zusammenarbeit, Integrationen, Förderprogramme und Presse '
-        'genügt eine kurze E-Mail.',
+        'Sie bauen an etwas Verwandtem, betreuen ein Förderprogramm oder '
+        'schreiben über dezentrale Finanzen? Eine kurze E-Mail genügt.',
     ctaButton: 'E-Mail an hello@cubealgos.de',
   ),
 };
