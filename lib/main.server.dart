@@ -12,7 +12,7 @@ void main() {
   Jaspr.initializeApp(options: defaultServerOptions);
 
   // No <base>: it would turn every in-page link such as `#main` or
-  // `#own-software` into a link to the home page. All other URLs are
+  // `#studio` into a link to the home page. All other URLs are
   // root-absolute.
   runApp(const Document(title: 'Cube Algos', base: null, body: App()));
 }

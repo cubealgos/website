@@ -8,13 +8,16 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:path/path.dart' as p;
+import 'package:website/src/content/site_content.dart';
 import 'package:website/src/outbound.dart';
+import 'package:website/src/routes.dart';
 
 import 'css_rules.dart';
 
-/// The only host the built pages may point at, apart from the few links of
-/// `outboundUrls` (Kevin's site, GitHub, LinkedIn), which may be the `href` of
-/// an `<a>` and nothing else: no script, stylesheet, image, form action or
+/// The only host the built pages may point at, apart from the links of
+/// `SiteContent.outboundAllowed` (the fixed allow-list of `outbound.dart` and
+/// the links of the works and posts), which may be the `href` of an `<a>` and
+/// nothing else: no script, stylesheet, image, form action or
 /// `url()` (a link is not a request).
 const siteHost = 'cubealgos.de';
 
@@ -76,8 +79,12 @@ class _Page {
   };
 }
 
-/// Runs every rule over the built site in [buildDir].
-List<Finding> checkSite(Directory buildDir) {
+/// Runs every rule over the built site in [buildDir]. With [content], what the
+/// site was built from, the pages are also held to the route table (the
+/// hreflang alternates a page must carry) and the links of the works and posts
+/// are allowed; without it only the generic rules and the fixed allow-list of
+/// `outbound.dart` apply.
+List<Finding> checkSite(Directory buildDir, {SiteContent? content}) {
   final root = buildDir.path;
   final pages = <String, _Page>{};
   for (final f in buildDir.listSync(recursive: true)) {
@@ -88,9 +95,15 @@ List<Finding> checkSite(Directory buildDir) {
   }
   final findings = <Finding>[];
   for (final page in pages.values) {
-    _checkHead(page, findings);
+    _checkHead(page, content, findings);
     _checkIcons(page, root, findings);
-    _checkLinks(page, root, pages, findings);
+    _checkLinks(
+      page,
+      root,
+      pages,
+      content?.outboundAllowed ?? outboundUrls,
+      findings,
+    );
   }
   _checkSitemap(root, pages, findings);
   _checkManifest(root, findings);
@@ -104,7 +117,46 @@ List<Finding> checkSite(Directory buildDir) {
 /// Whether [path] (relative to the build dir) is a 404 page.
 bool _is404(String path) => p.basename(path) == '404.html';
 
-void _checkHead(_Page page, List<Finding> out) {
+/// The alternates are the languages the route table says the page exists in
+/// (both, except for a post written in one language), plus `x-default`.
+void _checkAlternates(
+  _Page page,
+  SiteContent content,
+  List<_Tag> links,
+  void Function(String rule, String msg) add,
+) {
+  final route = resolve(
+    _pagePath(page.path).replaceFirst(RegExp(r'index\.html$'), ''),
+    content: content,
+  );
+  if (route == null) {
+    add('route', 'is no page of the route table');
+    return;
+  }
+  final want = {
+    for (final lang in route.alternates(content))
+      lang.code: '$siteOrigin${route.pathIn(lang, content)}',
+    'x-default': '$siteOrigin${route.pathIn(route.xDefault(content), content)}',
+  };
+  final have = {
+    for (final t in links)
+      if (t.attrs['rel'] == 'alternate')
+        t.attrs['hreflang'] ?? '': t.attrs['href'] ?? '',
+  };
+  for (final e in want.entries) {
+    if (have[e.key] != e.value) {
+      add(
+        'hreflang',
+        'alternate hreflang="${e.key}" is ${have[e.key]}, expected ${e.value}',
+      );
+    }
+  }
+  for (final k in have.keys) {
+    if (!want.containsKey(k)) add('hreflang', 'unexpected alternate "$k"');
+  }
+}
+
+void _checkHead(_Page page, SiteContent? content, List<Finding> out) {
   void add(String rule, String msg) => out.add(Finding(rule, page.path, msg));
   if (page.title.isEmpty) add('title', 'missing or empty <title>');
   final desc = page
@@ -134,14 +186,18 @@ void _checkHead(_Page page, List<Finding> out) {
     }
     return;
   }
-  for (final hreflang in ['en', 'de', 'x-default']) {
-    final ok = links.any(
-      (t) =>
-          t.attrs['rel'] == 'alternate' &&
-          t.attrs['hreflang'] == hreflang &&
-          (t.attrs['href'] ?? '').isNotEmpty,
-    );
-    if (!ok) add('hreflang', 'missing alternate hreflang="$hreflang"');
+  if (content == null) {
+    for (final hreflang in ['en', 'de', 'x-default']) {
+      final ok = links.any(
+        (t) =>
+            t.attrs['rel'] == 'alternate' &&
+            t.attrs['hreflang'] == hreflang &&
+            (t.attrs['href'] ?? '').isNotEmpty,
+      );
+      if (!ok) add('hreflang', 'missing alternate hreflang="$hreflang"');
+    }
+  } else {
+    _checkAlternates(page, content, links, add);
   }
   final canonical = links.any(
     (t) => t.attrs['rel'] == 'canonical' && (t.attrs['href'] ?? '').isNotEmpty,
@@ -222,6 +278,7 @@ void _checkLinks(
   _Page page,
   String root,
   Map<String, _Page> pages,
+  Set<String> outbound,
   List<Finding> out,
 ) {
   void add(String rule, String msg) => out.add(Finding(rule, page.path, msg));
@@ -241,7 +298,7 @@ void _checkLinks(
       // Exactly these URLs, as a plain link, character for character.
       if (tag.name == 'a' &&
           tag.attrs['href'] == value &&
-          outboundUrls.contains(value)) {
+          outbound.contains(value)) {
         continue;
       }
       if (uri.hasScheme && (uri.scheme == 'mailto' || uri.scheme == 'tel')) {

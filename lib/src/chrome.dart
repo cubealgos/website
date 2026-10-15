@@ -3,6 +3,7 @@
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/server.dart';
 import 'package:website/src/chrome_text.dart';
+import 'package:website/src/content/site_content.dart';
 import 'package:website/src/outbound.dart';
 import 'package:website/src/routes.dart';
 
@@ -28,19 +29,19 @@ class SkipLink extends StatelessComponent {
 /// The EN / DE switch: each link goes to the same page in that language
 /// (from the route table), the current language is `aria-current="true"`.
 class LangSwitch extends StatelessComponent {
-  /// Creates the switch for [pageKey] in [lang].
+  /// Creates the switch for [route].
   const new({
-    required this.pageKey,
-    required this.lang,
+    required this.route,
+    required this.content,
     this.inFooter = false,
     super.key,
   });
 
   /// The current page.
-  final PageKey pageKey;
+  final Route route;
 
-  /// The current language.
-  final Lang lang;
+  /// What the site shows (decides where a post without a translation leads).
+  final SiteContent content;
 
   /// Whether this is the footer's copy of the switch: its landmark needs a
   /// name of its own, since the header holds one too.
@@ -51,8 +52,8 @@ class LangSwitch extends StatelessComponent {
     classes: 'lang-switch',
     attributes: {
       'aria-label': inFooter
-          ? chromeText[lang]!.langFooterLabel
-          : chromeText[lang]!.langLabel,
+          ? chromeText[route.lang]!.langFooterLabel
+          : chromeText[route.lang]!.langLabel,
     },
     [
       ul([
@@ -60,11 +61,11 @@ class LangSwitch extends StatelessComponent {
           li([
             a(
               [Component.text(target.code.toUpperCase())],
-              href: switchPath(pageKey, target),
+              href: route.switchPath(target, content),
               attributes: {
                 'lang': target.code,
                 'hreflang': target.code,
-                if (target == lang) 'aria-current': 'true',
+                if (target == route.lang) 'aria-current': 'true',
               },
             ),
           ]),
@@ -73,32 +74,64 @@ class LangSwitch extends StatelessComponent {
   );
 }
 
+/// The navigation items of the header and the footer, in order: Home, Work
+/// (only with a work), Blog (only with a post), About, Contact.
+List<({PageKey key, String label})> navItems(Lang lang, SiteContent content) {
+  final t = chromeText[lang]!;
+  return [
+    (key: PageKey.home, label: t.home),
+    if (content.hasWorks) (key: PageKey.works, label: t.work),
+    if (content.hasPosts) (key: PageKey.blog, label: t.blog),
+    (key: PageKey.about, label: t.about),
+    (key: PageKey.contact, label: t.contact),
+  ];
+}
+
+/// The nav item a page belongs to: a work's page to Work, a post's to Blog.
+PageKey _section(PageKey key) => switch (key) {
+  PageKey.work => PageKey.works,
+  PageKey.post => PageKey.blog,
+  _ => key,
+};
+
 Component _link(
   PageKey key,
   Lang lang,
   String label, {
-  required PageKey current,
-}) => li([
-  a(
-    [Component.text(label)],
-    href: pathFor(key, lang),
-    attributes: {if (key == current) 'aria-current': 'page'},
-  ),
+  required Route current,
+}) {
+  final here = _section(current.key) == key;
+  return li([
+    a(
+      [Component.text(label)],
+      href: pathFor(key, lang),
+      // The page itself, or the index a work or a post belongs to.
+      attributes: {
+        if (here) 'aria-current': current.key == key ? 'page' : 'true',
+      },
+    ),
+  ]);
+}
+
+Component _navList(Route route, SiteContent content) => ul([
+  for (final item in navItems(route.lang, content))
+    _link(item.key, route.lang, item.label, current: route),
 ]);
 
 /// The site header: horizontal logo lockup, navigation, language switch.
 class SiteHeader extends StatelessComponent {
-  /// Creates the header of [pageKey] in [lang].
-  const new({required this.pageKey, required this.lang, super.key});
+  /// Creates the header of [route].
+  const new({required this.route, required this.content, super.key});
 
   /// The current page.
-  final PageKey pageKey;
+  final Route route;
 
-  /// The current language.
-  final Lang lang;
+  /// What the site shows (decides the navigation items).
+  final SiteContent content;
 
   @override
   Component build(BuildContext context) {
+    final lang = route.lang;
     final t = chromeText[lang]!;
     return header(classes: 'site-header', [
       div(classes: 'wrap bar', [
@@ -128,15 +161,9 @@ class SiteHeader extends StatelessComponent {
         nav(
           classes: 'primary',
           attributes: {'aria-label': t.navLabel},
-          [
-            ul([
-              _link(PageKey.home, lang, t.home, current: pageKey),
-              _link(PageKey.about, lang, t.about, current: pageKey),
-              _link(PageKey.contact, lang, t.contact, current: pageKey),
-            ]),
-          ],
+          [_navList(route, content)],
         ),
-        LangSwitch(pageKey: pageKey, lang: lang),
+        LangSwitch(route: route, content: content),
       ]),
     ]);
   }
@@ -144,17 +171,18 @@ class SiteHeader extends StatelessComponent {
 
 /// The site footer, text per the brand copy.
 class SiteFooter extends StatelessComponent {
-  /// Creates the footer of [pageKey] in [lang].
-  const new({required this.pageKey, required this.lang, super.key});
+  /// Creates the footer of [route].
+  const new({required this.route, required this.content, super.key});
 
   /// The current page.
-  final PageKey pageKey;
+  final Route route;
 
-  /// The current language.
-  final Lang lang;
+  /// What the site shows (decides the navigation items).
+  final SiteContent content;
 
   @override
   Component build(BuildContext context) {
+    final lang = route.lang;
     final t = chromeText[lang]!;
     return footer(classes: 'site-footer', [
       div(classes: 'wrap', [
@@ -162,25 +190,14 @@ class SiteFooter extends StatelessComponent {
         div(classes: 'footer-links', [
           nav(
             attributes: {'aria-label': t.footerLabel},
-            [
-              ul([
-                _link(PageKey.home, lang, t.home, current: pageKey),
-                _link(PageKey.about, lang, t.about, current: pageKey),
-                _link(PageKey.contact, lang, t.contact, current: pageKey),
-              ]),
-            ],
+            [_navList(route, content)],
           ),
           nav(
             attributes: {'aria-label': t.legalLabel},
             [
               ul([
-                _link(PageKey.impressum, lang, t.impressum, current: pageKey),
-                _link(
-                  PageKey.datenschutz,
-                  lang,
-                  t.datenschutz,
-                  current: pageKey,
-                ),
+                _link(PageKey.impressum, lang, t.impressum, current: route),
+                _link(PageKey.datenschutz, lang, t.datenschutz, current: route),
               ]),
             ],
           ),
@@ -197,7 +214,7 @@ class SiteFooter extends StatelessComponent {
         ]),
         div(classes: 'bottom', [
           p([Component.text(t.bottom)]),
-          LangSwitch(pageKey: pageKey, lang: lang, inFooter: true),
+          LangSwitch(route: route, content: content, inFooter: true),
         ]),
       ]),
     ]);

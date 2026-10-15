@@ -9,6 +9,7 @@ import 'package:test/test.dart';
 import 'package:website/src/copy/contact_copy.dart';
 import 'package:website/src/page_meta.dart';
 import 'package:website/src/routes.dart';
+import 'package:website/src/widgets.dart';
 
 import 'support/page_text.dart';
 
@@ -18,13 +19,11 @@ List<String> expectedBlocks(Lang lang) {
     c.h1,
     c.lede,
     'hello@cubealgos.de',
-    c.includeTitle,
-    c.includeIntro,
-    ...c.include,
-    c.includeOutro,
-    c.nextTitle,
-    ...c.next,
-    c.nextNote,
+    c.note,
+    c.topicsTitle,
+    for (final t in c.topics) '${t.lead} ${t.text}',
+    c.securityTitle,
+    plainText(c.security),
   ];
 }
 
@@ -53,10 +52,51 @@ void main() {
         expect(RegExp('<title>(.*?)</title>').firstMatch(html)![1], meta.title);
       });
 
-      test('every contact action is mailto:hello@cubealgos.de', () {
-        final mail = RegExp('href="(mailto:[^"]*)"').allMatches(html);
-        expect(mail.map((m) => m[1]).toSet(), {'mailto:hello@cubealgos.de'});
-        expect(html, isNot(contains('href="tel:')));
+      test(
+        'hello@ for enquiries, security@ for vulnerabilities, nothing else',
+        () {
+          final mail = RegExp('href="(mailto:[^"]*)"').allMatches(html);
+          expect(mail.map((m) => m[1]).toSet(), {
+            'mailto:hello@cubealgos.de',
+            'mailto:security@cubealgos.de',
+          });
+          expect(html, isNot(contains('href="tel:')));
+        },
+      );
+
+      test('no client project, no first call, no investor line', () {
+        final text = mainBlocks(html).join('\n');
+        expect(
+          text,
+          isNot(
+            matches(
+              RegExp(
+                r'Erstgespräch|first call|Projekt anfragen|Angebot|offer\b|'
+                'Invest|Beteiligung|Rendite|Bewertung|valuation|returns',
+                caseSensitive: false,
+              ),
+            ),
+          ),
+        );
+        // The one mention of client projects says there are none.
+        expect(
+          contactCopy[lang]!.lede,
+          contains(lang == Lang.de ? 'nehmen wir nicht an' : "don't take on"),
+        );
+      });
+
+      test('the vulnerability text names the file and asks for consent', () {
+        final c = contactCopy[lang]!;
+        expect(c.security, contains('`SECURITY.md`'));
+        expect(
+          c.security,
+          contains(
+            lang == Lang.de
+                ? 'nur mit Ihrer Zustimmung'
+                : 'only with your consent',
+          ),
+        );
+        expect(html, contains('<code>SECURITY.md</code>'));
       });
 
       test('no form, no input, only the reveal script', () {

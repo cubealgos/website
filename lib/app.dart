@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import 'package:jaspr/server.dart';
+import 'package:website/src/content/site_content.dart';
 import 'package:website/src/page.dart';
 import 'package:website/src/routes.dart';
 
@@ -18,17 +19,17 @@ class App extends StatefulComponent {
 class AppState extends State<App> with PreloadStateMixin {
   @override
   Future<void> preloadState() async {
-    for (final byLang in paths.values) {
-      for (final path in byLang.values) {
-        await ServerApp.requestRouteGeneration(path);
-      }
+    for (final route in routesFor(shippedContent)) {
+      await ServerApp.requestRouteGeneration(route.path);
     }
   }
 
   @override
   Component build(BuildContext context) {
+    final content = shippedContent;
     final route =
-        resolve(context.url) ?? (key: PageKey.notFound, lang: Lang.de);
-    return PageShell(pageKey: route.key, lang: route.lang);
+        resolve(context.url, content: content) ??
+        const Route(PageKey.notFound, Lang.de);
+    return PageShell(route: route, content: content);
   }
 }

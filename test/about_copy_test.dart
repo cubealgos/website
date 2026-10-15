@@ -6,8 +6,10 @@ library;
 import 'dart:io';
 
 import 'package:test/test.dart';
+import 'package:website/src/content/site_content.dart';
 import 'package:website/src/copy/about_copy.dart';
 import 'package:website/src/copy/common_copy.dart';
+import 'package:website/src/copy/home_copy.dart';
 import 'package:website/src/outbound.dart';
 import 'package:website/src/page_meta.dart';
 import 'package:website/src/pages/about_page.dart';
@@ -21,20 +23,17 @@ List<String> expectedBlocks(Lang lang) {
   return [
     c.h1,
     c.lede,
-    c.whoTitle,
-    ...c.who,
-    '${c.linksIntro} ${c.links.map(plainText).join(' · ')}',
-    c.oneTitle,
-    c.one,
-    c.ownTitle,
-    c.own,
-    plainText(c.ownCode),
+    c.workTitle,
+    ...c.work,
     c.howTitle,
-    ...c.how,
+    for (final item in c.how) [item.text, ?item.postLabel].join(' '),
+    c.whoTitle,
+    c.who,
+    c.links.map(plainText).join(' · '),
     c.whereTitle,
     c.where,
     c.ctaTitle,
-    writeToKevin[lang]!,
+    writeToUs[lang]!,
   ];
 }
 
@@ -63,10 +62,32 @@ void main() {
         expect(RegExp('<title>(.*?)</title>').firstMatch(html)![1], meta.title);
       });
 
-      test('the closing CTA is the only contact route', () {
-        final mail = RegExp('href="(mailto:[^"]*)"').allMatches(html);
-        expect(mail.map((m) => m[1]).toSet(), {'mailto:hello@cubealgos.de'});
+      test('the closing CTA leads to the contact page, no mailto, no form', () {
+        final main = html.substring(
+          html.indexOf('<main'),
+          html.indexOf('</main>'),
+        );
+        expect(main, isNot(contains('mailto:')));
+        expect(
+          main,
+          contains(
+            '<a class="btn btn--inverse" '
+            'href="${pathFor(PageKey.contact, lang)}">'
+            '${writeToUs[lang]}</a>',
+          ),
+        );
         expect(html, isNot(contains('<form')));
+      });
+
+      test('the AI item links the first post', () {
+        final post = shippedContent.postById(lang, aiPostId)!;
+        expect(
+          html,
+          contains(
+            '<a class="item-link" '
+            'href="${routePath(PageKey.post, lang, post.slug)}">',
+          ),
+        );
       });
 
       test('the portrait is the founder photo with its alt text', () {
@@ -108,23 +129,18 @@ void main() {
           'GitHub': githubProfileUrl,
           'LinkedIn': linkedinProfileUrl,
         });
-        expect(html, contains('href="$githubOrgUrl"'));
-        // Two links labelled "GitHub" lead to different places: the one to the
-        // organisation has its own accessible name, which holds the label.
-        final org = RegExp('<a [^>]*href="$githubOrgUrl"[^>]*>')
-            .firstMatch(html)![0]!;
-        expect(org, matches(RegExp('aria-label="[^"]*GitHub[^"]*"')));
       });
 
-      test('no sentence about prices', () {
+      test('no client work, no price, no offer', () {
         final text = mainBlocks(html).join('\n');
         expect(
           text,
           isNot(
             matches(
               RegExp(
-                r'Festpreis|fixed price|Preis|prices?\b|keine Kosten|'
-                'costs nothing',
+                'Festpreis|fixed price|€|keine Kosten|costs nothing|'
+                'Erstgespräch|'
+                r'first call|Projekt anfragen|start a project|Angebot|\boffer\b',
                 caseSensitive: false,
               ),
             ),

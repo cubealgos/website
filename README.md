@@ -45,7 +45,7 @@ Dart of Flutter 3.47.5).
 | `test` | unit tests plus tests over a fresh build | `fvm dart test` |
 | `build` | the static build succeeds | `fvm dart run tool/build.dart` |
 | `licence-check` | pub (and npm lockfile) licences against the org policy; needs network (pub.dev) | `fvm dart run tool/licence_check.dart` |
-| `html-check` | head metadata, internal links, fragments, foreign hosts (HTML and CSS, Google Fonts included; the only exceptions are the six outbound `<a href>` URLs of `lib/src/outbound.dart`, matched character for character, never as a request), sitemap with hreflang alternates, `robots.txt`, Open Graph and Twitter tags, the share images and the `Organization` JSON-LD (checked against the route table and the page copy), no storage API or `document.cookie` anywhere, no inline CSS (`inline-style`: no `<style>` element or `style` attribute in any built page, so the server can send a strict `style-src 'self'` with no hashes), no hard-coded colours, no duration or easing literals and no animation of anything but `transform`/`opacity` in the site's own CSS (tokens only), over the built site (build first); the workflow also runs the font coverage check and `browser_check` (headless Chrome over the built site: the favicon set and manifest load with status 200 and the SVG mark is ink on light, paper on dark; no horizontal scroll at 320/375/768/1280 px on every page, keyboard walkthrough with focus rings, language switch, UI motion incl. the sting by referrer and under `--force-prefers-reduced-motion`; needs Chrome, `$CHROME` overrides the binary) | `fvm dart run tool/html_check.dart`, `fvm dart run tool/fonts/check_coverage.dart build/jaspr`, `fvm dart run tool/browser_check.dart [--screenshots <dir>]` |
+| `html-check` | head metadata, internal links, fragments, foreign hosts (HTML and CSS, Google Fonts included; the only exceptions are the outbound `<a href>` URLs of `lib/src/outbound.dart` and the links of the works and posts in `content/`, matched character for character, never as a request), sitemap with hreflang alternates, `robots.txt`, Open Graph and Twitter tags, the share images and the `Organization` JSON-LD (checked against the route table and the page copy), no storage API or `document.cookie` anywhere, no inline CSS (`inline-style`: no `<style>` element or `style` attribute in any built page, so the server can send a strict `style-src 'self'` with no hashes), no hard-coded colours, no duration or easing literals and no animation of anything but `transform`/`opacity` in the site's own CSS (tokens only), over the built site (build first); the workflow also runs the font coverage check and `browser_check` (headless Chrome over the built site: the favicon set and manifest load with status 200 and the SVG mark is ink on light, paper on dark; no horizontal scroll at 320/375/768/1280 px on every page, keyboard walkthrough with focus rings, language switch, UI motion incl. the sting by referrer and under `--force-prefers-reduced-motion`; needs Chrome, `$CHROME` overrides the binary) | `fvm dart run tool/html_check.dart`, `fvm dart run tool/fonts/check_coverage.dart build/jaspr`, `fvm dart run tool/browser_check.dart [--screenshots <dir>]` |
 | `a11y` | accessibility over the built site, both languages, 404 pages included: `tool/a11y_check.dart` (headless Chrome: one banner/main/contentinfo landmark, named navigation landmarks, one H1, no skipped heading level, `lang`, names on every link, button and summary, a 2px focus ring on every tab stop in order, text contrast in the light and the dark theme) and Lighthouse's accessibility audits via `tool/a11y/` (dev-only npm tooling, lockfile committed; any failed audit fails; `axe-core` is the org's recorded dev-scope MPL-2.0 exception); the manual test matrix is `docs/accessibility.md` | `fvm dart run tool/a11y_check.dart`, `npm --prefix tool/a11y ci --ignore-scripts && node tool/a11y/lighthouse_a11y.mjs` (build first; `$CHROME_PATH` picks Chrome for Lighthouse) |
 | `brand-check` | `web/brand/` matches `brand.lock.json`: no modified, missing or unexpected file; offline | `fvm dart run tool/brand_sync.dart --check` |
 | `branch-lint` | the branch is `<family>/<N>-<slug>` (no argument: audits all local branches) | `fvm dart run tool/branch_lint.dart [branch]` |
@@ -65,13 +65,17 @@ language switch, hreflang alternates and canonical URLs all derive from it.
 | page | German | English |
 | --- | --- | --- |
 | Home | `/` | `/en/` |
+| Works (index), only with a work | `/arbeiten/` | `/en/work/` |
+| One work, only with its data file | `/arbeiten/<slug>/` | `/en/work/<slug>/` |
+| Blog (index), only with a post | `/blog/` | `/en/blog/` |
+| One post, in the language it is written in | `/blog/<slug>/` | `/en/blog/<slug>/` |
 | About | `/ueber/` | `/en/about/` |
 | Contact | `/kontakt/` | `/en/contact/` |
 | Impressum | `/impressum/` | `/en/impressum/` |
 | Datenschutz | `/datenschutz/` | `/en/datenschutz/` |
 | 404 | `/404.html` | `/en/404.html` |
 
-Home, About, Contact and the 404 pages carry their content (copy as data in `lib/src/copy/`, tested against the built pages); Impressum and Datenschutz are still shells. The 404 pages are `noindex`, outside the sitemap and use root-absolute URLs only, so the server can answer any unknown path with them (English below `/en/`).
+Home, About, Contact and the 404 pages carry their content (copy as data in `lib/src/copy/`, tested against the built pages); Impressum and Datenschutz are legal texts in `lib/src/legal_content.dart`. The works and the posts are data files in `content/` (`content/README.md` has the shapes): a page, a nav item or a sitemap entry exists only for a file that exists, so with no work in `content/works/` nothing about works is built, and a request for `/arbeiten/` gets the 404 page. `routesFor(SiteContent)` in `lib/src/routes.dart` lists exactly the pages that are built; the sitemap, the language switch, the hreflang alternates (a post written in one language has one) and the checks all read it. The 404 pages are `noindex`, outside the sitemap and use root-absolute URLs only, so the server can answer any unknown path with them (English below `/en/`).
 The built HTML references only same-origin resources and carries no inline CSS: the reveal stagger is `data-i="N"` (rules in `web/site.css`), and the sting's keyframes, which the vendored `sting-mark.svg` ships in a `<style>` block, are extracted by `tool/brand_sync.dart` into the vendored `web/brand/sting/sting-mark.css` (linked on the home pages, covered by `brand.lock.json` and `brand_sync --check`).
 
 ## Brand assets
@@ -94,8 +98,11 @@ releases exclude.
 | --- | --- |
 | `lib/main.server.dart` | Server entrypoint (`mode: static` pre-renders every route). |
 | `lib/app.dart` | Root component: reports all routes to the build, renders the page shell for the request path. |
-| `lib/src/routes.dart` | The route table (page keys, both paths, switch target). |
-| `lib/src/page_meta.dart` | Title, description and H1 per page and language. |
+| `lib/src/routes.dart` | The route table (page keys, both paths, the pages of works and posts, switch target, `routesFor`). |
+| `lib/src/page_meta.dart` | Title, description and H1 per page and language; a work's and a post's come from their data file. |
+| `lib/src/content/` | The works (`work.dart`, validated per data file), the posts (`post.dart`, `markdown.dart`: the blog's small Markdown) and `SiteContent`, what the pages and checks read. |
+| `lib/src/pages/` | The page bodies: Home, About, Contact, the works index and a work (`works_pages.dart`, the plate and rooms in `work_widgets.dart`), the blog index and a post, the 404. |
+| `content/` | One JSON data file per work and one Markdown file per post and language (`content/README.md`). Empty of works while none is published. |
 | `lib/src/page.dart` | The page shell (`lang`, title, description, canonical, hreflang, skip link, header, `<main>`, footer). |
 | `lib/src/chrome.dart`, `lib/src/chrome_text.dart` | Skip link, header (logo lockup, nav, EN/DE switch), footer, and their text per language (footer copy per the brand copy). |
 | `brand.lock.json` | The vendored brand release tag and the sha256 of every file in `web/brand/`. |
