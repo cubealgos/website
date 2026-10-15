@@ -231,6 +231,49 @@ void main() {
         );
         expect(() => _parse(_work(busl)), returnsNormally);
       });
+
+      test('a notice that names Chainlink or RedStone keeps all of MF-8', () {
+        const full = {
+          'de':
+              'Das Orakel ist unveränderlich, die Feeds, die es liest, sind es '
+              'nicht. Wer es nutzt, wählt die Konfiguration, prüft `updatedAt` '
+              'und trägt das Preisrisiko. Nicht mit Chainlink oder RedStone '
+              'verbunden und von ihnen nicht unterstützt.',
+          'en':
+              'The oracle is immutable; the feeds it reads are not. A consumer '
+              'chooses the configuration, checks `updatedAt` and bears the '
+              'price risk. Not affiliated with or endorsed by Chainlink or '
+              'RedStone.',
+        };
+        expect(_parse(_work({'notice': full})).notice, {
+          Lang.de: full['de'],
+          Lang.en: full['en'],
+        });
+        // The last sentence alone is refused, in either language.
+        expect(
+          () => _parse(
+            _work({
+              'notice': {
+                'de': 'Nicht mit Chainlink oder RedStone verbunden.',
+                'en': full['en'],
+              },
+            }),
+          ),
+          _fails('all three sentences'),
+        );
+        expect(
+          () => _parse(
+            _work({
+              'notice': {
+                'de': full['de'],
+                'en': 'Not affiliated with or endorsed by Chainlink.',
+              },
+            }),
+          ),
+          _fails('all three sentences'),
+        );
+      });
+
       test('is never "open source" (source-available, open use)', () {
         for (final text in [
           'This is open source.',

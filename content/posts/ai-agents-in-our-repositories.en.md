@@ -4,14 +4,14 @@ slug: ai-agents-in-our-repositories
 lang: en
 date: 2026-10-14
 seoTitle: How AI agents work in our repositories
-description: AI agents implement scoped tasks in our code. What checks their work, where a person decides, and what they are never allowed to do.
+description: AI agents implement scoped tasks in our code. What checks their work, and where a person decides.
 ---
 
-# How AI agents work in our repositories, and what they may not do
+# How AI agents work in our repositories, and where a person decides
 
 We love working with modern technology, and AI is part of that. In our repositories, AI agents implement tasks in
 the code. That raises a fair question: who checks what they produce? This post describes how the work is split,
-what checks it, where a person decides, and where the limits are.
+what checks it, where a person decides, and why a person has the last word.
 
 ## One issue, one agent
 
@@ -49,22 +49,22 @@ developer's machine and in CI. In our smart-contract repositories they include:
 - **A list of forbidden phrases** checks the public texts, for example for promises of a guarantee, or anything that
   suggests a partnership with the providers whose data we read.
 
-## What agents never do
+## What stays with a person
 
-Some things are explicitly off-limits for agents in our repositories, and the commands to deploy and to sign are
-blocked in their settings:
+Some steps in our repositories stay with a person, and the commands to deploy and to sign are blocked in the agents'
+settings:
 
 - They don't deploy contracts or send a transaction to a real network.
 - They don't publish packages or push release tags.
-- They don't merge, and they don't close issues.
+- A person confirms every merge and every closing of an issue.
 - They hold no key. No key, secret or keyed RPC URL goes into a repository, a commit message or a log.
 
 There is one exception, and it is narrow. In one repository, agents may send transactions to a local demo chain on
-our own machine. They use one of the publicly known test keys, which hold nothing on any real network. Before the first
+our own machine. They use one of the publicly known test keys, which carry no value on any real network. Before the first
 transaction, a script checks that the target really is that local copy and stops otherwise. The demo chain runs
 under its own chain ID, so nothing signed there is valid on the real network.
 
-## Where the limits are
+## Why a person has the last word
 
 Passing checks don't prove that code is correct. They show that it doesn't have the faults we look for. Agents make
 mistakes, and a review doesn't catch every one.

@@ -4,14 +4,14 @@ slug: ki-agenten-in-unseren-repositories
 lang: de
 date: 2026-10-14
 seoTitle: Wie KI-Agenten in unseren Repositories arbeiten
-description: Agenten setzen bei uns einzelne Aufgaben im Code um. Was ihre Arbeit prüft, wo ein Mensch entscheidet und was sie nie tun dürfen.
+description: Bei uns setzen KI-Agenten einzelne Aufgaben im Code um. Was ihre Arbeit prüft und wo ein Mensch entscheidet.
 ---
 
-# Wie KI-Agenten in unseren Repositories arbeiten, und was sie nicht dürfen
+# Wie KI-Agenten in unseren Repositories arbeiten, und wo ein Mensch entscheidet
 
 Wir arbeiten gern mit moderner Technik, und KI gehört dazu. In unseren Repositories setzen KI-Agenten Aufgaben im
 Code um. Daraus folgt eine berechtigte Frage: Wer prüft, was dabei entsteht? Hier steht, wie wir die Arbeit
-aufteilen, was sie prüft und wo ein Mensch entscheidet. Und wo die Grenzen liegen.
+aufteilen, was sie prüft und wo ein Mensch entscheidet. Und warum am Ende ein Mensch entscheidet.
 
 ## Ein Issue, ein Agent
 
@@ -51,14 +51,14 @@ In unseren Smart-Contract-Repositories gehören unter anderem dazu:
 - **Eine Liste verbotener Formulierungen** prüft die öffentlichen Texte, etwa auf Garantieversprechen oder auf den
   Anschein einer Partnerschaft mit den Anbietern, deren Daten wir lesen.
 
-## Was Agenten nie tun
+## Was einem Menschen vorbehalten bleibt
 
-Einiges ist Agenten in unseren Repositories ausdrücklich verboten. Die Befehle zum Bereitstellen und zum Signieren
-sind in ihren Einstellungen gesperrt.
+Manche Schritte bleiben in unseren Repositories einem Menschen vorbehalten. Die Befehle zum Bereitstellen und zum
+Signieren sind in den Einstellungen der Agenten gesperrt:
 
 - Sie stellen keine Smart Contracts bereit und senden keine Transaktion an ein echtes Netz.
 - Sie veröffentlichen keine Pakete und setzen keine Release-Tags.
-- Sie mergen nicht und schließen keine Issues.
+- Jeden Merge und jedes Schließen eines Issues bestätigt ein Mensch.
 - Sie halten keinen Schlüssel. Kein Schlüssel, kein Geheimnis und keine RPC-Adresse mit Zugangsschlüssel kommt ins
   Repository, auch nicht in eine Commit-Nachricht oder ein Log.
 
@@ -68,7 +68,7 @@ auf keinem echten Netz etwas besitzen. Ein Skript prüft vor der ersten Transakt
 lokale Kopie ist, und bricht sonst ab. Die Demo-Chain läuft unter einer eigenen Chain-ID, damit nichts, was dort
 signiert wird, auf dem echten Netz gilt.
 
-## Wo die Grenzen liegen
+## Warum am Ende ein Mensch entscheidet
 
 Bestandene Prüfungen beweisen nicht, dass Code richtig ist. Sie zeigen nur, dass er die Fehler nicht hat, nach
 denen wir suchen. Agenten machen Fehler, und eine Review findet nicht jeden.

@@ -136,11 +136,11 @@ void main() {
       });
 
       test(
-        'six stack rows, five studio items shown, no note under the card',
+        'six stack rows, four studio items shown, no note under the card',
         () {
           final c = homeCopy[lang]!;
           expect(c.stack, hasLength(6));
-          expect(c.studio, hasLength(6));
+          expect(c.studio, hasLength(5));
           expect(c.studio.where((i) => i.needsSource), hasLength(1));
           expect(html, isNot(contains(c.studio[3].lead)));
           expect(html, isNot(contains('stack-note')));
@@ -181,24 +181,26 @@ void main() {
               ),
             ),
           );
-          // The one mention of client projects says there are none.
-          expect(
-            text,
-            contains(
-              lang == Lang.de
-                  ? 'nehmen keine Kundenprojekte an'
-                  : 'take no client projects',
-            ),
-          );
-          expect(
-            'Kundenprojekte'.allMatches(text).length,
-            lang == Lang.de ? 1 : 0,
-          );
         },
       );
 
-      test('no price, no pricing model, no product name', () {
+      test('no privacy item on Home: the fact is in the Datenschutz', () {
         final text = mainBlocks(html).join('\n');
+        expect(
+          text,
+          isNot(matches(RegExp('Cookie|Tracking', caseSensitive: false))),
+        );
+      });
+
+      test('no price, no pricing model, no product name', () {
+        // The hero reads prices (the capability), it does not name any.
+        final text = mainBlocks(html)
+            .join('\n')
+            .replaceAll(
+              RegExp('Preise lesen|reading prices', caseSensitive: false),
+              '',
+            )
+            .replaceAll(RegExp('read prices', caseSensitive: false), '');
         expect(text, isNot(matches(RegExp(r'€|\bEUR\b|\bEuro\b'))));
         expect(text, isNot(matches(RegExp(r'\d\s?%'))));
         expect(text, isNot(matches(_pricing)));
