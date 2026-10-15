@@ -86,7 +86,8 @@ const Map<Lang, HomeCopy> homeCopy = {
     sublineSource:
         'We publish our contracts with their source code and their licence.',
     sublineShort:
-        'Reading prices, paying gas in another token, converting tokens.',
+        'We are building ways to read prices, pay gas in another token and '
+        'convert tokens.',
     buttonWork: 'See the work',
     buttonStudio: 'Learn more',
     secondaryCta: 'Write to us',
@@ -173,7 +174,8 @@ const Map<Lang, HomeCopy> homeCopy = {
     sublineSource:
         'Unsere Smart Contracts veröffentlichen wir mit Quelltext und Lizenz.',
     sublineShort:
-        'Preise lesen, Gas in einem anderen Token bezahlen, Token umwandeln.',
+        'Wir bauen gerade: Preise lesen, Gas in einem anderen Token bezahlen, '
+        'Token umwandeln.',
     buttonWork: 'Arbeiten ansehen',
     buttonStudio: 'Mehr erfahren',
     secondaryCta: 'Schreiben Sie uns',
