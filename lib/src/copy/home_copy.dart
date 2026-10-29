@@ -80,7 +80,7 @@ const Map<Lang, HomeCopy> homeCopy = {
     product: 'wearenotabank',
     productButton: 'wearenotabank on GitHub',
     contactLink: 'Write to us',
-    sheetTitle: 'Fact sheet',
+    sheetTitle: 'At a glance',
     providerLabel: 'Provider',
     registerLabel: 'Commercial register entry',
     productLabel: 'Product',

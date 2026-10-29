@@ -48,8 +48,8 @@ const Map<Lang, ({String title, String description})> _text = {
     description: 'Weiterleitung zur Startseite von Cube Algos.',
   ),
   Lang.en: (
-    title: 'Redirect to the home page | Cube Algos',
-    description: 'Redirect to the home page of Cube Algos.',
+    title: 'Redirecting to the home page | Cube Algos',
+    description: 'Redirecting to the Cube Algos home page.',
   ),
 };
 
