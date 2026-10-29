@@ -84,7 +84,7 @@ void main() {
           dotAll: true,
         ).firstMatch(html)!;
         expect(
-          RegExp('<span class="mark">(.*?)</span>')
+          RegExp('<span class="mark nohy">(.*?)</span>')
               .allMatches(h1[1]!)
               .map((m) => m[1]),
           ['wearenotabank'],
@@ -94,11 +94,11 @@ void main() {
       test('one button, to the organisation; the contact link is text', () {
         expect('class="btn"'.allMatches(html), hasLength(1));
         final c = homeCopy[lang]!;
+        const open = '<span class="nohy">wearenotabank</span>';
         expect(
           html,
           contains(
-            '<a class="btn" rel="noreferrer" href="$wearenotabankOrgUrl">'
-            '${c.productButton}<svg class="ext"',
+            '<a class="btn" rel="noreferrer" href="$wearenotabankOrgUrl">$open',
           ),
         );
         expect(

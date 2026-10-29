@@ -61,7 +61,7 @@ class ContactPage extends StatelessComponent {
                 for (final topic in contactTopics(lang, named: productNamed))
                   li([
                     strong([t(topic.lead)]),
-                    t(' ${topic.text}'),
+                    ...noHyphen(' ${topic.text}'),
                   ]),
               ]),
             ],

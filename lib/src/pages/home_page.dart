@@ -67,14 +67,14 @@ class HomePage extends StatelessComponent {
         attributes: const {'data-i': '1'},
         [
           t(h1Copy.pre),
-          span(classes: 'mark', [t(h1Copy.mark)]),
+          span(classes: 'mark $noHyphenClass', [t(h1Copy.mark)]),
           t(h1Copy.post),
         ],
       ),
       p(
         classes: 'bc-lede rise',
         attributes: const {'data-i': '2'},
-        [t(c.lede)],
+        noHyphen(c.lede),
       ),
       el(
         'div',
@@ -84,7 +84,7 @@ class HomePage extends StatelessComponent {
           if (productNamed) ...[
             span(classes: 'btn-wrap', [
               a(
-                [t(c.productButton), const _ExternalMark()],
+                [...noHyphen(c.productButton), const _ExternalMark()],
                 href: wearenotabankOrgUrl,
                 classes: 'btn',
                 attributes: const {'rel': 'noreferrer'},
@@ -131,7 +131,7 @@ class HomePage extends StatelessComponent {
             _row(c.productLabel, [
               span([
                 a(
-                  [t(c.product), const _ExternalMark()],
+                  [...noHyphen(c.product), const _ExternalMark()],
                   href: wearenotabankOrgUrl,
                   attributes: const {'rel': 'noreferrer'},
                 ),

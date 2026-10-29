@@ -22,6 +22,10 @@ import 'support/render.dart';
 
 final _brand = RegExp('notabank', caseSensitive: false);
 
+/// The text of [html]: tags removed, whitespace collapsed.
+String _text(String html) =>
+    html.replaceAll(RegExp('<[^>]*>'), '').replaceAll(RegExp(r'\s+'), ' ');
+
 /// The whole page of [key] in [lang], with the product named or not.
 Future<String> _shell(PageKey key, Lang lang, {required bool named}) =>
     renderHtml(
@@ -47,7 +51,7 @@ void main() {
       test('the H1, the button and the Produkt row name the product', () {
         final c = homeCopy[lang]!;
         expect(html, contains(headlineText(c.h1).split('wearenotabank').first));
-        expect(html, contains('<span class="mark">wearenotabank</span>'));
+        expect(html, contains('<span class="mark nohy">wearenotabank</span>'));
         expect(html, contains('href="$wearenotabankOrgUrl"'));
         expect('class="btn"'.allMatches(html), hasLength(1));
         expect('<dt>'.allMatches(html), hasLength(5));
@@ -66,43 +70,36 @@ void main() {
     });
 
     group('unnamed, ${lang.code}', () {
-      test(
-        'Home: the fallback H1, the button to Contact, no Produkt row',
-        () async {
-          final c = homeCopy[lang]!;
-          final home = await renderHtml(
-            HomePage(
-              lang: lang,
-              content: fixtureContent(),
-              productNamed: false,
-            ),
-          );
-          expect(
-            home,
-            contains(
-              '${c.h1Unnamed.pre}<span class="mark">${c.h1Unnamed.mark}</span>'
-              '${c.h1Unnamed.post}',
-            ),
-          );
-          expect(
-            home,
-            contains(
-              '<span class="btn-wrap"><a class="btn" '
-              'href="${pathFor(PageKey.contact, lang)}">${c.contactLink}</a>'
-              '</span>',
-            ),
-          );
-          expect('class="btn"'.allMatches(home), hasLength(1));
-          expect(home, isNot(contains('class="text-link"')));
-          expect(home, isNot(contains('<dt>${c.productLabel}</dt>')));
-          expect('<dt>'.allMatches(home), hasLength(4));
-          expect(home, isNot(contains('class="ext"')));
-          expect(home, isNot(matches(_brand)));
-          expect(home, isNot(contains(wearenotabankOrgUrl)));
-          // The paragraph does not name it and stays as it is.
-          expect(home, contains(c.lede));
-        },
-      );
+      test('Home: fallback H1, button to Contact, no Produkt row', () async {
+        final c = homeCopy[lang]!;
+        final home = await renderHtml(
+          HomePage(lang: lang, content: fixtureContent(), productNamed: false),
+        );
+        expect(
+          home,
+          contains(
+            '${c.h1Unnamed.pre}<span class="mark nohy">${c.h1Unnamed.mark}</span>'
+            '${c.h1Unnamed.post}',
+          ),
+        );
+        expect(
+          home,
+          contains(
+            '<span class="btn-wrap"><a class="btn" '
+            'href="${pathFor(PageKey.contact, lang)}">${c.contactLink}</a>'
+            '</span>',
+          ),
+        );
+        expect('class="btn"'.allMatches(home), hasLength(1));
+        expect(home, isNot(contains('class="text-link"')));
+        expect(home, isNot(contains('<dt>${c.productLabel}</dt>')));
+        expect('<dt>'.allMatches(home), hasLength(4));
+        expect(home, isNot(contains('class="ext"')));
+        expect(home, isNot(matches(_brand)));
+        expect(home, isNot(contains(wearenotabankOrgUrl)));
+        // The paragraph does not name it and stays as it is.
+        expect(_text(home), contains(c.lede));
+      });
 
       test(
         'Home and Contact, whole pages: neither the name nor the link',

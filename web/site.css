@@ -639,6 +639,15 @@ nav a[aria-current="page"],
   }
 }
 
+/* The product's name and the founder's name are never hyphenated by the
+   browser (a hyphen inside the product's name would set its last syllable
+   apart, wearenotabank `DEC-082` D2). The rest of the text keeps its
+   automatic hyphenation. */
+.nohy {
+  -webkit-hyphens: none;
+  hyphens: none;
+}
+
 /* A value that must not break inside: the register number. */
 .nobr {
   white-space: nowrap;

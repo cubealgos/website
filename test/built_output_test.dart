@@ -415,15 +415,20 @@ void main() {
 
     test('names who is responsible for the content under § 18(2) MStV', () {
       // Typed here independently of lib/src/legal_facts.dart.
+      // The name is wrapped in a no-hyphen span: compare the text.
+      String text(String path) =>
+          read(path)
+              .replaceAll(RegExp('<[^>]*>'), '')
+              .replaceAll(RegExp(r'\s+'), ' ');
       expect(
-        read('/impressum/'),
+        text('/impressum/'),
         contains(
           'Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV: '
           'Kevin Scheeren, An der Maar 19, 52525 Heinsberg',
         ),
       );
       expect(
-        read('/en/impressum/'),
+        text('/en/impressum/'),
         contains(
           'Responsible for the content under § 18(2) MStV: '
           'Kevin Scheeren, An der Maar 19, 52525 Heinsberg',
