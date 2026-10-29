@@ -15,6 +15,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:crypto/crypto.dart';
+import 'package:website/src/copy/home_copy.dart';
 import 'package:website/src/page_meta.dart';
 import 'package:website/src/routes.dart';
 import 'package:website/src/seo.dart';
@@ -52,7 +53,10 @@ String imageHtml(Lang lang, {String fontBase = '../../fonts'}) {
         'role="img" aria-label="Cube Algos logo"',
         'aria-hidden="true"',
       );
-  final h1 = pageMeta[PageKey.home]![lang]!.h1;
+  final h1 = fixedMeta(PageKey.home, lang).h1;
+  // The eyebrow keeps the name from meeting a reader without its object
+  // (regulatory edit E-C-3).
+  final eyebrow = homeCopy[lang]!.eyebrow;
   return '''
 <!DOCTYPE html>
 <html lang="${lang.code}"><head><meta charset="utf-8"/><style>
@@ -63,11 +67,13 @@ html,body{width:${shareImageWidth}px;height:${shareImageHeight}px;overflow:hidde
 body{background:$paper;color:$ink;font-family:Onest,sans-serif;position:relative}
 .logo{position:absolute;left:80px;top:72px;width:268px;height:64px;color:$ink}
 .logo svg{width:100%;height:100%;display:block}
-h1{position:absolute;left:80px;top:196px;width:1040px;font-weight:800;font-size:72px;line-height:1.1;letter-spacing:-0.02em}
+.eyebrow{position:absolute;left:80px;top:184px;font-family:"DM Mono",monospace;font-size:26px;letter-spacing:0.08em;text-transform:uppercase;color:$muted}
+h1{position:absolute;left:80px;top:238px;width:1040px;font-weight:800;font-size:72px;line-height:1.1;letter-spacing:-0.02em}
 .rule{position:absolute;left:80px;bottom:112px;width:176px;height:12px;background:$amber}
 .url{position:absolute;left:80px;bottom:52px;font-family:"DM Mono",monospace;font-size:26px;color:$muted}
 </style></head><body>
 <div class="logo">$lockup</div>
+<div class="eyebrow">${_esc(eyebrow)}</div>
 <h1>${_esc(h1)}</h1>
 <div class="rule"></div>
 <div class="url">cubealgos.de</div>

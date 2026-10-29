@@ -30,12 +30,7 @@ class SkipLink extends StatelessComponent {
 /// (from the route table), the current language is `aria-current="true"`.
 class LangSwitch extends StatelessComponent {
   /// Creates the switch for [route].
-  const new({
-    required this.route,
-    required this.content,
-    this.inFooter = false,
-    super.key,
-  });
+  const new({required this.route, required this.content, super.key});
 
   /// The current page.
   final Route route;
@@ -43,18 +38,10 @@ class LangSwitch extends StatelessComponent {
   /// What the site shows (decides where a post without a translation leads).
   final SiteContent content;
 
-  /// Whether this is the footer's copy of the switch: its landmark needs a
-  /// name of its own, since the header holds one too.
-  final bool inFooter;
-
   @override
   Component build(BuildContext context) => nav(
     classes: 'lang-switch',
-    attributes: {
-      'aria-label': inFooter
-          ? chromeText[route.lang]!.langFooterLabel
-          : chromeText[route.lang]!.langLabel,
-    },
+    attributes: {'aria-label': chromeText[route.lang]!.langLabel},
     [
       ul([
         for (final target in Lang.values)
@@ -74,22 +61,18 @@ class LangSwitch extends StatelessComponent {
   );
 }
 
-/// The navigation items of the header and the footer, in order: Home, Work
-/// (only with a work), Blog (only with a post), About, Contact.
+/// The navigation items of the header, in order: Blog (only with a post) and
+/// Contact. The logo is the link to the home page.
 List<({PageKey key, String label})> navItems(Lang lang, SiteContent content) {
   final t = chromeText[lang]!;
   return [
-    (key: PageKey.home, label: t.home),
-    if (content.hasWorks) (key: PageKey.works, label: t.work),
     if (content.hasPosts) (key: PageKey.blog, label: t.blog),
-    (key: PageKey.about, label: t.about),
     (key: PageKey.contact, label: t.contact),
   ];
 }
 
-/// The nav item a page belongs to: a work's page to Work, a post's to Blog.
+/// The nav item a page belongs to: a post's to Blog.
 PageKey _section(PageKey key) => switch (key) {
-  PageKey.work => PageKey.works,
   PageKey.post => PageKey.blog,
   _ => key,
 };
@@ -105,7 +88,7 @@ Component _link(
     a(
       [Component.text(label)],
       href: pathFor(key, lang),
-      // The page itself, or the index a work or a post belongs to.
+      // The page itself, or the index a post belongs to.
       attributes: {
         if (here) 'aria-current': current.key == key ? 'page' : 'true',
       },
@@ -169,29 +152,23 @@ class SiteHeader extends StatelessComponent {
   }
 }
 
-/// The site footer, text per the brand copy.
+/// The site footer: the legal links, the e-mail address and LinkedIn in one
+/// row, and the company line. No tagline and no second navigation (brand
+/// decision 59).
 class SiteFooter extends StatelessComponent {
   /// Creates the footer of [route].
-  const new({required this.route, required this.content, super.key});
+  const new({required this.route, super.key});
 
   /// The current page.
   final Route route;
-
-  /// What the site shows (decides the navigation items).
-  final SiteContent content;
 
   @override
   Component build(BuildContext context) {
     final lang = route.lang;
     final t = chromeText[lang]!;
-    return footer(classes: 'site-footer', [
+    return footer(classes: 'site-footer bc-footer', [
       div(classes: 'wrap', [
-        p(classes: 'tagline', [Component.text(t.tagline)]),
         div(classes: 'footer-links', [
-          nav(
-            attributes: {'aria-label': t.footerLabel},
-            [_navList(route, content)],
-          ),
           nav(
             attributes: {'aria-label': t.legalLabel},
             [
@@ -214,7 +191,6 @@ class SiteFooter extends StatelessComponent {
         ]),
         div(classes: 'bottom', [
           p([Component.text(t.bottom)]),
-          LangSwitch(route: route, content: content, inFooter: true),
         ]),
       ]),
     ]);

@@ -1,29 +1,15 @@
 // SPDX-License-Identifier: Apache-2.0
 
-// The compliance rules of a work's data file, the blog's Markdown and the
-// post files, over inline data and the fixtures (outside the shipped data).
+// The blog's Markdown and the post files, over inline data and the fixtures
+// (outside the shipped data).
 import 'package:test/test.dart';
 import 'package:website/src/content/markdown.dart';
 import 'package:website/src/content/post.dart';
 import 'package:website/src/content/site_content.dart';
-import 'package:website/src/content/work.dart';
+import 'package:website/src/outbound.dart';
 import 'package:website/src/routes.dart';
 
 import 'support/fixtures.dart';
-
-Map<String, Object?> _work([Map<String, Object?> extra = const {}]) => {
-  'number': 1,
-  'name': 'Example',
-  'slug': 'example',
-  'line': {'de': 'Eine Zeile.', 'en': 'A line.'},
-  'status': 'in-development',
-  ...extra,
-};
-
-const _source = {'source': 'https://example.org/example'};
-
-Work _parse(Map<String, Object?> json) =>
-    Work.fromJson(json, file: 'example.json');
 
 Matcher _fails(String about) => throwsA(
   isA<FormatException>().having((e) => e.message, 'message', contains(about)),
@@ -40,386 +26,39 @@ String _postSource({
     'seoTitle: SEO\ndescription: Desc\n$extra---\n\n$body';
 
 void main() {
-  group('a work data file', () {
-    test('the smallest valid one parses', () {
-      final w = _parse(_work());
-      expect(w.status, WorkStatus.inDevelopment);
-      expect(w.kind, WorkKind.contract);
-      expect(w.nameIn(Lang.en), 'Example');
-    });
-
-    test('nameEn replaces the name in English only', () {
-      final w = _parse(_work({'nameEn': 'Sample'}));
-      expect(w.nameIn(Lang.de), 'Example');
-      expect(w.nameIn(Lang.en), 'Sample');
-    });
-
-    test('an unknown field, slug or status is refused', () {
-      expect(() => _parse(_work({'colour': 'red'})), _fails('colour'));
-      expect(() => _parse(_work({'slug': 'Not A Slug'})), _fails('slug'));
-      expect(() => _parse(_work({'status': 'soon'})), _fails('status'));
-      expect(() => _parse(_work({'number': 0})), _fails('number'));
-    });
-
-    test('both languages of a text are required', () {
-      expect(
-        () => _parse(
-          _work({
-            'line': {'de': 'nur deutsch'},
-          }),
-        ),
-        _fails('line.en'),
-      );
-      expect(
-        () => _parse(
-          _work({
-            'about': {'de': 'a', 'en': ''},
-          }),
-        ),
-        _fails('about.en'),
-      );
-    });
-
-    test('a link must be an https URL', () {
-      for (final bad in ['#', 'http://example.org/x', 'example.org', '']) {
-        expect(
-          () => _parse(
-            _work({
-              'links': {'source': bad},
-            }),
-          ),
-          _fails('links.source'),
-          reason: bad,
-        );
-      }
-      expect(
-        () => _parse(
-          _work({
-            'links': {'mirror': 'https://example.org/x'},
-          }),
-        ),
-        _fails('links.mirror'),
-      );
-    });
-
-    group('a contract work that is public', () {
-      test('needs its source link', () {
-        expect(
-          () => _parse(_work({'status': 'public', 'licence': 'apache-2.0'})),
-          _fails('links.source'),
-        );
-      });
-      test('needs a licence', () {
-        expect(
-          () => _parse(_work({'status': 'public', 'links': _source})),
-          _fails('licence'),
-        );
-      });
-      test('parses with both', () {
-        final w = _parse(
-          _work({
-            'status': 'public',
-            'licence': 'apache-2.0',
-            'links': _source,
-          }),
-        );
-        expect(w.links[WorkLink.source], 'https://example.org/example');
-      });
-      test('an app needs neither', () {
-        expect(
-          () => _parse(_work({'kind': 'app', 'status': 'public'})),
-          returnsNormally,
-        );
-      });
-    });
-
-    group('a deployed work', () {
-      final deployed = {
-        'status': 'deployed',
-        'licence': 'apache-2.0',
-        'links': _source,
-        'chains': ['Chain A'],
-      };
-      test('a contract needs its chains', () {
-        expect(
-          () => _parse(_work({...deployed, 'chains': <String>[]})),
-          _fails('chains'),
-        );
-      });
-      test('an app needs its app link', () {
-        expect(
-          () => _parse(_work({'kind': 'app', 'status': 'deployed'})),
-          _fails('links.app'),
-        );
-        expect(
-          () => _parse(
-            _work({
-              'kind': 'app',
-              'status': 'deployed',
-              'links': {'app': 'https://example.org/app'},
-            }),
-          ),
-          returnsNormally,
-        );
-      });
-      test('that charges needs a fee, without placeholders', () {
-        expect(
-          () => _parse(_work({...deployed, 'charges': true})),
-          _fails('fee'),
-        );
-        expect(
-          () => _parse(
-            _work({
-              ...deployed,
-              'charges': true,
-              'fee': {'de': '{Satz}', 'en': '{rate}'},
-            }),
-          ),
-          _fails('placeholders'),
-        );
-        expect(
-          () => _parse(
-            _work({
-              ...deployed,
-              'charges': true,
-              'fee': {'de': '0,1 %', 'en': '0.1%'},
-            }),
-          ),
-          returnsNormally,
-        );
-      });
-      test('a work that is only public may still carry placeholders', () {
-        expect(
-          () => _parse(
-            _work({
-              'status': 'public',
-              'licence': 'apache-2.0',
-              'links': _source,
-              'charges': true,
-              'fee': {'de': '{Satz}', 'en': '{rate}'},
-            }),
-          ),
-          returnsNormally,
-        );
-      });
-    });
-
-    test('a fee needs "charges" and a licence', () {
-      const fee = {'de': 'x', 'en': 'y'};
-      expect(() => _parse(_work({'fee': fee})), _fails('charges'));
-      expect(
-        () => _parse(_work({'fee': fee, 'charges': true})),
-        _fails('licence'),
-      );
-    });
-
-    group('BUSL 1.1', () {
-      final busl = {
-        'status': 'public',
-        'licence': 'busl-1.1',
-        'links': _source,
-        'changeDate': {'de': '1. Januar 2030', 'en': '1 January 2030'},
-      };
-      test('needs a change date, and only BUSL has one', () {
-        expect(
-          () => _parse(_work({...busl}..remove('changeDate'))),
-          _fails('changeDate'),
-        );
-        expect(
-          () => _parse(_work({...busl, 'licence': 'apache-2.0'})),
-          _fails('changeDate'),
-        );
-        expect(() => _parse(_work(busl)), returnsNormally);
-      });
-
-      test('a notice that names Chainlink or RedStone keeps all of MF-8', () {
-        const full = {
-          'de':
-              'Das Orakel ist unveränderlich, die Feeds, die es liest, sind es '
-              'nicht. Wer es nutzt, wählt die Konfiguration, prüft `updatedAt` '
-              'und trägt das Preisrisiko. Nicht mit Chainlink oder RedStone '
-              'verbunden und von ihnen nicht unterstützt.',
-          'en':
-              'The oracle is immutable; the feeds it reads are not. A consumer '
-              'chooses the configuration, checks `updatedAt` and bears the '
-              'price risk. Not affiliated with or endorsed by Chainlink or '
-              'RedStone.',
-        };
-        expect(_parse(_work({'notice': full})).notice, {
-          Lang.de: full['de'],
-          Lang.en: full['en'],
-        });
-        // The last sentence alone is refused, in either language.
-        expect(
-          () => _parse(
-            _work({
-              'notice': {
-                'de': 'Nicht mit Chainlink oder RedStone verbunden.',
-                'en': full['en'],
-              },
-            }),
-          ),
-          _fails('all three sentences'),
-        );
-        expect(
-          () => _parse(
-            _work({
-              'notice': {
-                'de': full['de'],
-                'en': 'Not affiliated with or endorsed by Chainlink.',
-              },
-            }),
-          ),
-          _fails('all three sentences'),
-        );
-      });
-
-      test('is never "open source" (source-available, open use)', () {
-        for (final text in [
-          'This is open source.',
-          'Open-Source',
-          'quelloffen',
-        ]) {
-          expect(
-            () => _parse(
-              _work({
-                ...busl,
-                'about': {'de': text, 'en': text},
-              }),
-            ),
-            _fails('open source'),
-            reason: text,
-          );
-        }
-      });
-    });
-
-    test('an image is self-hosted and has alt text in both languages', () {
-      Map<String, Object?> image({String src = '/img/a.png', Object? alt}) => {
-        'src': src,
-        'width': 10,
-        'height': 10,
-        'alt': alt ?? {'de': 'Ein Bild', 'en': 'An image'},
-      };
-      expect(
-        () => _parse(
-          _work({
-            'images': [image(src: 'https://example.org/a.png')],
-          }),
-        ),
-        _fails('images[0].src'),
-      );
-      expect(
-        () => _parse(
-          _work({
-            'images': [image(src: '/img/../a.png')],
-          }),
-        ),
-        _fails('images[0].src'),
-      );
-      expect(
-        () => _parse(
-          _work({
-            'images': [
-              image(alt: {'de': 'nur'}),
-            ],
-          }),
-        ),
-        _fails('images[0].alt.en'),
-      );
-      expect(
-        () => _parse(
-          _work({
-            'images': [image()],
-          }),
-        ),
-        returnsNormally,
-      );
-    });
-
-    test('a funder needs a programme and a funder', () {
-      expect(
-        () => _parse(
-          _work({
-            'funder': {'programme': 'P'},
-          }),
-        ),
-        _fails('funder'),
-      );
-      final w = _parse(
-        _work({
-          'funder': {'programme': 'P', 'funder': 'F'},
-        }),
-      );
-      expect(w.funder, (programme: 'P', funder: 'F'));
-    });
-  });
-
   group('SiteContent', () {
-    test('works are kept newest first, posts by date', () {
+    test('posts are kept newest first, by date', () {
       final c = fixtureContent();
-      expect([for (final w in c.works) w.number], [4, 3, 2, 1]);
       expect(
         [for (final p in c.posts) p.slug],
         ['only-english', 'fixture-beitrag', 'fixture-post'],
       );
     });
 
-    test('two works may not share a slug or a number', () {
-      final a = _parse(_work());
-      expect(
-        () => SiteContent(
-          works: [
-            a,
-            _parse(_work({'number': 2})),
-          ],
-        ),
-        _fails('work slug'),
-      );
-      expect(
-        () => SiteContent(
-          works: [
-            a,
-            _parse(_work({'slug': 'other'})),
-          ],
-        ),
-        _fails('work number'),
-      );
-    });
-
-    test('only a work with a source link says the source is public', () {
+    test('two posts may not share a slug or an id in a language', () {
       final c = fixtureContent();
-      expect(c.hasPublicSource, isTrue);
-      expect(fixtureContent(works: 0).hasPublicSource, isFalse);
-      expect(
-        SiteContent(works: [c.workBySlug('fixture-app')!]).hasPublicSource,
-        isFalse,
-      );
+      final a = c.postBySlug(Lang.en, 'fixture-post')!;
+      expect(() => SiteContent(posts: [a, a]), _fails('post slug'));
     });
 
     test('with nothing there is nothing to show', () {
       final c = SiteContent();
-      expect(c.hasWorks, isFalse);
       expect(c.hasPosts, isFalse);
       expect(c.newestPostFor(Lang.de), isNull);
     });
 
-    test('the shipped data is valid; no work ships yet', () {
+    test('the shipped data is valid: the one post in both languages', () {
       final shipped = shippedContent;
-      expect(shipped.works, isEmpty);
       expect(shipped.posts.map((p) => '${p.lang.code}:${p.id}').toSet(), {
         'de:ai-agents',
         'en:ai-agents',
       });
     });
 
-    test('the allowed outbound links include those of the works and posts', () {
+    test('the allowed outbound links are the fixed ones and the posts', () {
       final c = fixtureContent();
+      expect(c.outboundAllowed, containsAll(outboundUrls));
       expect(c.outboundAllowed, contains('https://example.org/fixture'));
-      expect(
-        c.outboundAllowed,
-        contains('https://example.org/fixtures/fixture-sweep'),
-      );
       // A path link of a post is no outbound link.
       expect(c.outboundAllowed, isNot(contains('/en/blog/')));
     });

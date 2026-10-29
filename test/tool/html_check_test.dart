@@ -5,7 +5,9 @@ import 'dart:io';
 import 'package:path/path.dart' as p;
 import 'package:test/test.dart';
 
+import 'package:website/src/content/site_content.dart';
 import 'package:website/src/outbound.dart';
+import 'package:website/src/redirects.dart';
 
 import '../../tool/src/html_check.dart';
 
@@ -74,6 +76,85 @@ List<String> _rules(Directory dir) => [for (final f in checkSite(dir)) f.rule];
 void main() {
   test('a valid site passes', () {
     expect(checkSite(_site({})), isEmpty);
+  });
+
+  group('redirect pages (the retired About URLs)', () {
+    final de = redirects.first;
+    final en = redirects.last;
+
+    // The files a redirect page links (as the real build has them), and the
+    // pages its targets are.
+    Directory site(Map<String, String?> overrides) => _site({
+      'en/index.html': _page(),
+      'brand/favicon/favicon.svg': '<svg/>',
+      'brand/favicon/favicon.ico': 'ico',
+      'brand/favicon/apple-touch-icon.png': 'png',
+      'fonts/fonts.css': '',
+      'brand/tokens.css': '',
+      'site.css': '',
+      'sitemap.xml': _sitemap.replaceFirst(
+        '</urlset>',
+        '<url><loc>https://cubealgos.de/en/</loc></url></urlset>',
+      ),
+      ...overrides,
+    });
+
+    test('a valid redirect page passes, outside the sitemap', () {
+      final dir = site({de.file: redirectHtml(de), en.file: redirectHtml(en)});
+      expect(checkSite(dir), isEmpty);
+    });
+
+    test('fail for a refresh to another page, or none', () {
+      final other = redirectHtml(de)
+          .replaceFirst('content="0; url=/"', 'content="0; url=/en/"');
+      expect(_rules(site({de.file: other})), ['redirect']);
+      final none = redirectHtml(de)
+          .replaceFirst(RegExp('<meta http-equiv="refresh"[^>]*>'), '');
+      expect(_rules(site({de.file: none})), ['redirect']);
+    });
+
+    test('fail for a canonical that is not the target, or alternates', () {
+      final wrong = redirectHtml(de).replaceFirst(
+        '<link href="https://cubealgos.de/" rel="canonical"/>',
+        '<link href="https://cubealgos.de/ueber/" rel="canonical"/>',
+      );
+      expect(_rules(site({de.file: wrong})), contains('canonical'));
+      final alt = redirectHtml(de).replaceFirst(
+        '</head>',
+        '<link hreflang="en" href="https://cubealgos.de/en/" '
+            'rel="alternate"/></head>',
+      );
+      expect(_rules(site({de.file: alt})), ['hreflang']);
+    });
+
+    test('fail for a missing noindex or the wrong language', () {
+      final indexable = redirectHtml(de)
+          .replaceFirst('<meta name="robots" content="noindex"/>', '');
+      expect(_rules(site({de.file: indexable})), ['noindex']);
+      final wrongLang = redirectHtml(de)
+          .replaceFirst('<html lang="de">', '<html lang="en">');
+      expect(_rules(site({de.file: wrongLang})), ['lang']);
+    });
+
+    test('fail when a redirect page is listed in the sitemap', () {
+      final dir = site({
+        de.file: redirectHtml(de),
+        'sitemap.xml': _sitemap.replaceFirst(
+          '</urlset>',
+          '<url><loc>https://cubealgos.de/en/</loc></url>'
+              '<url><loc>https://cubealgos.de/ueber/</loc></url></urlset>',
+        ),
+      });
+      expect(_rules(dir), ['sitemap']);
+    });
+
+    test('with the content, a retired page that is not built fails', () {
+      final problems = [
+        for (final f in checkSite(_site({}), content: SiteContent()))
+          if (f.rule == 'redirect') f.page,
+      ];
+      expect(problems, [de.file, en.file]);
+    });
   });
 
   group('icons', () {
@@ -227,9 +308,12 @@ void main() {
     test('fail for an outbound link that is not on the allow list', () {
       for (final url in [
         'https://github.com/other',
+        'https://github.com/cubealgos',
+        'https://github.com/wearenotabank/viem_dart',
         'https://github.com/cubealgos/website',
         'https://www.linkedin.com/in/someone',
         'https://www.linkedin.com/company/other/',
+        'https://kevinscheeren.de/',
         'https://kevinscheeren.de/kontakt/',
         'https://example.com/',
       ]) {
@@ -239,13 +323,13 @@ void main() {
     });
     test('fail for an allow-listed URL with a query, fragment or http', () {
       for (final url in [
-        '$githubOrgUrl?ref=site',
-        '$githubOrgUrl#top',
+        '$wearenotabankOrgUrl?ref=site',
+        '$wearenotabankOrgUrl#top',
         '$linkedinCompanyUrl?trk=site',
         '$linkedinCompanyUrl#top',
         'http://www.linkedin.com/company/cubealgos/',
-        'http://github.com/cubealgos',
-        personalSiteUrl.replaceFirst('https://', '//'),
+        'http://github.com/wearenotabank',
+        wearenotabankOrgUrl.replaceFirst('https://', '//'),
       ]) {
         final dir = _site({'index.html': _page(body: '<a href="$url">x</a>')});
         expect(_rules(dir), ['foreign-host'], reason: url);
@@ -253,17 +337,17 @@ void main() {
     });
     test('fail for an allow-listed URL used as anything but a link', () {
       for (final body in [
-        '<img src="$githubOrgUrl" alt="x"/>',
-        '<script src="$githubProfileUrl"></script>',
-        '<form action="$linkedinProfileUrl"></form>',
+        '<img src="$wearenotabankOrgUrl" alt="x"/>',
+        '<script src="$wearenotabankOrgUrl"></script>',
+        '<form action="$linkedinCompanyUrl"></form>',
         '<iframe src="$linkedinCompanyUrl"></iframe>',
         '<script src="$linkedinCompanyUrl"></script>',
-        '<a href="/" src="$personalSiteUrl">x</a>',
+        '<a href="/" src="$wearenotabankOrgUrl">x</a>',
       ]) {
         final dir = _site({'index.html': _page(body: body)});
         expect(_rules(dir), ['foreign-host'], reason: body);
       }
-      final dir = _site({'a.css': '@font-face{src:url($githubOrgUrl)}'});
+      final dir = _site({'a.css': '@font-face{src:url($wearenotabankOrgUrl)}'});
       expect(_rules(dir), ['third-party']);
     });
     test('fail for another host', () {

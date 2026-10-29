@@ -4,17 +4,22 @@ import 'package:jaspr/dom.dart';
 import 'package:jaspr/server.dart';
 import 'package:website/src/chrome_text.dart';
 import 'package:website/src/copy/contact_copy.dart';
+import 'package:website/src/outbound.dart';
 import 'package:website/src/routes.dart';
 import 'package:website/src/widgets.dart';
 
 /// The contact page body: mailto only, no form. Collaboration, integrations,
 /// grants and press at hello@; vulnerability reports at security@.
 class ContactPage extends StatelessComponent {
-  /// Creates the contact page in [lang].
-  const new({required this.lang, super.key});
+  /// Creates the contact page in [lang]. [productNamed] is whether the topics
+  /// name wearenotabank (the site's [namesProduct]).
+  const new({required this.lang, this.productNamed = namesProduct, super.key});
 
   /// The page's language.
   final Lang lang;
+
+  /// Whether the topics name wearenotabank.
+  final bool productNamed;
 
   @override
   Component build(BuildContext context) {
@@ -53,10 +58,10 @@ class ContactPage extends StatelessComponent {
                 const div(classes: 'ledger-fish', [Fish(pose: 'idle')]),
               ]),
               ul(classes: 'note-list topic-list', [
-                for (final topic in c.topics)
+                for (final topic in contactTopics(lang, named: productNamed))
                   li([
                     strong([t(topic.lead)]),
-                    t(' ${topic.text}'),
+                    ...noHyphen(' ${topic.text}'),
                   ]),
               ]),
             ],

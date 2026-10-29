@@ -52,6 +52,30 @@ class BackLink extends StatelessComponent {
 /// A text node.
 Component t(String value) => Component.text(value);
 
+/// The words that must never be split by the browser's automatic hyphenation:
+/// the product's name (wearenotabank `DEC-082` D2: "bank" is never set apart)
+/// and the founder's name.
+const noHyphenTerms = ['wearenotabank', 'Kevin Scheeren'];
+
+final _noHyphen = RegExp(noHyphenTerms.map(RegExp.escape).join('|'));
+
+/// The class of the wrapper around a [noHyphenTerms] word (`hyphens: none`).
+const noHyphenClass = 'nohy';
+
+/// [text] as nodes, with every [noHyphenTerms] word in a `span.nohy`. Normal
+/// text keeps the automatic hyphenation of the page.
+List<Component> noHyphen(String text) {
+  final out = <Component>[];
+  var from = 0;
+  for (final m in _noHyphen.allMatches(text)) {
+    if (m.start > from) out.add(t(text.substring(from, m.start)));
+    out.add(span(classes: noHyphenClass, [t(m[0]!)]));
+    from = m.end;
+  }
+  if (from < text.length) out.add(t(text.substring(from)));
+  return out;
+}
+
 /// A clownfish pose from the vendored brand assets, always decorative (empty
 /// alt text, hidden from assistive technology: the adjacent text carries the
 /// meaning). The animated SVGs stop and show their key frame under reduced
@@ -85,25 +109,17 @@ class Fish extends StatelessComponent {
   );
 }
 
-/// A chamfered `mailto:` button (the focus ring lives on the wrapper). Set
-/// [inverse] for use on an amber ground.
+/// A chamfered `mailto:` button (the focus ring lives on the wrapper).
 class MailButton extends StatelessComponent {
   /// Creates a button labelled [label].
-  const new({required this.label, this.inverse = false, super.key});
+  const new({required this.label, super.key});
 
   /// The button text.
   final String label;
 
-  /// Ink button for amber panels.
-  final bool inverse;
-
   @override
   Component build(BuildContext context) => span(classes: 'btn-wrap', [
-    a(
-      [Component.text(label)],
-      href: 'mailto:$contactEmail',
-      classes: inverse ? 'btn btn--inverse' : 'btn',
-    ),
+    a([Component.text(label)], href: 'mailto:$contactEmail', classes: 'btn'),
   ]);
 }
 
@@ -111,12 +127,7 @@ class MailButton extends StatelessComponent {
 /// anchor).
 class LinkButton extends StatelessComponent {
   /// Creates a button labelled [label] leading to [href].
-  const new({
-    required this.label,
-    required this.href,
-    this.inverse = false,
-    super.key,
-  });
+  const new({required this.label, required this.href, super.key});
 
   /// The button text.
   final String label;
@@ -124,16 +135,9 @@ class LinkButton extends StatelessComponent {
   /// The target: a root-absolute path or an in-page anchor.
   final String href;
 
-  /// Ink button for amber panels.
-  final bool inverse;
-
   @override
   Component build(BuildContext context) => span(classes: 'btn-wrap', [
-    a(
-      [Component.text(label)],
-      href: href,
-      classes: inverse ? 'btn btn--inverse' : 'btn',
-    ),
+    a([Component.text(label)], href: href, classes: 'btn'),
   ]);
 }
 
@@ -142,7 +146,7 @@ class LinkButton extends StatelessComponent {
 List<Component> inlineComponents(List<Inline> inlines, {String? linkClass}) => [
   for (final i in inlines)
     switch (i) {
-      TextRun(:final text) => t(text),
+      TextRun(:final text) => Component.fragment(noHyphen(text)),
       CodeSpan(:final text) => code([t(text)]),
       Strong(:final text) => strong([t(text)]),
       LinkRun(:final label, :final url) => a(

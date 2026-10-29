@@ -1,265 +1,121 @@
 // SPDX-License-Identifier: Apache-2.0
 
-/// The home page copy, EN and DE side by side (copy v3 of the studio, brand
-/// decisions 56 and 57; all rights reserved). Components render it, tests
-/// compare the built pages against it. The copy says what the studio is and
-/// makes, offers no client work, names no price and promises nothing about
-/// money.
+/// The home page copy, EN and DE side by side: the business card, layout B
+/// "Steckbrief" (brand decisions 56, 58 and 59; copy direction C of the
+/// reframe of 2026-10-29 with the regulatory edits E-C-2 and E-C-3; all rights
+/// reserved). Components render it, tests compare the built pages against it.
+/// The copy says what the studio is and makes, offers no client work, names
+/// no price and describes no software beyond wearenotabank.
+///
+/// The page exists in two states ([namesProduct]): named, with the H1 "Cube
+/// Algos is the studio behind wearenotabank." and the button to its GitHub
+/// organisation, and unnamed, with `h1Unnamed` (copy section 3.5) and the
+/// button to the contact page. Everything that differs is a field here.
 library;
 
 import 'package:website/src/outbound.dart';
 import 'package:website/src/routes.dart';
 
-/// One row of the hero's stack card: a `label` and its `value`.
-typedef StackRow = ({String label, String value});
+/// A headline in three parts; `mark` carries the drawn underline and is
+/// always a whole word or phrase, never a part of one.
+typedef Headline = ({String pre, String mark, String post});
 
-/// One item of the studio section: a bold `lead` and its `text`, which may
-/// carry `[label](url)` links to the URLs of `outbound.dart`. An item with a
-/// `postId` ends with a link to that blog post (left out while the post does
-/// not exist). An item that `needsSource` is shown only while a work links its
-/// source code (it says the source is linked).
-typedef StudioItem = ({
-  String lead,
-  String text,
-  String? postId,
-  bool needsSource,
-});
+/// The headline as one string.
+String headlineText(Headline h) => '${h.pre}${h.mark}${h.post}';
 
 /// All copy of the home page in one language.
 typedef HomeCopy = ({
   String eyebrow,
-  String h1,
 
-  /// The part of `h1` that carries the drawn underline.
-  String h1Mark,
-  String subline,
+  /// The H1 of the named state ([namesProduct]); the mark is the whole word
+  /// `wearenotabank`.
+  Headline h1,
 
-  /// The sentence after `subline` that says the contracts are published with
-  /// their source: shown only while a work links its source code.
-  String sublineSource,
+  /// The H1 of the unnamed state (copy section 3.5).
+  Headline h1Unnamed,
 
-  /// The shorter subline shown on phones (below 30rem) instead of `subline`.
-  String sublineShort,
+  /// The paragraph under the H1, directly, at every width: it names the
+  /// object (developer tools: smart contracts, SDKs, libraries) so that the
+  /// name never meets a reader alone (regulatory edits E-C-2 and E-C-3).
+  String lede,
 
-  /// The hero's primary button while the site shows at least one work.
-  String buttonWork,
+  /// The product's name as the Produkt row shows it: always the whole word,
+  /// in lower case (wearenotabank `DEC-082` D2).
+  String product,
 
-  /// The hero's primary button while it shows none.
-  String buttonStudio,
-  String secondaryCta,
-  String stackTitle,
-  List<StackRow> stack,
+  /// The primary button of the named state; it leads to the organisation.
+  String productButton,
 
-  /// The `id` of the works section (the target of `buttonWork`).
-  String workAnchor,
-  String workTitle,
-  String workIntro,
+  /// The text link to the contact page in the named state, and the label of
+  /// the primary button in the unnamed state.
+  String contactLink,
 
-  /// The label of the link to all works; `{n}` is their number.
-  String allWorks,
-
-  /// The `id` of the studio section (the target of `buttonStudio`).
-  String studioAnchor,
-  String studioTitle,
-  List<StudioItem> studio,
-  String blogTitle,
-  String allPosts,
-  String ctaTitle,
-  String ctaText,
-  String ctaButton,
+  /// The title of the fact sheet.
+  String sheetTitle,
+  String providerLabel,
+  String registerLabel,
+  String productLabel,
+  String contactLabel,
+  String blogLabel,
 });
-
-/// The id of the blog post on how AI agents work in the repositories, which
-/// the studio section and About link to.
-const aiPostId = 'ai-agents';
 
 /// The home copy per language.
 const Map<Lang, HomeCopy> homeCopy = {
   Lang.en: (
-    eyebrow: 'Decentralised finance · Heinsberg',
-    h1: 'We build software that lets wallets do more on their own.',
-    h1Mark: 'more on their own',
-    subline:
-        'Reading prices, paying for gas in another token, converting the '
-        'tokens that come in: we are building the smart contracts and apps '
-        'for it.',
-    sublineSource:
-        'We publish our contracts with their source code and their licence.',
-    sublineShort:
-        'We are building ways to read prices, pay gas in another token and '
-        'convert tokens.',
-    buttonWork: 'See the work',
-    buttonStudio: 'Learn more',
-    secondaryCta: 'Write to us',
-    stackTitle: 'What we build with',
-    stack: [
-      (
-        label: 'Contracts',
-        value:
-            'Solidity and Foundry, tested against the deployed protocols they '
-            'call',
-      ),
-      (label: 'Apps', value: 'Dart and Flutter, on our own app template'),
-      (label: 'Web', value: 'Dart with Jaspr, this website included'),
-      (label: 'Checks', value: 'tests, fork tests, licence and wording checks'),
-      (
-        label: 'Hosting',
-        value: 'Linux and Docker on a server we run ourselves in Germany',
-      ),
-      (label: 'Licences', value: 'Apache-2.0; BUSL 1.1 for some works'),
-    ],
-    workAnchor: 'work',
-    workTitle: 'Work',
-    workIntro:
-        'What we have built, each with its status, licence and source '
-        'code: to check, and to build on.',
-    allWorks: 'All works ({n})',
-    studioAnchor: 'studio',
-    studioTitle: 'The studio',
-    studio: [
-      (
-        lead: 'Our own work.',
-        text: 'We build the software we want to use ourselves.',
-        postId: null,
-        needsSource: false,
-      ),
-      (
-        lead: 'Fixed once deployed.',
-        text:
-            'Our contracts have no admin, pause or upgrade key. The code at an '
-            'address stays as you check it; a fix is a new version at a new '
-            'address.',
-        postId: null,
-        needsSource: false,
-      ),
-      (
-        lead: 'Your keys stay with you.',
-        text:
-            'We build our contracts and apps for your own wallet, which acts '
-            'on rules you sign yourself.',
-        postId: null,
-        needsSource: false,
-      ),
-      (
-        lead: 'Code you can read.',
-        text:
-            'Each of our contracts shown here links to its source code. The '
-            'code of this website and our brand are public on '
-            '[GitHub]($githubOrgUrl), too.',
-        postId: null,
-        needsSource: true,
-      ),
-      (
-        lead: 'New tools.',
-        text: 'We love working with modern technology, AI included.',
-        postId: aiPostId,
-        needsSource: false,
-      ),
-    ],
-    blogTitle: 'From the blog',
-    allPosts: 'All posts',
-    ctaTitle: 'Write to us.',
-    ctaText:
-        'Building something related, running a grant programme or writing '
-        'about decentralised finance? A short email is enough.',
-    ctaButton: 'Write to hello@cubealgos.de',
+    eyebrow: 'Software studio · Heinsberg',
+    h1: (
+      pre: 'Cube Algos is the studio behind ',
+      mark: 'wearenotabank',
+      post: '.',
+    ),
+    h1Unnamed: (
+      pre: 'We build ',
+      mark: 'our own',
+      post: ' software for EVM chains.',
+    ),
+    lede:
+        'We make developer tools: smart contracts, SDKs and libraries for EVM '
+        'chains, with a focus on Dart. Kevin Scheeren founded the studio in '
+        'Heinsberg in 2023 and runs it as managing director.',
+    product: 'wearenotabank',
+    productButton: 'wearenotabank on GitHub',
+    contactLink: 'Write to us',
+    sheetTitle: 'At a glance',
+    providerLabel: 'Provider',
+    registerLabel: 'Commercial register entry',
+    productLabel: 'Product',
+    contactLabel: 'Contact',
+    blogLabel: 'Blog',
   ),
   Lang.de: (
-    eyebrow: 'Dezentrale Finanzen · Heinsberg',
-    h1: 'Wir bauen Software, mit der Wallets mehr selbst erledigen.',
-    h1Mark: 'mehr selbst',
-    subline:
-        'Preise lesen, Gas in einem anderen Token bezahlen, eingehende Token '
-        'umwandeln: Dafür bauen wir gerade Smart Contracts und Apps.',
-    sublineSource:
-        'Unsere Smart Contracts veröffentlichen wir mit Quelltext und Lizenz.',
-    sublineShort:
-        'Wir bauen gerade: Preise lesen, Gas in einem anderen Token bezahlen, '
-        'Token umwandeln.',
-    buttonWork: 'Arbeiten ansehen',
-    buttonStudio: 'Mehr erfahren',
-    secondaryCta: 'Schreiben Sie uns',
-    stackTitle: 'Womit wir bauen',
-    stack: [
-      (
-        label: 'Smart Contracts',
-        value:
-            'Solidity und Foundry, getestet gegen die Protokolle, die sie '
-            'aufrufen',
-      ),
-      (
-        label: 'Apps',
-        value: 'Dart und Flutter, auf unserer eigenen App-Vorlage',
-      ),
-      (label: 'Web', value: 'Dart mit Jaspr, auch diese Website'),
-      (
-        label: 'Prüfungen',
-        value: 'Tests, Fork-Tests, Lizenz- und Textprüfungen',
-      ),
-      (
-        label: 'Betrieb',
-        value:
-            'Linux und Docker auf einem selbst betriebenen Server in '
-            'Deutschland',
-      ),
-      (label: 'Lizenzen', value: 'Apache-2.0, für einzelne Arbeiten BUSL 1.1'),
-    ],
-    workAnchor: 'arbeiten',
-    workTitle: 'Arbeiten',
-    workIntro:
-        'Was wir gebaut haben, jeweils mit Status, Lizenz und Quelltext: '
-        'zum Prüfen und Einbinden.',
-    allWorks: 'Alle Arbeiten ({n})',
-    studioAnchor: 'studio',
-    studioTitle: 'Das Studio',
-    studio: [
-      (
-        lead: 'Eigene Arbeiten.',
-        text: 'Wir bauen die Software, die wir selbst benutzen wollen.',
-        postId: null,
-        needsSource: false,
-      ),
-      (
-        lead: 'Nach der Bereitstellung unveränderlich.',
-        text:
-            'Unsere Smart Contracts haben keinen Admin-, Pausen- oder '
-            'Upgrade-Schlüssel. Der Code unter einer Adresse bleibt, wie Sie '
-            'ihn prüfen; eine Korrektur ist eine neue Version unter einer '
-            'neuen Adresse.',
-        postId: null,
-        needsSource: false,
-      ),
-      (
-        lead: 'Ihre Schlüssel bleiben bei Ihnen.',
-        text:
-            'Wir bauen unsere Smart Contracts und Apps für Ihre eigene '
-            'Wallet. Die Wallet handelt nach Regeln, die Sie selbst '
-            'signieren.',
-        postId: null,
-        needsSource: false,
-      ),
-      (
-        lead: 'Quelltext zum Nachlesen.',
-        text:
-            'Zu jedem unserer Smart Contracts hier verlinken wir den '
-            'Quelltext. Auch der Code dieser Website und unsere Marke liegen '
-            'öffentlich auf [GitHub]($githubOrgUrl).',
-        postId: null,
-        needsSource: true,
-      ),
-      (
-        lead: 'Neue Werkzeuge.',
-        text: 'Wir arbeiten gern mit moderner Technik, auch mit KI.',
-        postId: aiPostId,
-        needsSource: false,
-      ),
-    ],
-    blogTitle: 'Aus dem Blog',
-    allPosts: 'Alle Beiträge',
-    ctaTitle: 'Schreiben Sie uns.',
-    ctaText:
-        'Sie bauen an etwas Verwandtem, betreuen ein Förderprogramm oder '
-        'schreiben über dezentrale Finanzen? Eine kurze E-Mail genügt.',
-    ctaButton: 'E-Mail an hello@cubealgos.de',
+    eyebrow: 'Softwarestudio · Heinsberg',
+    h1: (
+      pre: 'Cube Algos ist das Studio hinter ',
+      mark: 'wearenotabank',
+      post: '.',
+    ),
+    h1Unnamed: (
+      pre: 'Wir bauen ',
+      mark: 'eigene',
+      post: ' Software für EVM-Chains.',
+    ),
+    lede:
+        'Wir bauen Werkzeuge für die Softwareentwicklung: Smart Contracts, '
+        'SDKs und Bibliotheken für EVM-Chains, mit Schwerpunkt auf Dart. '
+        'Gegründet hat das Studio Kevin Scheeren 2023 in Heinsberg; er führt '
+        'es als Geschäftsführer.',
+    product: 'wearenotabank',
+    productButton: 'wearenotabank auf GitHub',
+    contactLink: 'Schreiben Sie uns',
+    sheetTitle: 'Steckbrief',
+    providerLabel: 'Anbieter',
+    registerLabel: 'Registereintrag',
+    productLabel: 'Produkt',
+    contactLabel: 'Kontakt',
+    blogLabel: 'Blog',
   ),
 };
+
+/// The headline of [lang] in the state in which the site [named] the product.
+Headline homeHeadline(Lang lang, {bool named = namesProduct}) =>
+    named ? homeCopy[lang]!.h1 : homeCopy[lang]!.h1Unnamed;

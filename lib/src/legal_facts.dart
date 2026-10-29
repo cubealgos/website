@@ -12,8 +12,11 @@ const companyName = 'Cube Algos UG (haftungsbeschränkt)';
 /// The street line of the registered address.
 const addressStreet = 'An der Maar 19';
 
+/// The place of the registered address.
+const addressPlace = 'Heinsberg';
+
 /// The postcode and city of the registered address.
-const addressCity = '52525 Heinsberg';
+const addressCity = '52525 $addressPlace';
 
 /// The managing director who represents the company.
 const managingDirector = 'Kevin Scheeren';

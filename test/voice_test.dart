@@ -15,7 +15,6 @@ import 'support/page_text.dart';
 /// keep their legal register and are not checked.
 const List<PageKey> _voicePages = [
   PageKey.home,
-  PageKey.about,
   PageKey.contact,
   PageKey.blog,
   PageKey.notFound,

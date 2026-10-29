@@ -3,6 +3,7 @@
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/server.dart';
 import 'package:website/src/legal_model.dart';
+import 'package:website/src/widgets.dart';
 
 /// Renders a [LegalDoc]: the H1, the optional authoritative-text notice and
 /// the sections.
@@ -30,7 +31,7 @@ class LegalPage extends StatelessComponent {
 }
 
 Component _inline(Inline part) => switch (part) {
-  final String text => Component.text(text),
+  final String text => Component.fragment(noHyphen(text)),
   final Link link => a([Component.text(link.text)], href: link.href),
   _ => throw ArgumentError('unsupported inline: $part'),
 };

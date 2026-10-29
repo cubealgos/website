@@ -12,7 +12,8 @@ VAT ID, email, phone) (see `NOTICE`).
 | install the git hooks | `README.md` Scripts: `fvm dart run tool/hooks.dart` (once per clone) |
 | start work on an issue | Branches below: new worktree, never the main checkout |
 | add a dependency | its licence must be on the allow list of the licence gate (`tool/licence_check.dart`, added in #5); copyleft is denied |
-| add a work or a post | `content/README.md`: one data file each, validated at build time; with no work nothing about works renders, and a work's links are the allow-listed outbound links |
+| add a post | `content/README.md`: one Markdown file per post and language, validated at build time; a post's links are the allow-listed outbound links |
+| name wearenotabank, or stop naming it | one switch, `namesProduct` in `lib/src/outbound.dart` (brand decisions 58 and 59; the constraints D1 to D10 of wearenotabank `DEC-082`): flip it, re-run `fvm dart run tool/og_images.dart`, and `product_state_test.dart` shows what the other state looks like |
 | touch brand assets or page copy | they are all rights reserved, not covered by Apache-2.0 (`NOTICE`, README "Licence") |
 
 ## Toolchain

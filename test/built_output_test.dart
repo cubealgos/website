@@ -16,6 +16,7 @@ import 'package:website/src/icons.dart';
 import 'package:website/src/outbound.dart';
 import 'package:website/src/page.dart' show revealPages;
 import 'package:website/src/page_meta.dart';
+import 'package:website/src/redirects.dart';
 import 'package:website/src/routes.dart';
 import 'package:website/src/seo.dart';
 
@@ -58,29 +59,65 @@ void main() {
   String read(String path) =>
       File(p.join(_buildDir, _fileFor(path).substring(1))).readAsStringSync();
 
-  test('the build holds exactly the pages of the route table', () {
+  test('the build holds the pages of the route table and the redirects', () {
     final built = [
       for (final f in Directory(_buildDir).listSync(recursive: true))
         if (f is File && f.path.endsWith('.html'))
           '/${p.relative(f.path, from: _buildDir)}',
     ]..sort();
-    final expected = [for (final r in routes) _fileFor(r.path)]..sort();
+    final expected = [
+      for (final r in routes) _fileFor(r.path),
+      for (final r in redirects) '/${r.file}',
+    ]..sort();
     expect(built, expected);
   });
 
-  test('no work ships, so no works page is built', () {
-    expect(content.works, isEmpty);
+  test('About and Works are gone: no page, no sitemap entry, no link', () {
     expect(Directory('$_buildDir/arbeiten').existsSync(), isFalse);
     expect(Directory('$_buildDir/en/work').existsSync(), isFalse);
+    expect(Directory('$_buildDir/img').existsSync(), isFalse);
     final sitemap = File('$_buildDir/sitemap.xml').readAsStringSync();
-    expect(sitemap, isNot(contains('/arbeiten/')));
-    expect(sitemap, isNot(contains('/en/work/')));
-    for (final f in Directory(_buildDir).listSync(recursive: true)) {
-      if (f is File && f.path.endsWith('.html')) {
-        final html = f.readAsStringSync();
-        expect(html, isNot(contains('href="/arbeiten/"')), reason: f.path);
-        expect(html, isNot(contains('href="/en/work/"')), reason: f.path);
+    for (final gone in ['/ueber/', '/en/about/', '/arbeiten/', '/en/work/']) {
+      expect(sitemap, isNot(contains(gone)), reason: gone);
+      for (final f in Directory(_buildDir).listSync(recursive: true)) {
+        if (f is File && f.path.endsWith('.html')) {
+          expect(
+            f.readAsStringSync(),
+            isNot(contains('href="$gone')),
+            reason: '${f.path} links $gone',
+          );
+        }
       }
+    }
+  });
+
+  group('the redirects of the retired About URLs', () {
+    test('there is one per language, to the home page of that language', () {
+      expect([for (final r in redirects) r.path], ['/ueber/', '/en/about/']);
+      expect([for (final r in redirects) r.target], ['/', '/en/']);
+    });
+
+    for (final r in redirects) {
+      test('${r.path}: a refresh, the home page as canonical, noindex', () {
+        final html = read(r.path);
+        expect(html, contains('<html lang="${r.lang.code}">'));
+        expect(
+          html,
+          contains('<meta http-equiv="refresh" content="0; url=${r.target}"/>'),
+        );
+        expect(
+          html,
+          contains('<link href="$siteOrigin${r.target}" rel="canonical"/>'),
+        );
+        expect(html, contains('<meta name="robots" content="noindex"/>'));
+        expect(html, isNot(contains('rel="alternate"')));
+        // A link for a browser that does not follow the refresh, and nothing
+        // else: no script, no inline style.
+        expect(html, contains('<a href="${r.target}">'));
+        expect(html, isNot(contains('<script')));
+        expect(html, isNot(contains('<style')));
+        expect(html, isNot(contains(' style=')));
+      });
     }
   });
 
@@ -184,13 +221,12 @@ void main() {
         isEmpty,
         reason: path,
       );
-      // Scripts: only the same-origin loaders (card sting on home, reveal on
+      // Scripts: only the same-origin loaders (the sting on home, reveal on
       // the content pages) and the JSON-LD data block (Organization) on home.
       final scripts = RegExp('<script[^>]*>').allMatches(read(path));
       expect(scripts.map((m) => m[0]), switch (route.key) {
         PageKey.home => [
           contains('src="/sting.js"'),
-          contains('src="/reveal.js"'),
           contains('type="application/ld+json"'),
         ],
         _ when revealPages.contains(route.key) => [
@@ -230,7 +266,12 @@ void main() {
       '${linkedinCompanyUrl}about/',
       linkedinCompanyUrl.substring(0, linkedinCompanyUrl.length - 1),
       '$linkedinCompanyUrl?ref=x',
-      '$githubOrgUrl?ref=x',
+      '$wearenotabankOrgUrl?ref=x',
+      '${wearenotabankOrgUrl}s',
+      '$wearenotabankOrgUrl/viem_dart',
+      'https://github.com/cubealgos',
+      'https://kevinscheeren.de/',
+      'https://github.com/kevinscheeren',
     ]) {
       expect(foreignReferences('<a href="$url">x</a>'), [url]);
     }
@@ -242,8 +283,8 @@ void main() {
     }
   });
 
-  test('the links of works and posts are allowed as links, and only those', () {
-    const url = 'https://example.org/fixtures/fixture-sweep';
+  test('the links of posts are allowed as links, and only those', () {
+    const url = 'https://example.org/fixture';
     final fixture = fixtureContent();
     expect(
       foreignReferences(
@@ -266,26 +307,44 @@ void main() {
     );
   });
 
-  test("About links the founder's site in its own language, Home does not", () {
-    const own = {Lang.de: personalSiteUrl, Lang.en: personalSiteUrlEn};
+  test('no page links the founder, the studio org or anything else', () {
+    // The founder's own site and profiles went with About (decision 59); Home
+    // links the organisation of wearenotabank and the footer LinkedIn.
     final href = RegExp('<a [^>]*href="(https://[^"]*)"');
-    for (final lang in Lang.values) {
-      List<String> external(PageKey key) =>
-          [for (final m in href.allMatches(read(pathFor(key, lang)))) m[1]!]
-              .where((u) => u != '$siteOrigin/' && !u.startsWith(siteOrigin))
-              .toList();
-      final about = external(PageKey.about);
-      expect(about, contains(own[lang]), reason: lang.code);
-      expect(about, contains(githubProfileUrl), reason: lang.code);
-      expect(about, contains(linkedinProfileUrl), reason: lang.code);
-      expect(about, isNot(contains(own[lang.other])));
-      expect(about.toSet().difference(outboundUrls), isEmpty);
-      final home = external(PageKey.home);
-      // The item that links the code on GitHub waits for a work with a
-      // source link (decision 54): none ships yet.
-      expect(home, isNot(contains(githubOrgUrl)), reason: lang.code);
-      expect(home, isNot(contains(own[lang])), reason: lang.code);
-      expect(home.toSet().difference(outboundUrls), isEmpty);
+    final external = <String>{};
+    for (final route in routes) {
+      final urls = [
+        for (final m in href.allMatches(read(route.path)))
+          if (!m[1]!.startsWith(siteOrigin)) m[1]!,
+      ];
+      for (final u in urls) {
+        expect(
+          content.outboundAllowed,
+          contains(u),
+          reason: '${route.path} links $u',
+        );
+      }
+      if (route.key != PageKey.post) external.addAll(urls);
+    }
+    expect(external, {wearenotabankOrgUrl, linkedinCompanyUrl});
+    for (final f in Directory(_buildDir).listSync(recursive: true)) {
+      if (f is File && f.path.endsWith('.html')) {
+        final html = f.readAsStringSync();
+        // Links only: the Datenschutz still names kevinscheeren.de as an
+        // example of a linked site.
+        for (final gone in [
+          'https://kevinscheeren.de',
+          'https://github.com/kevinscheeren',
+          'https://www.linkedin.com/in/',
+          'https://github.com/cubealgos',
+        ]) {
+          expect(
+            html,
+            isNot(contains('href="$gone')),
+            reason: '${f.path}: $gone',
+          );
+        }
+      }
     }
   });
 
@@ -356,15 +415,20 @@ void main() {
 
     test('names who is responsible for the content under § 18(2) MStV', () {
       // Typed here independently of lib/src/legal_facts.dart.
+      // The name is wrapped in a no-hyphen span: compare the text.
+      String text(String path) =>
+          read(path)
+              .replaceAll(RegExp('<[^>]*>'), '')
+              .replaceAll(RegExp(r'\s+'), ' ');
       expect(
-        read('/impressum/'),
+        text('/impressum/'),
         contains(
           'Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV: '
           'Kevin Scheeren, An der Maar 19, 52525 Heinsberg',
         ),
       );
       expect(
-        read('/en/impressum/'),
+        text('/en/impressum/'),
         contains(
           'Responsible for the content under § 18(2) MStV: '
           'Kevin Scheeren, An der Maar 19, 52525 Heinsberg',
@@ -596,7 +660,12 @@ void main() {
       final hosts = {
         for (final u in outboundUrls) registrable(Uri.parse(u).host),
       };
-      expect(hosts, named.keys.toSet());
+      // The new link (the organisation of wearenotabank on GitHub) is to a
+      // provider the section already names; the open list needs no new
+      // sentence (copy section 5, item 11). The text still names
+      // kevinscheeren.de as an example, though no page links it any more.
+      expect(hosts, {'github.com', 'linkedin.com'});
+      expect(named.keys.toSet().containsAll(hosts), isTrue);
       const open = {Lang.en: 'for example to', Lang.de: 'unter anderem auf'};
       const closed = {Lang.en: 'namely', Lang.de: 'namentlich'};
       for (final lang in Lang.values) {
@@ -783,19 +852,19 @@ void main() {
   });
 
   group('page frame', () {
-    // The footer is the brand copy (home.md "Footer"), character for character.
-    const footer = {
+    // The footer (decision 59): the legal links, the address and LinkedIn in
+    // one row and the company line; no tagline, no repeated navigation, no
+    // second language switch.
+    const frame = {
       Lang.en: (
-        tagline: 'Cube Algos, Heinsberg. Software studio since 2023.',
-        links: ['Home', 'Blog', 'About', 'Contact'],
         linkedin: 'Cube Algos on LinkedIn',
         skip: 'Skip to content',
+        nav: ['Blog', 'Contact'],
       ),
       Lang.de: (
-        tagline: 'Cube Algos, Heinsberg. Softwarestudio seit 2023.',
-        links: ['Start', 'Blog', 'Über', 'Kontakt'],
         linkedin: 'Cube Algos auf LinkedIn',
         skip: 'Zum Inhalt springen',
+        nav: ['Blog', 'Kontakt'],
       ),
     };
     const bottom = '© 2026 Cube Algos UG (haftungsbeschränkt)';
@@ -807,7 +876,7 @@ void main() {
         final path = route.path;
         test('$path renders through the shell', () {
           final html = read(path);
-          final f = footer[lang]!;
+          final f = frame[lang]!;
           // Skip link first, then landmarks in order.
           final order = [
             '<a class="skip" href="#main">${f.skip}</a>',
@@ -819,9 +888,21 @@ void main() {
           expect(order, everyElement(isNonNegative), reason: path);
           expect(html, matches(RegExp('<main [^>]*id="main"')), reason: path);
           expect(order, orderedEquals([...order]..sort()), reason: path);
-          // Footer text.
+          // The header navigation: Blog and Contact, in that order.
+          final headerHtml = html.substring(
+            html.indexOf('<header'),
+            html.indexOf('</header>'),
+          );
+          final navHtml = RegExp(
+            '<nav class="primary".*?</nav>',
+            dotAll: true,
+          ).firstMatch(headerHtml)![0]!;
+          expect([for (final m in anchor.allMatches(navHtml)) m[2]], f.nav);
+          // Footer: the legal links, the address, LinkedIn, the company line.
           final footerHtml = html.substring(html.indexOf('<footer'));
-          expect(footerHtml, contains('<p class="tagline">${f.tagline}</p>'));
+          expect(footerHtml, isNot(contains('tagline')));
+          expect(footerHtml, isNot(contains('Softwarestudio seit')));
+          expect(footerHtml, isNot(contains('Software studio since')));
           expect(footerHtml, contains('<p>$bottom</p>'));
           expect(
             footerHtml,
@@ -829,21 +910,16 @@ void main() {
               '<a href="mailto:hello@cubealgos.de">hello@cubealgos.de</a>',
             ),
           );
-          final labels = [
-            for (final m in anchor.allMatches(
-              footerHtml.split('class="bottom"')[0],
-            ))
-              m[2]!,
-          ];
+          expect('<nav'.allMatches(footerHtml), hasLength(1));
+          expect(footerHtml, isNot(contains('lang-switch')));
+          final labels = [for (final m in anchor.allMatches(footerHtml)) m[2]!];
           expect(labels, [
-            ...f.links,
             'Impressum',
             'Datenschutz',
             'hello@cubealgos.de',
             f.linkedin,
           ]);
-          // The company page: a plain link to the allow-listed URL, labelled
-          // apart from the founder's own "LinkedIn" link on About.
+          // The company page: a plain link to the allow-listed URL.
           expect(
             footerHtml,
             contains(
@@ -851,14 +927,13 @@ void main() {
               '${f.linkedin}</a>',
             ),
           );
-          expect(footerHtml, isNot(contains(linkedinProfileUrl)));
-          // Header nav and the language switch (header and footer).
+          // The language switch is in the header only.
           final switchLinks = [
             for (final m in anchor.allMatches(html))
               if (m[1]!.contains('hreflang=') && (m[2] == 'DE' || m[2] == 'EN'))
                 m,
           ];
-          expect(switchLinks, hasLength(4), reason: path);
+          expect(switchLinks, hasLength(2), reason: path);
           for (final m in switchLinks) {
             final target = Lang.values.firstWhere(
               (l) => m[2] == l.code.toUpperCase(),

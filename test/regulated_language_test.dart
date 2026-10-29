@@ -68,6 +68,18 @@ void main() {
     expect(_forbidden[Lang.de]!.hasMatch('Hohe Rendite, garantiert'), isTrue);
     expect(_forbidden[Lang.en]!.hasMatch('Powered by Chainlink'), isTrue);
     expect(_forbidden[Lang.en]!.hasMatch('A recommended token'), isTrue);
+    // The product's name holds "bank" in one word: no word boundary, no hit
+    // (wearenotabank `DEC-082`); "bank" on its own is still caught.
+    for (final lang in Lang.values) {
+      expect(
+        _forbidden[lang]!.hasMatch(
+          'Cube Algos ist das Studio hinter wearenotabank, the studio behind '
+          'wearenotabank, github.com/wearenotabank',
+        ),
+        isFalse,
+      );
+      expect(_forbidden[lang]!.hasMatch('wearenotabank is a bank'), isTrue);
+    }
     // Intended: licence rows, the "no guarantee" talk of the post, MF-8.
     expect(
       _forbidden[Lang.en]!.hasMatch(

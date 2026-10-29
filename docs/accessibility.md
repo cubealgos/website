@@ -52,8 +52,6 @@ How to test:
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | Home | DE | `/` | pass | pending: Kevin | pending: Kevin | pending: Kevin | pending: Kevin | pending: Kevin | pending: Kevin |
 | Home | EN | `/en/` | pass | pending: Kevin | pending: Kevin | pending: Kevin | pending: Kevin | pending: Kevin | pending: Kevin |
-| About | DE | `/ueber/` | pass | pending: Kevin | pending: Kevin | pending: Kevin | pending: Kevin | pending: Kevin | pending: Kevin |
-| About | EN | `/en/about/` | pass | pending: Kevin | pending: Kevin | pending: Kevin | pending: Kevin | pending: Kevin | pending: Kevin |
 | Contact | DE | `/kontakt/` | pass | pending: Kevin | pending: Kevin | pending: Kevin | pending: Kevin | pending: Kevin | pending: Kevin |
 | Contact | EN | `/en/contact/` | pass | pending: Kevin | pending: Kevin | pending: Kevin | pending: Kevin | pending: Kevin | pending: Kevin |
 | Impressum | DE | `/impressum/` | pass | pending: Kevin | pending: Kevin | pending: Kevin | pending: Kevin | pending: Kevin | pending: Kevin |
@@ -62,6 +60,10 @@ How to test:
 | Datenschutz | EN | `/en/datenschutz/` | pass | pending: Kevin | pending: Kevin | pending: Kevin | pending: Kevin | pending: Kevin | pending: Kevin |
 | 404 | DE | `/404.html` | pass | pending: Kevin | pending: Kevin | pending: Kevin | pending: Kevin | pending: Kevin | pending: Kevin |
 | 404 | EN | `/en/404.html` | pass | pending: Kevin | pending: Kevin | pending: Kevin | pending: Kevin | pending: Kevin | pending: Kevin |
+
+About folded into Home (brand decision 59). `/ueber/` and `/en/about/` are redirect pages (`docs/redirects.md`): a
+browser never stays on them, so they have no row; `browser_check` opens them and checks that they end on Home. Home
+changed to the business card (the statement and the fact sheet), so its row needs a new manual run.
 
 ### Log
 
@@ -76,7 +78,7 @@ How to test:
   and one DE page, in light and dark. `browser_check` and `a11y_check` automate the tab order
   and the ring.
 - [ ] pending: Kevin. (moved from #9) Watch the home sting once in a real browser: it plays on
-  the first home view, not again after About and back, plays again in a new session, and there
+  the first home view, not again after Contact and back, plays again in a new session, and there
   is no motion with reduced motion on (automated in `browser_check`).
 - [ ] pending: Kevin. Keyboard-only and VoiceOver run of Home (EN) and Home (DE) from the skip
   link to the footer, without a dead end.

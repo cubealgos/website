@@ -7,10 +7,10 @@ import 'package:website/src/routes.dart';
 
 import 'support/fixtures.dart';
 
-/// The pages that have a path of their own (not one per work or post).
+/// The pages that have a path of their own (not one per post).
 final List<PageKey> _fixed = [
   for (final k in PageKey.values)
-    if (k != PageKey.work && k != PageKey.post) k,
+    if (k != PageKey.post) k,
 ];
 
 void main() {
@@ -29,12 +29,8 @@ void main() {
       ([
         '/',
         '/en/',
-        '/ueber/',
-        '/en/about/',
         '/kontakt/',
         '/en/contact/',
-        '/arbeiten/',
-        '/en/work/',
         '/blog/',
         '/en/blog/',
         '/impressum/',
@@ -47,9 +43,7 @@ void main() {
     );
   });
 
-  test('a work and a post live under the path of their index', () {
-    expect(routePath(PageKey.work, Lang.de, 'a-work'), '/arbeiten/a-work/');
-    expect(routePath(PageKey.work, Lang.en, 'a-work'), '/en/work/a-work/');
+  test('a post lives under the path of the index', () {
     expect(routePath(PageKey.post, Lang.de, 'a-post'), '/blog/a-post/');
     expect(routePath(PageKey.post, Lang.en, 'a-post'), '/en/blog/a-post/');
   });
@@ -58,7 +52,6 @@ void main() {
     final keys = {for (final r in routesFor(SiteContent())) r.key};
     expect(keys, {
       PageKey.home,
-      PageKey.about,
       PageKey.contact,
       PageKey.impressum,
       PageKey.datenschutz,
@@ -76,8 +69,8 @@ void main() {
       expect(back?.key, r.key);
       expect(back?.slug, r.slug);
     }
-    // 12 fixed + 2 work indexes + 8 works + 2 blog indexes + 3 posts.
-    expect(routes, hasLength(12 + 2 + 8 + 2 + 3));
+    // 10 fixed + 2 blog indexes + 3 posts.
+    expect(routes, hasLength(10 + 2 + 3));
   });
 
   test('the language switch leads to the equivalent page, both ways', () {
@@ -93,7 +86,6 @@ void main() {
       // And back again.
       expect(resolved.switchPath(r.lang, content), r.path);
     }
-    expect(switchTarget(PageKey.about, Lang.en), '/ueber/');
     expect(switchTarget(PageKey.contact, Lang.de), '/en/contact/');
     expect(switchTarget(PageKey.home, Lang.en), '/');
   });
@@ -110,7 +102,6 @@ void main() {
   test('the 404 pages switch to the home page, not to each other', () {
     expect(switchPath(PageKey.notFound, Lang.en), '/en/');
     expect(switchPath(PageKey.notFound, Lang.de), '/');
-    expect(switchPath(PageKey.about, Lang.de), '/ueber/');
     expect(
       const Route(PageKey.notFound, Lang.de).switchPath(Lang.en, SiteContent()),
       '/en/',
@@ -118,16 +109,22 @@ void main() {
   });
 
   test('resolve accepts paths with or without trailing slash', () {
-    final content = fixtureContent();
-    expect(resolve('/en/about')?.key, PageKey.about);
-    expect(resolve('/ueber/')?.lang, Lang.de);
+    expect(resolve('/en/contact')?.key, PageKey.contact);
+    expect(resolve('/kontakt/')?.lang, Lang.de);
     expect(resolve('/nope'), isNull);
-    expect(resolve('/arbeiten', content: content)?.key, PageKey.works);
-    expect(
-      resolve('/arbeiten'),
-      isNull,
-      reason: 'no works in the empty content',
-    );
+  });
+
+  test('About and Works are no routes any more', () {
+    final content = fixtureContent();
+    for (final gone in [
+      '/ueber/',
+      '/en/about/',
+      '/arbeiten/',
+      '/en/work/',
+      '/arbeiten/an-old-work/',
+    ]) {
+      expect(resolve(gone, content: content), isNull, reason: gone);
+    }
   });
 
   test('titles are unique per language', () {
@@ -141,16 +138,8 @@ void main() {
     }
   });
 
-  test('a work and a post take their metadata from their data file', () {
+  test('a post takes its metadata from its data file', () {
     final content = fixtureContent();
-    final work = metaFor(
-      const Route(PageKey.work, Lang.en, 'fixture-price-oracle-contracts'),
-      content,
-    );
-    expect(work.title, 'fixture-price-oracle-contracts | Cube Algos');
-    expect(work.h1, 'fixture-price-oracle-contracts');
-    expect(work.description, isNot(contains('`')));
-    expect(work.description, contains('AggregatorV3Interface'));
     final post = metaFor(
       const Route(PageKey.post, Lang.en, 'fixture-post'),
       content,

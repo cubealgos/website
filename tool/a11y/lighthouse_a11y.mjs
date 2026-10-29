@@ -39,8 +39,11 @@ function walk(dir) {
 
 // Every built HTML page, as a URL path: `a/index.html` is `/a/`, the flat 404
 // pages keep their file name (they are served with status 200 here).
+// The redirect pages of the retired URLs (`<meta http-equiv="refresh">`) are
+// left out: a browser never stays on them, so there is no page to audit.
 const pages = walk(root)
   .filter((f) => f.endsWith('.html'))
+  .filter((f) => !/http-equiv="refresh"/i.test(readFileSync(f, 'utf8')))
   .map((f) => '/' + relative(root, f).split(sep).join('/'))
   .map((u) => u.replace(/index\.html$/, ''))
   .sort();

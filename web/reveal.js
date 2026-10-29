@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: Apache-2.0 */
 /* Reveals headings and content blocks (.reveal) once, as they scroll into view:
-   a short rise and fade, staggered within a group. Loaded in <head> on the home,
-   about and contact pages. Without JavaScript, without IntersectionObserver or
+   a short rise and fade, staggered within a group. Loaded in <head> on the contact
+   and blog pages. Without JavaScript, without IntersectionObserver or
    with reduced motion nothing is hidden. Stores nothing. */
 (function () {
   'use strict';
