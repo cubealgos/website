@@ -27,3 +27,11 @@ verified:
     reason: >-
       pub.dev reports no licence; the LICENSE file is the MIT text after a contributor list
       (read 2026-10-01); transitive dev-only dependency of jaspr_cli.
+  - package: posix
+    version: 6.5.2
+    licence: MIT
+    reason: >-
+      pub.dev reports no licence since 2026-10-29 (its score API returns only the publisher tag);
+      the LICENSE file in the published archive, whose sha256 matches pubspec.lock, is the plain
+      MIT text, "Copyright (c) 2020 Brett Sutton" (read 2026-10-29); transitive dev-only
+      dependency: build_web_compilers -> archive -> posix.
