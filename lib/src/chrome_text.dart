@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 /// The words of the shared page frame (header, footer, skip link) per
-/// language. The footer text is the brand copy, character for character.
+/// language.
 library;
 
 import 'package:website/src/routes.dart';
@@ -12,14 +12,8 @@ typedef ChromeText = ({
   String homeLabel,
   String navLabel,
   String langLabel,
-  String langFooterLabel,
-  String footerLabel,
   String legalLabel,
-  String tagline,
-  String home,
-  String work,
   String blog,
-  String about,
   String contact,
   String impressum,
   String datenschutz,
@@ -37,14 +31,8 @@ const Map<Lang, ChromeText> chromeText = {
     homeLabel: 'Cube Algos, Home',
     navLabel: 'Main',
     langLabel: 'Language',
-    langFooterLabel: 'Switch language',
-    footerLabel: 'Footer',
     legalLabel: 'Legal',
-    tagline: 'Cube Algos, Heinsberg. Software studio since 2023.',
-    home: 'Home',
-    work: 'Work',
     blog: 'Blog',
-    about: 'About',
     contact: 'Contact',
     impressum: 'Impressum',
     datenschutz: 'Datenschutz',
@@ -56,14 +44,8 @@ const Map<Lang, ChromeText> chromeText = {
     homeLabel: 'Cube Algos, Startseite',
     navLabel: 'Hauptnavigation',
     langLabel: 'Sprache',
-    langFooterLabel: 'Sprache wechseln',
-    footerLabel: 'Fußbereich',
     legalLabel: 'Rechtliches',
-    tagline: 'Cube Algos, Heinsberg. Softwarestudio seit 2023.',
-    home: 'Start',
-    work: 'Arbeiten',
     blog: 'Blog',
-    about: 'Über',
     contact: 'Kontakt',
     impressum: 'Impressum',
     datenschutz: 'Datenschutz',

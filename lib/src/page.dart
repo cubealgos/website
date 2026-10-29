@@ -4,59 +4,55 @@ import 'package:jaspr/dom.dart';
 import 'package:jaspr/server.dart';
 import 'package:website/src/chrome.dart';
 import 'package:website/src/content/site_content.dart';
+import 'package:website/src/copy/home_copy.dart';
 import 'package:website/src/icons.dart';
 import 'package:website/src/legal_content.dart';
 import 'package:website/src/legal_view.dart';
+import 'package:website/src/outbound.dart';
 import 'package:website/src/page_meta.dart';
-import 'package:website/src/pages/about_page.dart';
 import 'package:website/src/pages/blog_pages.dart';
 import 'package:website/src/pages/contact_page.dart';
 import 'package:website/src/pages/home_page.dart';
 import 'package:website/src/pages/not_found_page.dart';
-import 'package:website/src/pages/works_pages.dart';
 import 'package:website/src/routes.dart';
 import 'package:website/src/seo.dart';
 import 'package:website/src/sting.dart';
 
 /// The pages whose sections rise in on scroll (`reveal.js`).
-const Set<PageKey> revealPages = {
-  PageKey.home,
-  PageKey.about,
-  PageKey.contact,
-  PageKey.works,
-  PageKey.blog,
-};
+const Set<PageKey> revealPages = {PageKey.contact, PageKey.blog};
 
 /// The pages whose sections run edge to edge (`main.flush`): the ledger pages.
-/// The legal pages and the 404 pages keep the padded `<main>`.
-const Set<PageKey> flushPages = {
-  PageKey.home,
-  PageKey.about,
-  PageKey.contact,
-  PageKey.works,
-  PageKey.work,
-  PageKey.blog,
-  PageKey.post,
-};
+/// The legal pages and the 404 pages keep the padded `<main>`; the home page
+/// is the business card and sets its own padding (`main.bc-main`).
+const Set<PageKey> flushPages = {PageKey.contact, PageKey.blog, PageKey.post};
 
 /// The page shell: `<html lang>`, title, description, canonical and hreflang
 /// links derived from the route table, the skip link, header and footer, and
 /// the body of the page.
 class PageShell extends StatelessComponent {
-  /// Creates the shell of [route] over [content].
-  const new({required this.route, required this.content, super.key});
+  /// Creates the shell of [route] over [content]. [productNamed] is whether
+  /// the site names wearenotabank (its [namesProduct]).
+  const new({
+    required this.route,
+    required this.content,
+    this.productNamed = namesProduct,
+    super.key,
+  });
 
   /// Which page this is.
   final Route route;
 
-  /// The works and posts of the site.
+  /// The posts of the site.
   final SiteContent content;
+
+  /// Whether the pages that can name wearenotabank do.
+  final bool productNamed;
 
   @override
   Component build(BuildContext context) {
     final key = route.key;
     final lang = route.lang;
-    final meta = metaFor(route, content);
+    final meta = metaFor(route, content, named: productNamed);
     final canonical = route.url;
     final alternates = route.alternates(content);
     final xDefault =
@@ -129,20 +125,25 @@ class PageShell extends StatelessComponent {
       SiteHeader(route: route, content: content),
       main_(
         id: mainId,
-        classes: flushPages.contains(key) ? 'flush' : null,
+        classes: switch (key) {
+          PageKey.home => 'bc-main',
+          _ when flushPages.contains(key) => 'flush',
+          _ => null,
+        },
         attributes: const {'tabindex': '-1'},
         [
           if (legalDocs[key]?[lang] case final doc?)
             LegalPage(heading: meta.h1, doc: doc)
           else
             switch (key) {
-              PageKey.home => HomePage(lang: lang, content: content),
-              PageKey.about => AboutPage(lang: lang, content: content),
-              PageKey.contact => ContactPage(lang: lang),
-              PageKey.works => WorksIndexPage(lang: lang, content: content),
-              PageKey.work => WorkPage(
+              PageKey.home => HomePage(
                 lang: lang,
-                work: content.workBySlug(route.slug!)!,
+                content: content,
+                productNamed: productNamed,
+              ),
+              PageKey.contact => ContactPage(
+                lang: lang,
+                productNamed: productNamed,
               ),
               PageKey.blog => BlogIndexPage(lang: lang, content: content),
               PageKey.post => PostPage(
@@ -156,7 +157,7 @@ class PageShell extends StatelessComponent {
             },
         ],
       ),
-      SiteFooter(route: route, content: content),
+      SiteFooter(route: route),
     ]);
   }
 
@@ -168,7 +169,10 @@ class PageShell extends StatelessComponent {
   ) {
     final lang = route.lang;
     final image = shareImageUrl(lang);
-    final alt = '${pageMeta[PageKey.home]![lang]!.h1} (Cube Algos)';
+    // What the share image shows: the eyebrow, then the H1.
+    final alt =
+        '${homeCopy[lang]!.eyebrow}. '
+        '${fixedMeta(PageKey.home, lang, named: productNamed).h1}';
     Component tag(String key, String value, {bool property = true}) =>
         Component.element(
           tag: 'meta',

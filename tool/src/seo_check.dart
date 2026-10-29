@@ -53,6 +53,22 @@ List<String> organizationProblems(Object? data) {
       out.add('$key is not on $siteOrigin');
     }
   }
+  final brand = data['brand'];
+  if (brand != null) {
+    if (!namesProduct) {
+      out.add('brand is set but the site does not name the product');
+    }
+    if (brand is! Map ||
+        brand['@type'] != 'Brand' ||
+        brand['name'] != 'wearenotabank' ||
+        brand['url'] != wearenotabankOrgUrl ||
+        brand['description'] is! String ||
+        (brand['description'] as String).isEmpty) {
+      out.add('brand is not the wearenotabank Brand with its description');
+    }
+  } else if (namesProduct) {
+    out.add('missing brand');
+  }
   final sameAs = data['sameAs'];
   if (sameAs is List) {
     for (final v in sameAs) {

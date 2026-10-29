@@ -85,25 +85,17 @@ class Fish extends StatelessComponent {
   );
 }
 
-/// A chamfered `mailto:` button (the focus ring lives on the wrapper). Set
-/// [inverse] for use on an amber ground.
+/// A chamfered `mailto:` button (the focus ring lives on the wrapper).
 class MailButton extends StatelessComponent {
   /// Creates a button labelled [label].
-  const new({required this.label, this.inverse = false, super.key});
+  const new({required this.label, super.key});
 
   /// The button text.
   final String label;
 
-  /// Ink button for amber panels.
-  final bool inverse;
-
   @override
   Component build(BuildContext context) => span(classes: 'btn-wrap', [
-    a(
-      [Component.text(label)],
-      href: 'mailto:$contactEmail',
-      classes: inverse ? 'btn btn--inverse' : 'btn',
-    ),
+    a([Component.text(label)], href: 'mailto:$contactEmail', classes: 'btn'),
   ]);
 }
 
@@ -111,12 +103,7 @@ class MailButton extends StatelessComponent {
 /// anchor).
 class LinkButton extends StatelessComponent {
   /// Creates a button labelled [label] leading to [href].
-  const new({
-    required this.label,
-    required this.href,
-    this.inverse = false,
-    super.key,
-  });
+  const new({required this.label, required this.href, super.key});
 
   /// The button text.
   final String label;
@@ -124,16 +111,9 @@ class LinkButton extends StatelessComponent {
   /// The target: a root-absolute path or an in-page anchor.
   final String href;
 
-  /// Ink button for amber panels.
-  final bool inverse;
-
   @override
   Component build(BuildContext context) => span(classes: 'btn-wrap', [
-    a(
-      [Component.text(label)],
-      href: href,
-      classes: inverse ? 'btn btn--inverse' : 'btn',
-    ),
+    a([Component.text(label)], href: href, classes: 'btn'),
   ]);
 }
 

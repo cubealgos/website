@@ -1,9 +1,9 @@
 /* SPDX-License-Identifier: Apache-2.0 */
-/* Home page: plays the mark sting inside the offer card when a visitor arrives
+/* Home page: plays the mark sting inside the fact sheet when a visitor arrives
    from outside the site (a direct load, an external link or an empty
-   referrer) or reloads the page, once the card is in view and has faded in.
+   referrer) or reloads the page, once the sheet is in view and has faded in.
    Loaded in <head> on the home pages. Without JavaScript, with reduced motion,
-   or when the visitor came from a page of this site, the card shows the still
+   or when the visitor came from a page of this site, the sheet shows the still
    mark. Stores nothing. */
 (function () {
   'use strict';

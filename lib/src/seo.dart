@@ -32,8 +32,14 @@ String ogLocale(Lang lang) => switch (lang) {
 /// The URL of the vendored mark, used as the organisation's logo.
 const logoUrl = '$siteOrigin/brand/logo/mark.svg';
 
-/// The `Organization` JSON-LD of the home pages.
-Map<String, Object> organizationJsonLd() => {
+/// The brand's description in the structured data (regulatory edit E-C-4,
+/// wearenotabank `DEC-082` D3: the name never stands without its object).
+const brandDescription = 'Developer tools for EVM chains';
+
+/// The `Organization` JSON-LD of the home pages. [productNamed] is whether the
+/// site names wearenotabank: then the organisation has it as its `brand` (a
+/// product, so not `sameAs`), with its object.
+Map<String, Object> organizationJsonLd({bool productNamed = namesProduct}) => {
   '@context': 'https://schema.org',
   '@type': 'Organization',
   'name': companyName,
@@ -48,12 +54,20 @@ Map<String, Object> organizationJsonLd() => {
   },
   // The studio's own profiles, from the outbound allow-list.
   'sameAs': [linkedinCompanyUrl],
+  if (productNamed)
+    'brand': {
+      '@type': 'Brand',
+      'name': 'wearenotabank',
+      'url': wearenotabankOrgUrl,
+      'description': brandDescription,
+    },
 };
 
 /// `sitemap.xml`: every indexable page, each with its `xhtml:link`
 /// alternates (the languages the page exists in, and `x-default` = German
-/// where it exists). The 404 pages stay out. The pages of the works and the
-/// posts are listed only for content that exists.
+/// where it exists). The 404 pages stay out, and so do the redirect pages of
+/// the retired URLs (they are no routes). The pages of the posts are listed
+/// only for content that exists.
 String sitemapXml(SiteContent content) {
   final buffer = StringBuffer()
     ..writeln('<?xml version="1.0" encoding="UTF-8"?>')

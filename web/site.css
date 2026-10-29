@@ -34,7 +34,7 @@ main {
   isolation: isolate;
 }
 
-/* The ledger pages (Home, About, Contact) run their sections edge to edge. */
+/* The ledger pages (Contact, Blog) run their sections edge to edge. */
 main.flush {
   padding-block: 0;
 }
@@ -271,12 +271,6 @@ nav a[aria-current="page"],
   line-height: var(--font-scale-small-line-height);
 }
 
-.tagline {
-  margin: 0 0 var(--spacing-4);
-  font-weight: var(--font-weight-display);
-  font-size: var(--font-scale-body-size);
-}
-
 .footer-links {
   display: flex;
   flex-wrap: wrap;
@@ -305,6 +299,61 @@ nav a[aria-current="page"],
   margin: 0;
 }
 
+/* Slim footer (decision 59): no tagline and no repeated navigation. The legal
+   links, the address and LinkedIn sit on one row, then the company line; from
+   64rem the company line moves to the right of that row. */
+.bc-footer {
+  padding-block: var(--spacing-4);
+}
+
+.bc-footer .footer-links {
+  align-items: center;
+  column-gap: var(--spacing-6);
+  row-gap: 0;
+}
+
+.bc-footer .footer-links ul {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: var(--spacing-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.bc-footer .footer-contact {
+  padding: 0;
+}
+
+.bc-footer .footer-links a {
+  display: inline-block;
+  padding-block: var(--spacing-3);
+}
+
+.bc-footer nav a {
+  color: var(--color-fg);
+}
+
+.bc-footer .bottom {
+  margin-top: var(--spacing-2);
+}
+
+@media (min-width: 64rem) {
+  .bc-footer .wrap {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    column-gap: var(--spacing-8);
+  }
+
+  .bc-footer .bottom {
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+}
+
 /* Chamfered button (a mailto link styled as a button). The focus ring lives on
    the wrapper as a drop-shadow, because clip-path would clip an outline. */
 .btn-wrap {
@@ -321,6 +370,8 @@ nav a[aria-current="page"],
   color: var(--color-on-accent);
   font-weight: var(--font-weight-display);
   text-decoration: none;
+  /* A label wraps at spaces only ("Git-Hub" at 320 px). */
+  hyphens: manual;
   transition: transform var(--duration-press) var(--ease-settle);
   clip-path: polygon(
     0 0,
@@ -364,37 +415,20 @@ nav a[aria-current="page"],
 }
 
 /* Shared small pieces. */
-.vh {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
-}
-
 .fish-img {
   display: block;
   width: 100%;
   height: auto;
 }
 
-.eyebrow,
-.eyebrow-muted {
+.eyebrow {
   font-family: var(--font-family-mono);
   font-weight: var(--font-weight-mono);
   font-size: var(--font-scale-label-size);
   line-height: var(--font-scale-label-line-height);
   letter-spacing: var(--font-scale-label-tracking);
   text-transform: uppercase;
-}
-
-.eyebrow {
   color: var(--color-accent-text);
-}
-
-.eyebrow-muted {
-  color: var(--color-muted);
 }
 
 .actions {
@@ -407,11 +441,6 @@ nav a[aria-current="page"],
 .text-link {
   font-weight: var(--font-weight-display);
   padding-block: var(--spacing-3);
-}
-
-.num {
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
 }
 
 /* The 404 page keeps the plain hero: text, then the confused fish. */
@@ -440,10 +469,8 @@ nav a[aria-current="page"],
   }
 }
 
-/* Chamfered surfaces: the stack card, the amber panel, the confused fish's
-   stage. */
+/* Chamfered surfaces: the ledger card and the confused fish's stage. */
 .ledger,
-.cta,
 .fish-stage {
   --c: var(--chamfer-lg);
 
@@ -460,15 +487,10 @@ nav a[aria-current="page"],
 /* Single-column grids never grow past the viewport: long German words wrap
    instead of widening the page. */
 .hero-grid,
-.band-grid,
-.sheet-grid,
-.split,
-.ticks,
-.cta {
+.split {
   grid-template-columns: minmax(0, 1fr);
 }
 
-.ticks,
 .note-list {
   max-width: none;
 }
@@ -505,7 +527,134 @@ nav a[aria-current="page"],
   }
 }
 
-/* Page hero (Home, About, Contact): headline left, one card right from 64rem. */
+/* Home, the business card (decision 59, layout B "Steckbrief"): the statement
+   on the left, the fact sheet on the right, in the middle of the screen
+   between header and footer. The grid lines up with the hairline grid behind it
+   (.gridlines draws 4 columns on phones, 12 from 48rem). */
+.bc-main {
+  display: grid;
+  align-content: center;
+  padding-block: var(--spacing-6) var(--spacing-8);
+}
+
+@media (min-width: 64rem) {
+  .bc-main {
+    padding-block: var(--spacing-6);
+  }
+}
+
+.bc-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  row-gap: var(--spacing-6);
+}
+
+@media (min-width: 48rem) {
+  .bc-grid {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+  }
+}
+
+.bc-h1 {
+  margin: 0;
+  font-size: var(--font-scale-h1-size);
+  line-height: var(--font-scale-h1-line-height);
+  letter-spacing: var(--font-scale-h1-tracking);
+  hyphens: manual;
+}
+
+@media (max-width: 22.49rem) {
+  .bc-h1 {
+    font-size: var(--font-scale-h2-size);
+    line-height: var(--font-scale-h2-line-height);
+  }
+}
+
+.bc-lede {
+  margin: 0;
+  max-width: 62ch;
+}
+
+/* A line of this paragraph is wide enough from 48rem to wrap at spaces only
+   (no "Ke-vin"); phones keep the site's automatic hyphenation. */
+@media (min-width: 48rem) {
+  .bc-lede {
+    hyphens: manual;
+  }
+}
+
+.b-text {
+  display: grid;
+  gap: var(--spacing-6);
+  align-content: start;
+  padding-top: var(--spacing-4);
+  min-width: 0;
+}
+
+.b-text > * {
+  margin: 0;
+}
+
+.b-text .bc-h1 {
+  border-top: 2px solid var(--color-fg);
+  padding-top: var(--spacing-4);
+}
+
+.b-sheet .stack dd {
+  hyphens: manual;
+}
+
+.b-sheet .stack dd a {
+  font-weight: var(--font-weight-display);
+}
+
+.b-sheet-foot {
+  margin: 0;
+  font-size: var(--font-scale-small-size);
+}
+
+@media (min-width: 48rem) {
+  .b-text {
+    grid-column: 1 / 13;
+  }
+
+  .b-sheet {
+    grid-column: 1 / 10;
+  }
+
+  .b-text .bc-h1 {
+    font-size: var(--font-scale-display-size);
+    letter-spacing: var(--font-scale-display-tracking);
+  }
+}
+
+@media (min-width: 64rem) {
+  .b-text {
+    grid-column: 1 / 8;
+  }
+
+  .b-sheet {
+    grid-column: 8 / 13;
+    grid-row: 1;
+  }
+}
+
+/* A value that must not break inside: the register number. */
+.nobr {
+  white-space: nowrap;
+}
+
+/* The outbound marker after a link that leaves the site: a small diagonal
+   arrow, decoration only (the link text says where it goes). */
+.ext {
+  display: inline-block;
+  width: 0.75em;
+  height: 0.75em;
+  margin-inline-start: var(--spacing-2);
+  vertical-align: -0.02em;
+}
+
+/* Page hero (Contact, Blog): headline left, one card right from 64rem. */
 .hero {
   padding-block: var(--spacing-8) var(--spacing-12);
 }
@@ -540,30 +689,14 @@ nav a[aria-current="page"],
   hyphens: manual;
 }
 
-.hero-sublines > p {
-  margin: 0;
-}
-
-/* Two sublines: the short one on phones, the full one elsewhere. `display:
-   none` takes the hidden one out of the accessibility tree. */
-.hero-sub--short {
-  display: none;
-}
-
+/* The subline of a page hero is a size smaller on phones. */
 @media (max-width: 29.99rem) {
   .hero-sub {
     font-size: var(--font-scale-body-size);
     line-height: var(--font-scale-body-line-height);
   }
 
-  .hero-sub--full {
-    display: none;
-  }
-
-  .hero-sub--short {
-    display: block;
-  }
-}
+    }
 
 @media (min-width: 48rem) {
   .hero-h1 {
@@ -589,7 +722,7 @@ nav a[aria-current="page"],
   }
 }
 
-/* The ledger card: the stack card on Home, the checklist on Contact. */
+/* The ledger card: the fact sheet on Home, the checklist on Contact. */
 .ledger {
   background: var(--color-card);
   padding: var(--spacing-6);
@@ -660,15 +793,8 @@ nav a[aria-current="page"],
   flex: none;
 }
 
-/* The hero card: what the studio builds with, as label and value rows on a
-   route line (square nodes). */
-.stack-col {
-  display: grid;
-  gap: var(--spacing-3);
-  min-width: 0;
-}
-
-/* The stack: label · value rows on the route line. */
+/* The stack: label · value rows on the route line (square nodes), the fact
+   sheet's rows on Home. */
 .stack {
   margin: 0;
   padding: 0 0 0 var(--spacing-8);
@@ -745,72 +871,6 @@ nav a[aria-current="page"],
   }
 }
 
-/* The proof band: an inverse surface (ink on paper pages, card grey on ink
-   pages), derived from existing tokens until branding names the roles
-   (cubealgos/branding#33). */
-:root {
-  --band-bg: var(--color-fg);
-  --band-fg: var(--color-bg);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --band-bg: var(--color-card);
-    --band-fg: var(--color-fg);
-  }
-}
-
-:root[data-theme="dark"] {
-  --band-bg: var(--color-card);
-  --band-fg: var(--color-fg);
-}
-
-.band {
-  background: var(--band-bg);
-  color: var(--band-fg);
-  padding-block: var(--spacing-16);
-}
-
-.band-grid {
-  display: grid;
-  gap: var(--spacing-6);
-}
-
-.band-title {
-  margin: 0;
-  font-size: var(--font-scale-h1-size);
-  line-height: var(--font-scale-h1-line-height);
-}
-
-.band-text {
-  margin: 0;
-  font-size: var(--font-scale-h3-size);
-  line-height: var(--font-scale-h3-line-height);
-  max-width: 52ch;
-  hyphens: manual;
-}
-
-@media (max-width: 29.99rem) {
-  .band-text {
-    font-size: var(--font-scale-body-size);
-    line-height: var(--font-scale-body-line-height);
-  }
-}
-
-@media (min-width: 64rem) {
-  .band-grid {
-    grid-template-columns: 5fr 7fr;
-    column-gap: calc(100% / 12);
-    align-items: start;
-  }
-
-  .band-title {
-    font-size: var(--font-scale-display-size);
-    line-height: var(--font-scale-display-line-height);
-    letter-spacing: var(--font-scale-display-tracking);
-  }
-}
-
 /* Plain sections: no card, just space and a hairline. */
 h2 {
   font-size: var(--font-scale-h2-size);
@@ -829,33 +889,12 @@ h3 {
   border-top: 1px solid var(--color-rule);
 }
 
-.band + .sec,
-.sheet + .sec,
 .sec--first {
   border-top: 0;
 }
 
 .sec--first {
   padding-top: var(--spacing-8);
-}
-
-.sec-h2 {
-  margin-bottom: var(--spacing-8);
-}
-
-.sec-head {
-  display: grid;
-  gap: var(--spacing-4);
-  margin-bottom: var(--spacing-8);
-}
-
-.sec-head > * {
-  margin: 0;
-}
-
-.measure {
-  max-width: 62ch;
-  hyphens: manual;
 }
 
 .note {
@@ -865,84 +904,7 @@ h3 {
   line-height: var(--font-scale-small-line-height);
 }
 
-@media (min-width: 64rem) {
-  .sec-head {
-    grid-template-columns: 4fr 8fr;
-    align-items: end;
-  }
-}
-
-/* Links to other sites (the few html_check allows): a plain text link, set
-   bold where it stands alone. */
-.item-link {
-  display: inline-block;
-  font-weight: var(--font-weight-display);
-  padding-block: var(--spacing-1);
-}
-
-.links-line a {
-  font-weight: var(--font-weight-display);
-  white-space: nowrap;
-}
-
-/* Short bold lines and link names never hyphenate ("Softwarestu-dio",
-   "kevinschee-ren.de" at 320 px). */
-.tagline,
-.links-line {
-  hyphens: manual;
-}
-
-/* Sheet: a light card-grey band, airy, the heading left. */
-.sheet {
-  background: var(--color-card);
-  padding-block: var(--spacing-16);
-}
-
-.sheet-grid {
-  display: grid;
-  gap: var(--spacing-6);
-}
-
-.sheet-title {
-  margin: 0;
-}
-
-.sheet-body {
-  display: grid;
-  gap: var(--spacing-4);
-  max-width: 52ch;
-}
-
-.sheet-body > * {
-  margin: 0;
-}
-
-.sheet-lede {
-  font-size: var(--font-scale-h3-size);
-  line-height: var(--font-scale-h3-line-height);
-  hyphens: manual;
-}
-
-.sheet-note {
-  padding-top: var(--spacing-4);
-  border-top: 2px solid var(--color-fg);
-  font-weight: var(--font-weight-display);
-}
-
-@media (max-width: 29.99rem) {
-  .sheet-lede {
-    font-size: var(--font-scale-body-size);
-    line-height: var(--font-scale-body-line-height);
-  }
-}
-
-@media (min-width: 64rem) {
-  .sheet-grid {
-    grid-template-columns: 4fr 8fr;
-  }
-}
-
-/* About: the founder split and the ticks. */
+/* Split: the heading left, the body right (Contact's security section). */
 .split {
   display: grid;
   gap: var(--spacing-6);
@@ -981,23 +943,6 @@ h3 {
   }
 }
 
-.ticks {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  border-top: 2px solid var(--color-fg);
-}
-
-.ticks li {
-  position: relative;
-  padding: var(--spacing-4) 0 var(--spacing-4) var(--spacing-6);
-  border-bottom: 1px solid var(--color-rule);
-  background: var(--color-bg);
-  min-width: 0;
-}
-
-.ticks li::before,
 .note-list li::before {
   content: "";
   position: absolute;
@@ -1008,72 +953,7 @@ h3 {
   background: var(--color-accent-fill);
 }
 
-.sec--after-band {
-  border-top: 0;
-}
-
-@media (min-width: 48rem) {
-  .ticks {
-    grid-template-columns: 1fr 1fr;
-    column-gap: var(--spacing-8);
-  }
-
-  .ticks li:last-child {
-    grid-column: 1 / -1;
-  }
-}
-
-@media (min-width: 64rem) {
-  .ticks li:last-child {
-    padding-right: calc(100% / 3);
-  }
-}
-
-/* About, "Der Gründer": the portrait under the heading, left column (decision
-   47). Sized to the 560 px source: 280 px wide at most (sharp at 2x), 192 px
-   on phones (sharp at about 3x). The brand chamfer cuts top-right and
-   bottom-left; no filter, no tint, no retouch. */
-.split-head {
-  display: grid;
-  gap: var(--spacing-6);
-  align-content: start;
-  min-width: 0;
-}
-
-.founder-photo {
-  --c: var(--chamfer-lg);
-
-  margin: 0;
-  width: 12rem;
-  aspect-ratio: 3 / 4;
-  background: var(--color-card);
-  clip-path: polygon(0 0, calc(100% - var(--c)) 0, 100% var(--c), 100% 100%, var(--c) 100%, 0 calc(100% - var(--c)));
-}
-
-.founder-photo picture {
-  display: contents;
-}
-
-.founder-photo img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-@media (min-width: 48rem) {
-  .founder-photo {
-    width: 15rem;
-  }
-}
-
-@media (min-width: 64rem) {
-  .founder-photo {
-    width: 17.5rem;
-  }
-}
-
-/* The body column no longer stretches its rows to the photo's height. */
+/* The body column does not stretch its rows. */
 .split-body {
   align-content: start;
 }
@@ -1095,89 +975,8 @@ h3 {
   top: calc(var(--spacing-3) + 0.7em);
 }
 
-.note-outro {
-  padding-top: var(--spacing-4);
-  border-top: 2px solid var(--color-fg);
-  font-weight: var(--font-weight-display);
-}
-
 .sec--last {
   padding-bottom: var(--spacing-12);
-}
-
-/* Final call to action: an amber panel with the on-amber fish. */
-.cta-sec {
-  padding-block: var(--spacing-8) var(--spacing-16);
-}
-
-.cta-sec--gap {
-  padding-top: var(--spacing-16);
-}
-
-.cta {
-  background: var(--color-accent-fill);
-  color: var(--color-on-accent);
-  padding: var(--spacing-8) var(--spacing-6);
-  display: grid;
-  gap: var(--spacing-6);
-  align-items: center;
-}
-
-.cta-text {
-  display: grid;
-  gap: var(--spacing-6);
-  justify-items: start;
-}
-
-.cta-text > * {
-  margin: 0;
-}
-
-.cta h2 {
-  font-size: var(--font-scale-h1-size);
-  line-height: var(--font-scale-h1-line-height);
-}
-
-.cta-fish {
-  width: 8rem;
-}
-
-@media (min-width: 48rem) {
-  .cta {
-    grid-template-columns: 1fr 14rem;
-    padding: var(--spacing-16) var(--spacing-12);
-  }
-
-  .cta--slim {
-    grid-template-columns: minmax(0, 1fr);
-    padding-block: var(--spacing-12);
-  }
-
-  .cta h2 {
-    font-size: var(--font-scale-display-size);
-    line-height: var(--font-scale-display-line-height);
-  }
-
-  .cta-fish {
-    width: 100%;
-  }
-}
-
-@media (min-width: 64rem) {
-  .cta--slim .cta-text {
-    grid-template-columns: 1fr auto;
-    align-items: center;
-  }
-}
-
-/* The inverse button sits on amber: ink fill, paper text. */
-.btn--inverse {
-  background: var(--color-on-accent);
-  color: var(--color-primitive-paper);
-}
-
-.btn--inverse::before {
-  background: var(--color-primitive-paper);
 }
 
 .lede {
@@ -1385,246 +1184,9 @@ h3 {
   margin: 0;
 }
 
-/* ---------- Works and blog (decisions 51, 52 and 55: direction C "Räume"). ---------- */
+/* ---------- Blog (decision 52). ---------- */
 
-/* Status: a mono label with the stack card's node. In development: an
-   outlined square; source public: a filled square; deployed: the amber
-   chamfer (fill only, never text). The text is always the foreground. */
-.status {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--spacing-2);
-  font-family: var(--font-family-mono);
-  font-size: var(--font-scale-label-size);
-  line-height: var(--font-scale-label-line-height);
-  letter-spacing: var(--font-scale-label-tracking);
-  text-transform: uppercase;
-  color: var(--color-fg);
-  white-space: nowrap;
-}
-
-.status-node {
-  width: 10px;
-  height: 10px;
-  flex: none;
-  border: 2px solid var(--color-fg);
-}
-
-.status--public .status-node {
-  background: var(--color-fg);
-}
-
-.status--deployed .status-node {
-  background: var(--color-accent-fill);
-  border-color: var(--color-accent-fill);
-  clip-path: polygon(0 0, 70% 0, 100% 30%, 100% 100%, 30% 100%, 0 70%);
-}
-
-.placard-lic,
-.placard-no {
-  font-family: var(--font-family-mono);
-  font-size: var(--font-scale-label-size);
-  line-height: var(--font-scale-label-line-height);
-  letter-spacing: var(--font-scale-label-tracking);
-  color: var(--color-muted);
-}
-
-.name-note {
-  font-family: var(--font-family-mono);
-  font-weight: var(--font-weight-mono);
-  font-size: var(--font-scale-label-size);
-  letter-spacing: var(--font-scale-label-tracking);
-  text-transform: uppercase;
-  color: var(--color-muted);
-  white-space: nowrap;
-}
-
-.more {
-  font-weight: var(--font-weight-display);
-  padding-block: var(--spacing-2);
-  justify-self: start;
-}
-
-/* The plate: a work's first image, or its generated cover. */
-.plate {
-  --c: var(--chamfer-lg);
-
-  position: relative;
-  aspect-ratio: 4 / 3;
-  background: var(--color-card);
-  clip-path: polygon(
-    0 0,
-    calc(100% - var(--c)) 0,
-    100% var(--c),
-    100% 100%,
-    var(--c) 100%,
-    0 calc(100% - var(--c))
-  );
-  min-width: 0;
-}
-
-.plate-svg,
-.plate-img {
-  display: block;
-  width: 100%;
-  height: 100%;
-}
-
-.plate-img {
-  object-fit: cover;
-}
-
-.pl-bg {
-  fill: var(--color-card);
-}
-
-.pl-grid {
-  stroke: var(--color-rule);
-  stroke-width: 1;
-}
-
-.pl-ink {
-  fill: var(--color-fg);
-}
-
-.pl-outline {
-  fill: none;
-  stroke: var(--color-fg);
-  stroke-width: 2;
-}
-
-.pl-amber {
-  fill: var(--color-accent-fill);
-}
-
-.pl-route {
-  stroke: var(--color-fg);
-  stroke-width: 2;
-}
-
-.pl-node {
-  fill: var(--color-card);
-  stroke: var(--color-fg);
-  stroke-width: 2;
-}
-
-/* Rooms: each work gets a room of its own, a full-width band with a large
-   plate and its text, alternating card grey and paper, the plate swapping
-   sides. Home shows two rooms and links to the rest. */
-.works-head {
-  padding-top: var(--spacing-16);
-}
-
-.works-head .sec-head {
-  margin-bottom: var(--spacing-12);
-}
-
-.room {
-  padding-block: var(--spacing-16);
-}
-
-.room--odd {
-  background: var(--color-card);
-}
-
-.room--odd .pl-bg,
-.room--odd .pl-node,
-.work-room .pl-bg,
-.work-room .pl-node {
-  fill: var(--color-bg);
-}
-
-.room--odd .plate,
-.work-room .plate {
-  background: var(--color-bg);
-}
-
-.room-grid {
-  display: grid;
-  gap: var(--spacing-8);
-  grid-template-columns: minmax(0, 1fr);
-  align-items: center;
-}
-
-.room-text {
-  display: grid;
-  gap: var(--spacing-4);
-  justify-items: start;
-  min-width: 0;
-}
-
-.room-text > * {
-  margin: 0;
-}
-
-.room-top {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--spacing-2) var(--spacing-4);
-}
-
-.room-name {
-  font-size: var(--font-scale-h1-size);
-  line-height: var(--font-scale-h1-line-height);
-  overflow-wrap: anywhere;
-}
-
-.room-line {
-  font-size: var(--font-scale-h3-size);
-  line-height: var(--font-scale-h3-line-height);
-  hyphens: manual;
-  max-width: 40ch;
-}
-
-@media (max-width: 29.99rem) {
-  .room-line {
-    font-size: var(--font-scale-body-size);
-    line-height: var(--font-scale-body-line-height);
-  }
-}
-
-.rooms-more {
-  padding-block: var(--spacing-8) var(--spacing-16);
-}
-
-.works--index .room:first-child {
-  padding-top: var(--spacing-12);
-}
-
-@media (min-width: 64rem) {
-  .room-grid {
-    grid-template-columns: 7fr 5fr;
-    column-gap: calc(100% / 12);
-  }
-
-  .room--even .room-grid {
-    grid-template-columns: 5fr 7fr;
-  }
-
-  .room--even .room-grid > .plate {
-    order: 2;
-  }
-}
-
-/* Work page: the work's room first (name and plate), then the text with the
-   facts beside it. */
-.work-room {
-  background: var(--color-card);
-  padding-block: var(--spacing-8) var(--spacing-16);
-}
-
-@media (min-width: 64rem) {
-  .work-room .room-grid {
-    grid-template-columns: 5fr 7fr;
-  }
-
-  .work-grid {
-    grid-template-columns: 7fr 5fr;
-    column-gap: calc(100% / 12);
-  }
-}
-
+/* The link back above a post. */
 .back {
   margin: 0 0 var(--spacing-6);
 }
@@ -1646,300 +1208,6 @@ h3 {
   stroke: currentcolor;
   stroke-width: 2;
   stroke-linecap: square;
-}
-
-.work-head {
-  display: grid;
-  gap: var(--spacing-4);
-  align-content: start;
-  min-width: 0;
-}
-
-.work-head > * {
-  margin: 0;
-}
-
-.work-h1 {
-  hyphens: manual;
-  overflow-wrap: anywhere;
-}
-
-.work-lede {
-  max-width: 48ch;
-}
-
-.work-lede code,
-.room-line code {
-  overflow-wrap: anywhere;
-}
-
-.work-grid {
-  display: grid;
-  gap: var(--spacing-8);
-  grid-template-columns: minmax(0, 1fr);
-}
-
-.work-main {
-  display: grid;
-  gap: var(--spacing-6);
-  align-content: start;
-  max-width: 62ch;
-  min-width: 0;
-}
-
-.work-main > * {
-  margin: 0;
-}
-
-.work-about h2 {
-  margin-bottom: var(--spacing-3);
-}
-
-.work-about p {
-  margin: 0;
-  font-size: var(--font-scale-h3-size);
-  line-height: var(--font-scale-h3-line-height);
-  hyphens: manual;
-}
-
-@media (max-width: 29.99rem) {
-  .work-about p {
-    font-size: var(--font-scale-body-size);
-    line-height: var(--font-scale-body-line-height);
-  }
-}
-
-.work-notice {
-  padding: var(--spacing-4) 0 var(--spacing-4) var(--spacing-4);
-  border-inline-start: 2px solid var(--color-accent-fill);
-  font-weight: var(--font-weight-display);
-}
-
-.work-funder {
-  color: var(--color-muted);
-}
-
-.work-closing {
-  padding-top: var(--spacing-4);
-  border-top: 1px solid var(--color-rule);
-}
-
-.work-images {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  gap: var(--spacing-4);
-  max-width: none;
-}
-
-.work-images img {
-  display: block;
-  width: 100%;
-  height: auto;
-}
-
-.work-side {
-  min-width: 0;
-}
-
-/* The facts card: a ledger with the work's number. */
-.facts-card {
-  gap: var(--spacing-2);
-}
-
-.work-facts {
-  margin: 0;
-  display: grid;
-}
-
-.work-facts > div {
-  display: grid;
-  gap: var(--spacing-1);
-  padding-block: var(--spacing-3);
-  border-top: 1px solid var(--color-rule);
-  min-width: 0;
-}
-
-.work-facts > div:first-child {
-  border-top: 0;
-}
-
-.work-facts dt {
-  font-family: var(--font-family-mono);
-  font-size: var(--font-scale-label-size);
-  line-height: var(--font-scale-label-line-height);
-  letter-spacing: var(--font-scale-label-tracking);
-  text-transform: uppercase;
-  color: var(--color-muted);
-}
-
-.work-facts dd {
-  margin: 0;
-  display: grid;
-  gap: var(--spacing-1);
-  justify-items: start;
-  min-width: 0;
-}
-
-.dd-strong {
-  font-weight: var(--font-weight-display);
-}
-
-.dd-note {
-  color: var(--color-muted);
-  font-size: var(--font-scale-small-size);
-  line-height: var(--font-scale-small-line-height);
-  hyphens: auto;
-}
-
-.chips,
-.work-links {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--spacing-1) var(--spacing-4);
-}
-
-.chips li {
-  font-weight: var(--font-weight-display);
-}
-
-.work-links {
-  flex-direction: column;
-}
-
-.work-links a {
-  display: inline-block;
-  padding-block: var(--spacing-1);
-  font-weight: var(--font-weight-display);
-}
-
-.facts-card .placard-no {
-  font-size: var(--font-scale-small-size);
-  color: var(--color-fg);
-}
-
-@media (min-width: 30rem) {
-  .work-facts > div {
-    grid-template-columns: 8rem minmax(0, 1fr);
-    column-gap: var(--spacing-4);
-    align-items: baseline;
-  }
-}
-
-/* Home: the studio in the ink band, six items in two columns. A link in the
-   band takes the dark-theme accent text (paper on ink needs the light amber)
-   until the branding names a band role (cubealgos/branding#33). */
-.studio-band a {
-  color: var(--color-primitive-accent-text-dark);
-}
-
-.studio-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  border-top: 2px solid var(--band-fg);
-  max-width: none;
-}
-
-.studio-list li {
-  padding-block: var(--spacing-4);
-  border-bottom: 1px solid var(--color-primitive-muted);
-  min-width: 0;
-  hyphens: manual;
-}
-
-.studio-list strong {
-  display: block;
-  margin-bottom: var(--spacing-1);
-}
-
-.studio-list .item-link {
-  display: inline;
-}
-
-@media (min-width: 48rem) {
-  .studio-list {
-    grid-template-columns: 1fr 1fr;
-    column-gap: var(--spacing-8);
-  }
-}
-
-/* The anchors of the home sections get a little air under the viewport
-   edge. */
-#studio,
-#arbeiten,
-#work {
-  scroll-margin-top: var(--spacing-4);
-}
-
-/* Home: one blog teaser row, small and airy after the dense band. */
-.teaser {
-  border-top: 0;
-}
-
-.teaser-grid {
-  display: grid;
-  gap: var(--spacing-4);
-  grid-template-columns: minmax(0, 1fr);
-}
-
-.teaser-h2 {
-  margin: 0;
-  font-family: var(--font-family-mono);
-  font-weight: var(--font-weight-mono);
-  font-size: var(--font-scale-label-size);
-  line-height: var(--font-scale-label-line-height);
-  letter-spacing: var(--font-scale-label-tracking);
-  text-transform: uppercase;
-  color: var(--color-muted);
-}
-
-.teaser-body {
-  display: grid;
-  gap: var(--spacing-3);
-  justify-items: start;
-  padding-top: var(--spacing-4);
-  border-top: 2px solid var(--color-fg);
-}
-
-.teaser-body > * {
-  margin: 0;
-}
-
-.teaser-title {
-  font-size: var(--font-scale-h2-size);
-  line-height: var(--font-scale-h2-line-height);
-  max-width: 30ch;
-}
-
-.teaser-title a {
-  color: var(--color-fg);
-  text-decoration-color: var(--color-accent-fill);
-  text-decoration-thickness: 2px;
-}
-
-.teaser-desc {
-  color: var(--color-muted);
-  max-width: 60ch;
-}
-
-@media (min-width: 64rem) {
-  .teaser-grid {
-    grid-template-columns: 4fr 8fr;
-    column-gap: calc(100% / 12);
-  }
-
-  .teaser-h2 {
-    padding-top: var(--spacing-4);
-    border-top: 2px solid var(--color-fg);
-    align-self: start;
-  }
 }
 
 /* Blog index: one ruled row per post. */
@@ -2214,11 +1482,7 @@ code {
   }
 }
 
-/* About and Contact. */
-.ticks li .item-link {
-  display: inline;
-}
-
+/* Contact. */
 .topic-list li {
   padding-block: var(--spacing-3);
   hyphens: manual;
@@ -2234,18 +1498,6 @@ code {
 
 /* Inline code on a card-grey surface takes the page ground, so it stays
    visible. */
-.ledger code,
-.sheet code,
-.room--odd code,
-.work-room code {
+.ledger code {
   background: var(--color-bg);
-}
-
-/* "Zusammenarbeit," is one word at h1 size: the closing panel's heading steps
-   down on phones. */
-@media (max-width: 29.99rem) {
-  .cta h2 {
-    font-size: var(--font-scale-h2-size);
-    line-height: var(--font-scale-h2-line-height);
-  }
 }

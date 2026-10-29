@@ -1,10 +1,16 @@
 // SPDX-License-Identifier: Apache-2.0
 
-/// The contact page copy, EN and DE side by side (copy v3, brand decisions 56
-/// and 57; all rights reserved). Collaboration, integrations, grants and
-/// press; no investor line (regulatory check of 2026-10-14, C-2).
+/// The contact page copy, EN and DE side by side (the reframe copy section
+/// 4.2, brand decisions 56, 58 and 59; all rights reserved). Collaboration,
+/// integrations, grants and press around wearenotabank; no investor line
+/// (regulatory check of 2026-10-14, C-2), no client work, offered or denied.
+///
+/// The topics name wearenotabank (`topics`); `topicsUnnamed` is the same list
+/// for the state in which the site does not ([namesProduct]), in the wording
+/// of copy v3.
 library;
 
+import 'package:website/src/outbound.dart';
 import 'package:website/src/routes.dart';
 
 /// One topic: a bold `lead` and its `text`.
@@ -16,7 +22,12 @@ typedef ContactCopy = ({
   String lede,
   String note,
   String topicsTitle,
+
+  /// The topics of the named state ([namesProduct]).
   List<Topic> topics,
+
+  /// The topics of the unnamed state.
+  List<Topic> topicsUnnamed,
   String securityTitle,
 
   /// The paragraph on vulnerability reports; `[label](mailto:…)` link and
@@ -31,15 +42,37 @@ const securityEmail = 'security@cubealgos.de';
 const Map<Lang, ContactCopy> contactCopy = {
   Lang.en: (
     h1: 'Write to us.',
-    lede: 'Email us about collaborations, integrations, grants or press.',
+    lede: 'Email us about collaboration, integrations, grants or press.',
     note: 'We treat your email as confidential.',
     topicsTitle: 'What to write about',
     topics: [
       (
         lead: 'Collaboration.',
         text:
-            'You research or build something related and want to work with '
-            'us on something public.',
+            'You are building something related, in Dart or on EVM chains, '
+            'and want to work with us on something public.',
+      ),
+      (
+        lead: 'Integrations.',
+        text:
+            'You want to build a wearenotabank project into your wallet, app '
+            'or library. Ask usage questions in public, in that '
+            "repository's issues, so everyone benefits from the answer.",
+      ),
+      (
+        lead: 'Grants.',
+        text:
+            'Public grant programmes and grants from foundations or '
+            'protocols that fit wearenotabank.',
+      ),
+      (lead: 'Press.', text: 'Questions about Cube Algos and wearenotabank.'),
+    ],
+    topicsUnnamed: [
+      (
+        lead: 'Collaboration.',
+        text:
+            'You are building something related, in Dart or on EVM chains, '
+            'and want to work with us on something public.',
       ),
       (
         lead: 'Integrations.',
@@ -76,8 +109,31 @@ const Map<Lang, ContactCopy> contactCopy = {
       (
         lead: 'Zusammenarbeit.',
         text:
-            'Sie forschen oder bauen an etwas Verwandtem und möchten '
-            'gemeinsam an einer öffentlichen Arbeit ansetzen.',
+            'Sie bauen an etwas Verwandtem, mit Dart oder auf EVM-Chains, und '
+            'möchten mit uns an einer öffentlichen Arbeit ansetzen.',
+      ),
+      (
+        lead: 'Integrationen.',
+        text:
+            'Sie möchten ein Projekt von wearenotabank in Ihre Wallet, App '
+            'oder Bibliothek einbinden. Fragen zur Nutzung stellen Sie am '
+            'besten öffentlich, in den Issues des jeweiligen Repositorys: '
+            'Dann haben alle etwas von der Antwort.',
+      ),
+      (
+        lead: 'Förderprogramme.',
+        text:
+            'Öffentliche Förderprogramme und Grants von Stiftungen oder '
+            'Protokollen, die zu wearenotabank passen.',
+      ),
+      (lead: 'Presse.', text: 'Fragen zu Cube Algos und wearenotabank.'),
+    ],
+    topicsUnnamed: [
+      (
+        lead: 'Zusammenarbeit.',
+        text:
+            'Sie bauen an etwas Verwandtem, mit Dart oder auf EVM-Chains, und '
+            'möchten mit uns an einer öffentlichen Arbeit ansetzen.',
       ),
       (
         lead: 'Integrationen.',
@@ -106,3 +162,7 @@ const Map<Lang, ContactCopy> contactCopy = {
         'Namen nur mit Ihrer Zustimmung.',
   ),
 };
+
+/// The topics of [lang] in the state in which the site [named] the product.
+List<Topic> contactTopics(Lang lang, {bool named = namesProduct}) =>
+    named ? contactCopy[lang]!.topics : contactCopy[lang]!.topicsUnnamed;

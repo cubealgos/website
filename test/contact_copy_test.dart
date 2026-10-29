@@ -21,7 +21,7 @@ List<String> expectedBlocks(Lang lang) {
     'hello@cubealgos.de',
     c.note,
     c.topicsTitle,
-    for (final t in c.topics) '${t.lead} ${t.text}',
+    for (final t in contactTopics(lang)) '${t.lead} ${t.text}',
     c.securityTitle,
     plainText(c.security),
   ];
@@ -77,6 +77,48 @@ void main() {
               ),
             ),
           ),
+        );
+      });
+
+      test('client projects are not mentioned, offered or denied', () {
+        // Decision 56: the page says what the studio is and does, and never
+        // that it takes no client work. The four topics are the whole scope.
+        final text = [
+          ...mainBlocks(html),
+          RegExp('content="([^"]*)"').allMatches(html).map((m) => m[1]).join(),
+        ].join('\n');
+        expect(
+          text,
+          isNot(
+            matches(
+              RegExp(
+                'Kundenprojekt|client project|Kundenauftr|Aufträge|'
+                r'nehmen keine|\bno client',
+                caseSensitive: false,
+              ),
+            ),
+          ),
+        );
+      });
+
+      test('the topics name wearenotabank and the SEO line carries it', () {
+        final text = mainBlocks(html).join('\n');
+        expect(text, contains('wearenotabank'));
+        expect(
+          pageMeta[PageKey.contact]![lang]!.description,
+          contains('wearenotabank'),
+        );
+        // Integrations point to the repositories of the product, in public.
+        expect(
+          contactCopy[lang]!.topics.map((t) => t.lead).toList(),
+          lang == Lang.de
+              ? [
+                  'Zusammenarbeit.',
+                  'Integrationen.',
+                  'Förderprogramme.',
+                  'Presse.',
+                ]
+              : ['Collaboration.', 'Integrations.', 'Grants.', 'Press.'],
         );
       });
 

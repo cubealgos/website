@@ -3,13 +3,15 @@
 // Builds the static site into `build/jaspr/`, prunes it to the deployable
 // files (`jaspr build` also leaves the build tooling's own bookkeeping --
 // `packages/`, `.dart_tool/`, `.build.manifest` -- next to the pages) and
-// adds `sitemap.xml` from the route table.
+// adds `sitemap.xml` from the route table and the redirect pages of the retired
+// URLs (`lib/src/redirects.dart`).
 //
 // Run: `fvm dart run tool/build.dart`.
 import 'dart:io';
 
 import 'package:website/src/content/site_content.dart';
 import 'package:website/src/icons.dart';
+import 'package:website/src/redirects.dart';
 import 'package:website/src/seo.dart';
 
 const _outDir = 'build/jaspr';
@@ -23,6 +25,15 @@ void _writeManifest() {
     File('$_outDir/brand/tokens.css').readAsStringSync(),
   );
   File('$_outDir$manifestPath').writeAsStringSync(webManifest(paper: paper));
+}
+
+// A redirect page at each retired path (About folded into Home).
+void _writeRedirects() {
+  for (final r in redirects) {
+    File('$_outDir/${r.file}')
+      ..createSync(recursive: true)
+      ..writeAsStringSync(redirectHtml(r));
+  }
 }
 
 const _leftovers = ['packages', '.dart_tool', '.build.manifest'];
@@ -45,5 +56,6 @@ Future<void> main() async {
   }
   _writeSitemap();
   _writeManifest();
+  _writeRedirects();
   stdout.writeln('static site written to $_outDir');
 }

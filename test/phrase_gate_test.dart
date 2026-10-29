@@ -4,8 +4,8 @@
 // are, never what we are not). The studio no longer defines itself by what it
 // does not take, hold or show; these defensive phrases are retired and fail
 // the build's tests if one comes back, in German or English, on any built page
-// (legal pages included) or on a work page rendered from the fixtures (no work
-// ships yet, so the template's status texts are not in the build).
+// (legal pages included), and on the home page and the blog rendered from the
+// fixtures.
 @Timeout(Duration(minutes: 5))
 library;
 
@@ -14,8 +14,8 @@ import 'dart:io';
 import 'package:path/path.dart' as p;
 import 'package:test/test.dart';
 import 'package:website/src/content/site_content.dart';
+import 'package:website/src/pages/blog_pages.dart';
 import 'package:website/src/pages/home_page.dart';
-import 'package:website/src/pages/works_pages.dart';
 import 'package:website/src/routes.dart';
 
 import 'support/fixtures.dart';
@@ -126,15 +126,16 @@ void main() {
     expect(hits, isEmpty);
   });
 
-  test('no work page, index or home room does, whatever the status', () async {
+  test('the home page and the blog index of the fixtures carry none', () async {
     final content = fixtureContent();
     final hits = <String>[];
     for (final lang in Lang.values) {
       final pages = {
         'home': await renderHtml(HomePage(lang: lang, content: content)),
-        'index': await renderHtml(WorksIndexPage(lang: lang, content: content)),
-        for (final work in content.works)
-          work.slug: await renderHtml(WorkPage(lang: lang, work: work)),
+        'home unnamed': await renderHtml(
+          HomePage(lang: lang, content: content, productNamed: false),
+        ),
+        'blog': await renderHtml(BlogIndexPage(lang: lang, content: content)),
       };
       for (final MapEntry(:key, :value) in pages.entries) {
         for (final phrase in retiredIn(value)) {

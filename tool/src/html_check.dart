@@ -10,13 +10,14 @@ import 'dart:io';
 import 'package:path/path.dart' as p;
 import 'package:website/src/content/site_content.dart';
 import 'package:website/src/outbound.dart';
+import 'package:website/src/redirects.dart';
 import 'package:website/src/routes.dart';
 
 import 'css_rules.dart';
 
 /// The only host the built pages may point at, apart from the links of
 /// `SiteContent.outboundAllowed` (the fixed allow-list of `outbound.dart` and
-/// the links of the works and posts), which may be the `href` of an `<a>` and
+/// the links of the posts), which may be the `href` of an `<a>` and
 /// nothing else: no script, stylesheet, image, form action or
 /// `url()` (a link is not a request).
 const siteHost = 'cubealgos.de';
@@ -81,7 +82,7 @@ class _Page {
 
 /// Runs every rule over the built site in [buildDir]. With [content], what the
 /// site was built from, the pages are also held to the route table (the
-/// hreflang alternates a page must carry) and the links of the works and posts
+/// hreflang alternates a page must carry) and the links of the posts
 /// are allowed; without it only the generic rules and the fixed allow-list of
 /// `outbound.dart` apply.
 List<Finding> checkSite(Directory buildDir, {SiteContent? content}) {
@@ -105,6 +106,14 @@ List<Finding> checkSite(Directory buildDir, {SiteContent? content}) {
       findings,
     );
   }
+  // With the content the site was built from, every retired page is built.
+  for (final r in redirects) {
+    if (content != null && !pages.containsKey(r.file)) {
+      findings.add(
+        Finding('redirect', r.file, 'retired page ${r.path} is not built'),
+      );
+    }
+  }
   _checkSitemap(root, pages, findings);
   _checkManifest(root, findings);
   _checkThirdParty(buildDir, findings);
@@ -116,6 +125,54 @@ List<Finding> checkSite(Directory buildDir, {SiteContent? content}) {
 
 /// Whether [path] (relative to the build dir) is a 404 page.
 bool _is404(String path) => p.basename(path) == '404.html';
+
+/// The retired page built at [path] (relative to the build dir), if it is one.
+Redirect? _redirectAt(String path) {
+  final normal = path.replaceAll(r'\', '/');
+  return redirects.where((r) => r.file == normal).firstOrNull;
+}
+
+/// A retired page redirects at once to the home page of its language, names
+/// that page as canonical, is `noindex` and carries no alternates (explicit
+/// exemptions from the rules of an indexable page, not a skip).
+void _checkRedirect(
+  Redirect r,
+  _Page page,
+  List<_Tag> links,
+  void Function(String rule, String msg) add,
+) {
+  final robots = page
+      .named('meta')
+      .where((t) => t.attrs['name']?.toLowerCase() == 'robots');
+  if (!robots.any((t) => (t.attrs['content'] ?? '').contains('noindex'))) {
+    add(
+      'noindex',
+      'redirect page lacks <meta name="robots" content="noindex">',
+    );
+  }
+  final refresh = page
+      .named('meta')
+      .where((t) => t.attrs['http-equiv']?.toLowerCase() == 'refresh')
+      .map((t) => t.attrs['content'])
+      .toList();
+  if (refresh.length != 1 || refresh.single != '0; url=${r.target}') {
+    add('redirect', 'refresh is $refresh, expected "0; url=${r.target}"');
+  }
+  final canonical = [
+    for (final t in links)
+      if (t.attrs['rel'] == 'canonical') t.attrs['href'],
+  ];
+  if (canonical.length != 1 || canonical.single != r.targetUrl) {
+    add('canonical', 'canonical is $canonical, expected ${r.targetUrl}');
+  }
+  if (links.any((t) => t.attrs['rel'] == 'alternate')) {
+    add('hreflang', 'redirect page must not carry alternate links');
+  }
+  final lang = page.named('html').firstOrNull?.attrs['lang'];
+  if (lang != r.lang.code) {
+    add('lang', '<html lang> is "$lang", expected "${r.lang.code}"');
+  }
+}
 
 /// The alternates are the languages the route table says the page exists in
 /// (both, except for a post written in one language), plus `x-default`.
@@ -169,6 +226,10 @@ void _checkHead(_Page page, SiteContent? content, List<Finding> out) {
   final lang = page.named('html').firstOrNull?.attrs['lang'] ?? '';
   if (lang.trim().isEmpty) add('lang', 'missing or empty <html lang>');
   final links = page.named('link').toList();
+  if (_redirectAt(page.path) case final r?) {
+    _checkRedirect(r, page, links, add);
+    return;
+  }
   if (_is404(page.path)) {
     // Explicit exemptions, not a skip: a 404 page is noindex and has neither a
     // canonical nor hreflang alternates (it is no equivalent of its sibling).
@@ -361,10 +422,19 @@ void _checkSitemap(String root, Map<String, _Page> pages, List<Finding> out) {
       m[1]!.trim(),
   };
   for (final page in pages.values) {
-    // 404 pages are deliberately not indexed.
-    if (p.basename(page.path) == '404.html') continue;
     final path = _pagePath(page.path).replaceFirst(RegExp(r'index\.html$'), '');
     final url = 'https://$siteHost$path';
+    // Retired pages are no destinations: they must stay out of the sitemap.
+    if (_redirectAt(page.path) != null) {
+      if (listed.contains(url)) {
+        out.add(
+          Finding('sitemap', page.path, 'redirect page listed in sitemap.xml'),
+        );
+      }
+      continue;
+    }
+    // 404 pages are deliberately not indexed.
+    if (p.basename(page.path) == '404.html') continue;
     if (!listed.contains(url)) {
       out.add(
         Finding('sitemap', page.path, 'not listed in sitemap.xml ($url)'),

@@ -11,14 +11,16 @@
 //    focus token on every stop) in light and dark;
 //  * the language switch on every page lands on the same page in the other
 //    language (on the 404 pages: on the home page of the other language);
-//  * UI motion: the mark sting sits in the home hero's stack card (not in the
-//    header, which has the same height on every page) and starts once the card
-//    is in view, on a direct load and not when arriving from a page of this
-//    site (same-origin referrer), with nothing written to session or local
+//  * UI motion: the mark sting sits in the home page's fact sheet (not in the
+//    header, which has the same height on every page) and starts once the
+//    sheet is in view, on a direct load and not when arriving from a page of
+//    this site (same-origin referrer), with nothing written to session or local
 //    storage; it is the still mark under reduced motion (a second
 //    Chrome started with `--force-prefers-reduced-motion`); durations and
 //    easings are the tokens; only transform, opacity and the underline's
 //    background-size animate; button press and hover;
+//  * the retired About URLs, opened in the browser, end on the home page of
+//    their language;
 //  * reveal on scroll: scrolling each content page to the bottom leaves every
 //    `.reveal` element at opacity 1; with reduced motion or JavaScript off
 //    (`--blink-settings=scriptEnabled=false`) they are visible without
@@ -30,7 +32,9 @@
 import 'dart:io';
 
 import 'package:website/src/content/site_content.dart';
+import 'package:website/src/copy/home_copy.dart';
 import 'package:website/src/page.dart' show revealPages;
+import 'package:website/src/redirects.dart';
 import 'package:website/src/routes.dart';
 
 import 'src/chrome.dart';
@@ -39,14 +43,11 @@ import 'src/static_server.dart';
 const _widths = [320, 375, 768, 1280];
 
 /// The pages `--screenshots` writes (EN and DE, 375 and 1280 px, light and
-/// dark): the pages without a slug, plus the newest work and post.
+/// dark): the pages without a slug, plus the newest post.
 const List<PageKey> _shotPages = [
   PageKey.home,
-  PageKey.works,
-  PageKey.work,
   PageKey.blog,
   PageKey.post,
-  PageKey.about,
   PageKey.contact,
   PageKey.notFound,
 ];
@@ -185,7 +186,7 @@ Future<void> main(List<String> args) async {
       await page.setMedia(dark: dark);
       for (final r in [
         (key: PageKey.home, lang: Lang.de),
-        (key: PageKey.about, lang: Lang.de),
+        (key: PageKey.home, lang: Lang.en),
         (key: PageKey.contact, lang: Lang.en),
       ]) {
         final where = '${pathFor(r.key, r.lang)} (${dark ? 'dark' : 'light'})';
@@ -312,11 +313,9 @@ Future<void> main(List<String> args) async {
       ),
       (path: '/en/xyz', h1: 'This page swam off.'),
       (path: '/en/some/deep/missing/path', h1: 'This page swam off.'),
-      // With no work the works pages do not exist: a request gets the 404.
-      if (!content.hasWorks) ...[
-        (path: '/arbeiten/', h1: 'Diese Seite ist davongeschwommen.'),
-        (path: '/en/work/', h1: 'This page swam off.'),
-      ],
+      // The works pages are gone with the works: a request gets the 404.
+      (path: '/arbeiten/', h1: 'Diese Seite ist davongeschwommen.'),
+      (path: '/en/work/', h1: 'This page swam off.'),
     ]) {
       await page.setViewport(1280, 800);
       await page.goto('$base${probe.path}');
@@ -334,9 +333,12 @@ Future<void> main(List<String> args) async {
       }
     }
 
+    // 5a. The retired About URLs land on the home page of their language.
     // 6. The favicon set loads without a 404 and the SVG mark switches to
     // paper in a dark browser theme.
-    failures.addAll(await _iconChecks(page, base));
+    failures
+      ..addAll(await _redirectChecks(page, base))
+      ..addAll(await _iconChecks(page, base));
 
     // 5. Screenshots for review (optional).
     if (shots != null) {
@@ -476,6 +478,35 @@ Future<List<String>> _revealChecks(
     }
   }
   return out;
+}
+
+// --- Retired pages -----------------------------------------------------------
+
+/// Each retired page, opened in the browser, ends on the home page of its
+/// language (the refresh in its head) and says so in `<html lang>`.
+Future<List<String>> _redirectChecks(ChromePage page, String base) async {
+  final failures = <String>[];
+  await page.setViewport(1280, 800);
+  await page.setMedia();
+  for (final r in redirects) {
+    await page.goto('$base${r.path}');
+    String? path;
+    for (var i = 0; i < 40 && path != r.target; i++) {
+      await Future<void>.delayed(const Duration(milliseconds: 100));
+      path = (await page.eval('location.pathname'))! as String;
+    }
+    final lang = await page.eval('document.documentElement.lang');
+    final h1 = await page.eval("document.querySelector('h1')?.textContent");
+    if (path != r.target ||
+        lang != r.lang.code ||
+        h1 != headlineText(homeHeadline(r.lang))) {
+      failures.add(
+        'redirect: ${r.path} ended on $path ($lang, "$h1"), expected '
+        '${r.target} (${r.lang.code})',
+      );
+    }
+  }
+  return failures;
 }
 
 // --- Icons -------------------------------------------------------------------
@@ -710,21 +741,21 @@ Future<List<String>> _motionChecks(
       if ((width - 40).abs() > 1) {
         out.add('$where ($theme): mark is $width px wide, expected 40');
       }
-      // Home -> About -> Home through the site's own links: the second home
-      // load has a same-origin referrer, so the still, no replay.
+      // Home -> Contact -> Home through the site's own links: the second
+      // home load has a same-origin referrer, so the still, no replay.
       await page.setViewport(1280, 800);
       final homeHeader = headerOf(await page.evalMap(_stingState));
-      await _clickTo(page, pathFor(PageKey.about, lang));
-      final about = await page.evalMap(_stingState);
-      if (about['marks'] != 0 || about['scripts'] != 1) {
+      await _clickTo(page, pathFor(PageKey.contact, lang));
+      final contact = await page.evalMap(_stingState);
+      if (contact['marks'] != 0 || contact['scripts'] != 1) {
         out.add(
-          '${pathFor(PageKey.about, lang)}: sting on another page: $about',
+          '${pathFor(PageKey.contact, lang)}: sting on another page: $contact',
         );
       }
-      if (headerOf(about) != homeHeader) {
+      if (headerOf(contact) != homeHeader) {
         out.add(
           '$where ($theme): header height $homeHeader on home, '
-          '${headerOf(about)} on About',
+          '${headerOf(contact)} on Contact',
         );
       }
       await _clickTo(page, pathFor(PageKey.home, lang));
@@ -821,7 +852,7 @@ Future<List<String>> _motionChecks(
   }
   if (!(p['animations']! as int > 0)) out.add('motion: nothing animates');
   final delays = (p['staggerDelays']! as List<dynamic>).join(' ');
-  // Eyebrow, headline, subline, buttons; then the stack card (data-i 2).
+  // Eyebrow, headline, paragraph, buttons; then the fact sheet (data-i 2).
   if (delays != '0s 0.06s 0.12s 0.18s 0.12s') {
     out.add('motion: stagger delays $delays');
   }
@@ -845,7 +876,7 @@ Future<List<String>> _motionChecks(
   if (pressed != 'matrix($scale, 0, 0, $scale, 0, 0)') {
     out.add('motion: pressed transform $pressed, expected scale $scale');
   }
-  // Release away from the link, so no mailto: is opened.
+  // Release away from the link, so it is not followed.
   await page.mouse('mouseMoved', 1, 1);
   await page.mouse('mouseReleased', 1, 1);
   await Future<void>.delayed(const Duration(milliseconds: 300));

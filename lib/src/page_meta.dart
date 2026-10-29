@@ -2,89 +2,57 @@
 
 /// Title, meta description and H1 of every page.
 ///
-/// Titles and descriptions come from the brand copy (copy v3, brand
-/// decisions 56 and 57).
+/// Titles and descriptions come from the brand copy (the reframe copy
+/// direction C, brand decisions 56, 58 and 59, with the regulatory edits
+/// E-C-1 to E-C-3). Home and Contact name wearenotabank; [pageMetaUnnamed]
+/// holds their wording for the state in which the site does not
+/// ([namesProduct]).
 library;
 
 import 'package:website/src/content/site_content.dart';
+import 'package:website/src/outbound.dart';
 import 'package:website/src/routes.dart';
 
 /// The head and heading text of one page in one language.
 typedef PageMeta = ({String title, String description, String h1});
 
-/// Every page's [PageMeta] per language. The pages of a work and of a post
-/// take theirs from their data file ([metaFor]).
+/// Every page's [PageMeta] per language, for the state in which the site names
+/// wearenotabank. The pages of a post take theirs from their data file
+/// ([metaFor]).
 const Map<PageKey, Map<Lang, PageMeta>> pageMeta = {
   PageKey.home: {
     Lang.en: (
-      title: 'Cube Algos | Studio for decentralised finance',
+      title: 'Cube Algos UG | Software studio in Heinsberg',
       description:
-          'Cube Algos is a decentralised-finance studio in Heinsberg. We build '
-          'software that lets wallets do more on their own: read prices, pay '
-          'for gas, convert tokens.',
-      h1: 'We build software that lets wallets do more on their own.',
+          'Cube Algos is the software studio behind wearenotabank: smart '
+          'contracts, SDKs and Dart libraries for EVM chains. In Heinsberg, '
+          'Germany, since 2023.',
+      h1: 'Cube Algos is the studio behind wearenotabank.',
     ),
     Lang.de: (
-      title: 'Cube Algos | Studio für dezentrale Finanzanwendungen',
+      title: 'Cube Algos UG | Softwarestudio in Heinsberg',
       description:
-          'Studio für dezentrale Finanzen in Heinsberg. Wir bauen Software, '
-          'mit der Wallets mehr selbst erledigen: Preise lesen, Gas bezahlen, '
-          'Token umwandeln.',
-      h1: 'Wir bauen Software, mit der Wallets mehr selbst erledigen.',
-    ),
-  },
-  PageKey.about: {
-    Lang.en: (
-      title: 'About | Cube Algos',
-      description:
-          'Cube Algos is a small studio in Heinsberg, founded in 2023. We '
-          'build our own software for decentralised finance, mostly smart '
-          'contracts and apps.',
-      h1: 'About the studio',
-    ),
-    Lang.de: (
-      title: 'Über Cube Algos | Cube Algos',
-      description:
-          'Cube Algos ist ein kleines Studio aus Heinsberg, gegründet 2023. '
-          'Wir bauen eigene Software für dezentrale Finanzen, vor allem '
-          'Smart Contracts und Apps.',
-      h1: 'Über das Studio',
+          'Cube Algos ist das Softwarestudio hinter wearenotabank: Smart '
+          'Contracts, SDKs und Dart-Bibliotheken für EVM-Chains. Seit 2023 in '
+          'Heinsberg.',
+      h1: 'Cube Algos ist das Studio hinter wearenotabank.',
     ),
   },
   PageKey.contact: {
     Lang.en: (
       title: 'Contact | Cube Algos',
       description:
-          'Write to Cube Algos at hello@cubealgos.de about collaborations, '
-          'integrations, grants or press. Report vulnerabilities to '
-          'security@cubealgos.de.',
+          'Write to Cube Algos about collaboration, grants and press around '
+          'wearenotabank. Report vulnerabilities to security@cubealgos.de.',
       h1: 'Write to us.',
     ),
     Lang.de: (
       title: 'Kontakt | Cube Algos',
       description:
-          'Schreiben Sie Cube Algos an hello@cubealgos.de, zu Zusammenarbeit, '
-          'Integrationen, Förderprogrammen und Presse. Schwachstellen bitte '
-          'an security@cubealgos.de.',
+          'Schreiben Sie Cube Algos zu Zusammenarbeit, Förderprogrammen und '
+          'Presse rund um wearenotabank. Schwachstellen melden Sie an '
+          'security@cubealgos.de.',
       h1: 'Schreiben Sie uns.',
-    ),
-  },
-  PageKey.works: {
-    Lang.en: (
-      title: 'Work | Cube Algos',
-      description:
-          'The published work of Cube Algos: smart contracts and apps for '
-          'decentralised finance, each with its status, licence and source '
-          'code.',
-      h1: 'Work',
-    ),
-    Lang.de: (
-      title: 'Arbeiten | Cube Algos',
-      description:
-          'Die veröffentlichten Arbeiten von Cube Algos: Smart Contracts und '
-          'Apps für dezentrale Finanzen, jeweils mit Status, Lizenz und '
-          'Quelltext.',
-      h1: 'Arbeiten',
     ),
   },
   PageKey.blog: {
@@ -150,21 +118,66 @@ const Map<PageKey, Map<Lang, PageMeta>> pageMeta = {
   },
 };
 
-/// The suffix of the title of a work or a post.
+/// The wording of the pages that name wearenotabank when the site does not
+/// ([namesProduct] is false): Home carries the fallback H1 and a description
+/// built from it and the fallback subline (copy section 3.5), Contact the
+/// description of the live copy v3. Title and H1 of the other pages are the
+/// same in both states.
+const Map<PageKey, Map<Lang, PageMeta>> pageMetaUnnamed = {
+  PageKey.home: {
+    Lang.en: (
+      title: 'Cube Algos UG | Software studio in Heinsberg',
+      description:
+          'We build our own software for EVM chains: smart contracts, SDKs '
+          'and libraries, with a focus on Dart, from a studio in Heinsberg.',
+      h1: 'We build our own software for EVM chains.',
+    ),
+    Lang.de: (
+      title: 'Cube Algos UG | Softwarestudio in Heinsberg',
+      description:
+          'Wir bauen eigene Software für EVM-Chains: Smart Contracts, SDKs '
+          'und Bibliotheken, mit Schwerpunkt auf Dart, aus einem Studio in '
+          'Heinsberg.',
+      h1: 'Wir bauen eigene Software für EVM-Chains.',
+    ),
+  },
+  PageKey.contact: {
+    Lang.en: (
+      title: 'Contact | Cube Algos',
+      description:
+          'Write to Cube Algos at hello@cubealgos.de about collaborations, '
+          'integrations, grants or press. Report vulnerabilities to '
+          'security@cubealgos.de.',
+      h1: 'Write to us.',
+    ),
+    Lang.de: (
+      title: 'Kontakt | Cube Algos',
+      description:
+          'Schreiben Sie Cube Algos an hello@cubealgos.de, zu '
+          'Zusammenarbeit, Integrationen, Förderprogrammen und Presse. '
+          'Schwachstellen bitte an security@cubealgos.de.',
+      h1: 'Schreiben Sie uns.',
+    ),
+  },
+};
+
+/// The suffix of the title of a post.
 const siteTitleSuffix = ' | Cube Algos';
 
+/// The head and heading text of [key] in [lang], a page without a slug, for the
+/// state in which the site [named] wearenotabank or not.
+PageMeta fixedMeta(PageKey key, Lang lang, {bool named = namesProduct}) =>
+    (named ? null : pageMetaUnnamed[key]?[lang]) ?? pageMeta[key]![lang]!;
+
 /// The head and heading text of [route]: the fixed table for the fixed pages,
-/// the data file for a work or a post.
-PageMeta metaFor(Route route, SiteContent content) {
+/// the data file for a post. [named] is whether the site names
+/// wearenotabank.
+PageMeta metaFor(
+  Route route,
+  SiteContent content, {
+  bool named = namesProduct,
+}) {
   switch (route.key) {
-    case PageKey.work:
-      final work = content.workBySlug(route.slug!)!;
-      final name = work.nameIn(route.lang);
-      return (
-        title: '$name$siteTitleSuffix',
-        description: work.line[route.lang]!.replaceAll('`', ''),
-        h1: name,
-      );
     case PageKey.post:
       final post = content.postBySlug(route.lang, route.slug!)!;
       return (
@@ -173,13 +186,11 @@ PageMeta metaFor(Route route, SiteContent content) {
         h1: post.title,
       );
     case PageKey.home ||
-        PageKey.about ||
         PageKey.contact ||
-        PageKey.works ||
         PageKey.blog ||
         PageKey.impressum ||
         PageKey.datenschutz ||
         PageKey.notFound:
-      return pageMeta[route.key]![route.lang]!;
+      return fixedMeta(route.key, route.lang, named: named);
   }
 }
