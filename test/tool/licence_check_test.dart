@@ -183,6 +183,26 @@ verified:
     },
   );
 
+  test('the committed overrides cover posix 6.5.2 and nothing else', () async {
+    final yaml = File('tool/licence-exceptions.yaml').readAsStringSync();
+    expect(
+      await _run(_repo(pub: {'posix': '6.5.2'}, exceptions: yaml), {}, []),
+      0,
+    );
+    // Pinned: another version is denied again.
+    expect(
+      await _run(_repo(pub: {'posix': '6.5.3'}, exceptions: yaml), {}, []),
+      1,
+    );
+    // Never overrides a licence pub.dev did detect.
+    expect(
+      await _run(_repo(pub: {'posix': '6.5.2'}, exceptions: yaml), {
+        'posix': ['gpl-3.0-only'],
+      }, []),
+      1,
+    );
+  });
+
   test('npm lockfile licences are checked too', () async {
     expect(await _run(_repo(pub: {}, npm: {'a': 'MIT'}), {}, []), 0);
     expect(
