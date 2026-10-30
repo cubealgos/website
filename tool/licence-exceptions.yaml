@@ -16,22 +16,16 @@ exceptions:
       lighthouse in tool/a11y/ (the accessibility audit), never shipped,
       consumed unmodified. Not the @axe-core/* runners, not pa11y.
 
-# `verified:` is a different kind of entry: pub.dev's detector sometimes finds
-# no licence for a package whose LICENSE file is fine (a detection gap). It
-# matches the exact version only, never overrides a detected licence, and the
-# recorded licence must itself be on the allow list. Printed on every run.
-verified:
-  - package: html
-    version: 0.15.7
-    licence: MIT
-    reason: >-
-      pub.dev reports no licence; the LICENSE file is the MIT text after a contributor list
-      (read 2026-10-01); transitive dev-only dependency of jaspr_cli.
-  - package: posix
-    version: 6.5.2
-    licence: MIT
-    reason: >-
-      pub.dev reports no licence since 2026-10-29 (its score API returns only the publisher tag);
-      the LICENSE file in the published archive, whose sha256 matches pubspec.lock, is the plain
-      MIT text, "Copyright (c) 2020 Brett Sutton" (read 2026-10-29); transitive dev-only
-      dependency: build_web_compilers -> archive -> posix.
+# `verified:` is a different kind of entry, for a package pub.dev reports no licence for
+# AND whose LICENSE file the gate's own reader (`tool/src/licence_file.dart`) does not
+# recognise: it reads standard MIT, BSD-2/3-Clause and Apache-2.0 texts from the pub cache,
+# so most detection gaps need no entry. An entry matches the exact version only, never
+# overrides a detected licence, and the recorded licence must itself be on the allow list.
+# Printed on every run.
+#
+# verified:
+#   - package: some_package
+#     version: 1.2.3
+#     licence: MIT
+#     reason: "How it was verified, and when."
+verified: []
