@@ -203,7 +203,6 @@ void main() {
             '${lang == Lang.de ? 'eine unabhängige' : 'an independent'}',
           ),
         );
-        expect(html, contains('<span class="nohy">Kevin Scheeren</span>'));
         // E-C-3: nothing sits between the H1 and the paragraph, on any width.
         final between = RegExp(
           '</h1>(.*?)<p class="bc-lede',
@@ -214,7 +213,7 @@ void main() {
         expect('class="bc-lede'.allMatches(html), hasLength(1));
       });
 
-      test('the paragraph has no clause beyond the object and the founder', () {
+      test('the paragraph has no clause beyond the object', () {
         final text = mainBlocks(html).join('\n');
         expect(
           text,
@@ -224,6 +223,24 @@ void main() {
             ),
           ),
         );
+        // The founder sentence is gone (owner, PR #103): Home names no
+        // founder, in either state.
+        for (final named in [true, false]) {
+          final lede = homeLede(lang, named: named);
+          expect(lede, endsWith('Dart.'));
+          expect(
+            lede,
+            isNot(
+              matches(
+                RegExp(
+                  'Scheeren|Gegründet|founded|Geschäftsführer|'
+                  'managing director',
+                ),
+              ),
+            ),
+          );
+        }
+        expect(text, isNot(contains('Kevin Scheeren')));
       });
 
       test('the only mail address is hello@cubealgos.de (sheet, footer)', () {

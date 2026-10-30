@@ -185,8 +185,8 @@ void main() {
       wrapped += RegExp('class="(mark )?nohy"').allMatches(html).length;
     }
     expect(hits, isEmpty);
-    // Home (both languages) and Contact carry the name several times, the
-    // Impressum and Home the founder's name.
+    // Home (both languages) and Contact carry the name several times, Home
+    // viem_dart, the Impressum the founder's name.
     expect(wrapped, greaterThanOrEqualTo(12));
     final css = File('$_buildDir/site.css').readAsStringSync();
     expect(RegExp(r'\.nohy\s*\{[^}]*\bhyphens:\s*none').hasMatch(css), isTrue);

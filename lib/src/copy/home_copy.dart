@@ -85,12 +85,10 @@ const Map<Lang, HomeCopy> homeCopy = {
     lede:
         'Under the name wearenotabank we make SDKs, libraries and smart '
         'contracts, among them viem_dart, an independent port of viem to pure '
-        'Dart. Kevin Scheeren founded the studio in Heinsberg in 2023 and runs '
-        'it as managing director.',
+        'Dart.',
     ledeUnnamed:
         'We make developer tools: smart contracts, SDKs and libraries for EVM '
-        'chains, with a focus on Dart. Kevin Scheeren founded the studio in '
-        'Heinsberg in 2023 and runs it as managing director.',
+        'chains, with a focus on Dart.',
     product: 'wearenotabank',
     productButton: 'wearenotabank on GitHub',
     contactLink: 'Write to us',
@@ -116,13 +114,10 @@ const Map<Lang, HomeCopy> homeCopy = {
     lede:
         'Unter dem Namen wearenotabank entstehen SDKs, Bibliotheken und Smart '
         'Contracts, darunter viem_dart, eine unabhängige Portierung von viem '
-        'in reines Dart. Gegründet hat das Studio Kevin Scheeren 2023 in '
-        'Heinsberg; er führt es als Geschäftsführer.',
+        'in reines Dart.',
     ledeUnnamed:
         'Wir bauen Werkzeuge für die Softwareentwicklung: Smart Contracts, '
-        'SDKs und Bibliotheken für EVM-Chains, mit Schwerpunkt auf Dart. '
-        'Gegründet hat das Studio Kevin Scheeren 2023 in Heinsberg; er führt '
-        'es als Geschäftsführer.',
+        'SDKs und Bibliotheken für EVM-Chains, mit Schwerpunkt auf Dart.',
     product: 'wearenotabank',
     productButton: 'wearenotabank auf GitHub',
     contactLink: 'Schreiben Sie uns',
