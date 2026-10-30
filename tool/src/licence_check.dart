@@ -11,6 +11,7 @@ import 'dart:io';
 import 'package:path/path.dart' as p;
 import 'package:yaml/yaml.dart';
 
+import 'licence_file.dart';
 import 'licence_policy.dart';
 
 /// Returns the licence identifiers of a pub package at a locked version:
@@ -189,10 +190,15 @@ List<File> npmLockfiles(String root) {
 }
 
 /// Collects every hosted pub package and npm package of the repo at [root].
+///
+/// A pub package pub.dev reports no licence tag for (none, or only
+/// `license:unknown`) is classified from its LICENSE file in the pub cache
+/// instead; [out] says so. A package pub.dev does tag keeps the tag's verdict.
 Future<List<Dependency>> collectDependencies(
   String root,
-  PubLicenceLookup lookup,
-) async {
+  PubLicenceLookup lookup, {
+  void Function(String) out = print,
+}) async {
   final deps = <Dependency>[];
   final pubLock = File(p.join(root, 'pubspec.lock'));
   if (pubLock.existsSync()) {
@@ -208,6 +214,18 @@ Future<List<Dependency>> collectDependencies(
           if (!pubDevNonLicenceTags.contains(t) && pubDevTagToSpdx[t] != null)
             pubDevTagToSpdx[t]!,
       ];
+      final untagged = tags.every(
+        (t) => pubDevNonLicenceTags.contains(t) || t == 'unknown',
+      );
+      if (untagged) {
+        final fromFile = licenceFromCache(
+          root,
+          name,
+          '${pkg['version']}',
+          log: out,
+        );
+        if (fromFile != null) licences.add(fromFile);
+      }
       deps.add(Dependency('pub', name, '${pkg['version']}', licences));
     }
   }
@@ -240,7 +258,7 @@ Future<int> runLicenceCheck({
   final overrides = File(p.join(root, 'tool', 'licence-exceptions.yaml'));
   final exceptions = loadExceptions(overrides);
   final verified = loadVerified(overrides);
-  final deps = await collectDependencies(root, lookup);
+  final deps = await collectDependencies(root, lookup, out: out);
   final verdicts = {for (final d in deps) d: classify(d, exceptions, verified)};
   final denied = [
     for (final e in verdicts.entries)
@@ -277,31 +295,18 @@ Future<int> runLicenceCheck({
 }
 
 /// The real lookup: pub.dev's score API `license:` tags for the locked
-/// [version]. The unversioned endpoint describes the latest release, which
-/// stays unanalysed (no tags at all) for a while after it is published, so it
-/// is only the fallback when the locked version itself has no licence tag
-/// (pub.dev does not analyse every version); the fallback is logged.
+/// [version] (empty when pub.dev has none for it; the caller then reads the
+/// LICENSE file from the pub cache). The unversioned endpoint is not a
+/// fallback: it describes the latest release, a different archive from the
+/// locked one.
 Future<List<String>> pubDevLookup(
   String package,
   String version, {
   PubTagFetch fetch = _fetchPubTags,
-  void Function(String) log = _logErr,
-}) async {
-  List<String> licences(List<String> tags) => [
-    for (final t in tags)
-      if (t.startsWith('license:')) t.substring('license:'.length),
-  ];
-  final own = licences(await fetch('$package/versions/$version/score'));
-  if (own.isNotEmpty) return own;
-  final latest = licences(await fetch('$package/score'));
-  log(
-    'licence_check: $package $version has no licence tag on pub.dev; '
-    "using the latest version's tags (${latest.join('/')}).",
-  );
-  return latest;
-}
-
-void _logErr(String line) => stderr.writeln(line);
+}) async => [
+  for (final t in await fetch('$package/versions/$version/score'))
+    if (t.startsWith('license:')) t.substring('license:'.length),
+];
 
 Future<List<String>> _fetchPubTags(String path) async {
   final client = HttpClient();

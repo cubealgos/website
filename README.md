@@ -44,7 +44,7 @@ Dart of Flutter 3.47.5).
 | `analyze` | no analyzer findings (very_good_analysis), infos included | `fvm dart analyze --fatal-infos` |
 | `test` | unit tests plus tests over a fresh build | `fvm dart test` |
 | `build` | the static build succeeds | `fvm dart run tool/build.dart` |
-| `licence-check` | pub (and npm lockfile) licences against the org policy; needs network (pub.dev) | `fvm dart run tool/licence_check.dart` |
+| `licence-check` | pub (and npm lockfile) licences against the org policy; needs network (pub.dev) and `dart pub get` first (the pub cache) | `fvm dart run tool/licence_check.dart` |
 | `html-check` | head metadata, internal links, fragments, foreign hosts (HTML and CSS, Google Fonts included; the only exceptions are the outbound `<a href>` URLs of `lib/src/outbound.dart` and the links of the posts in `content/`, matched character for character, never as a request), sitemap with hreflang alternates (the redirect pages of the retired URLs are held to their own rules: a refresh to the home page, that page as canonical, `noindex`, no alternates, not in the sitemap), `robots.txt`, Open Graph and Twitter tags, the share images and the `Organization` JSON-LD (checked against the route table and the page copy), no storage API or `document.cookie` anywhere, no inline CSS (`inline-style`: no `<style>` element or `style` attribute in any built page, so the server can send a strict `style-src 'self'` with no hashes), no hard-coded colours, no duration or easing literals and no animation of anything but `transform`/`opacity` in the site's own CSS (tokens only), over the built site (build first); the workflow also runs the font coverage check and `browser_check` (headless Chrome over the built site: the favicon set and manifest load with status 200 and the SVG mark is ink on light, paper on dark; no horizontal scroll at 320/375/768/1280 px on every page, keyboard walkthrough with focus rings, language switch, the retired URLs ending on Home, UI motion incl. the sting by referrer and under `--force-prefers-reduced-motion`; needs Chrome, `$CHROME` overrides the binary) | `fvm dart run tool/html_check.dart`, `fvm dart run tool/fonts/check_coverage.dart build/jaspr`, `fvm dart run tool/browser_check.dart [--screenshots <dir>]` |
 | `a11y` | accessibility over the built site, both languages, 404 pages included: `tool/a11y_check.dart` (headless Chrome: one banner/main/contentinfo landmark, named navigation landmarks, one H1, no skipped heading level, `lang`, names on every link, button and summary, a 2px focus ring on every tab stop in order, text contrast in the light and the dark theme) and Lighthouse's accessibility audits via `tool/a11y/` (dev-only npm tooling, lockfile committed; any failed audit fails; `axe-core` is the org's recorded dev-scope MPL-2.0 exception); the manual test matrix is `docs/accessibility.md` | `fvm dart run tool/a11y_check.dart`, `npm --prefix tool/a11y ci --ignore-scripts && node tool/a11y/lighthouse_a11y.mjs` (build first; `$CHROME_PATH` picks Chrome for Lighthouse) |
 | `brand-check` | `web/brand/` matches `brand.lock.json`: no modified, missing or unexpected file; offline | `fvm dart run tool/brand_sync.dart --check` |
@@ -55,7 +55,10 @@ Dart of Flutter 3.47.5).
 The licence gate allows MIT, Apache-2.0 (also with LLVM-exception), BSD-2/3-Clause, Unicode-3.0,
 Unlicense, CC0-1.0, Zlib, ISC, PSF-2.0, BlueOak-1.0.0, MIT-0 and 0BSD; denies GPL, AGPL, LGPL,
 SSPL and BUSL; and denies MPL-2.0 unless recorded in `tool/licence-exceptions.yaml`. An unknown
-licence fails. Recorded exceptions and hand-verified detection gaps are printed on every run.
+licence fails. A pub package pub.dev reports no licence tag for (its tag analysis is intermittent)
+is classified from its LICENSE file in the pub cache instead, and the run says so: standard MIT,
+BSD-2/3-Clause and Apache-2.0 texts are recognised, a missing or unrecognised file is denied.
+Recorded exceptions and hand-verified detection gaps are printed on every run.
 
 ## Routes
 

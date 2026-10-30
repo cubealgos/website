@@ -2,7 +2,9 @@
 # `ubuntu-24.04` only (this repo is public: a fork PR must never run code on
 # the org's own infrastructure). Toolchain: `.github/actions/setup`.
 #
-# Needs outbound access to pub.dev's score API (GitHub-hosted runners have it).
+# Needs outbound access to pub.dev's score API (GitHub-hosted runners have it) and
+# the pub cache that the setup action fills with `dart pub get`: a package pub.dev
+# has no licence tag for is classified from its LICENSE file in that cache.
 name: licence-check
 
 on:
