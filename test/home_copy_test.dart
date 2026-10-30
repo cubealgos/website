@@ -78,7 +78,7 @@ void main() {
         expect(html, isNot(contains('<base')));
       });
 
-      test('the H1 underlines the whole word wearenotabank, nothing else', () {
+      test('the H1 underlines the Dart apps, nothing else', () {
         final h1 = RegExp(
           '<h1[^>]*>(.*?)</h1>',
           dotAll: true,
@@ -87,7 +87,13 @@ void main() {
           RegExp('<span class="mark nohy">(.*?)</span>')
               .allMatches(h1[1]!)
               .map((m) => m[1]),
-          ['wearenotabank'],
+          [if (lang == Lang.de) 'Dart-Apps' else 'Dart apps'],
+        );
+        expect(
+          headlineText(homeCopy[lang]!.h1),
+          lang == Lang.de
+              ? 'Wir bauen Werkzeuge, die Dart-Apps mit EVM-Chains verbinden.'
+              : 'We build tools that connect Dart apps to EVM chains.',
         );
       });
 
@@ -165,18 +171,39 @@ void main() {
 
       test('the paragraph names the object, directly under the H1', () {
         final c = homeCopy[lang]!;
-        // E-C-2: the first sentence says what is made, in plain words.
+        // D3: the first sentence puts the name next to what is made; D10: the
+        // name is never the actor; E-C-6: viem_dart is an independent port.
         expect(
           c.lede,
           startsWith(
             lang == Lang.de
-                ? 'Wir bauen Werkzeuge für die Softwareentwicklung: Smart '
-                      'Contracts, SDKs und Bibliotheken für EVM-Chains, mit '
-                      'Schwerpunkt auf Dart.'
-                : 'We make developer tools: smart contracts, SDKs and '
-                      'libraries for EVM chains, with a focus on Dart.',
+                ? 'Unter dem Namen wearenotabank entstehen SDKs, Bibliotheken '
+                      'und Smart Contracts, darunter viem_dart, eine '
+                      'unabhängige Portierung von viem in reines Dart.'
+                : 'Under the name wearenotabank we make SDKs, libraries and '
+                      'smart contracts, among them viem_dart, an independent '
+                      'port of viem to pure Dart.',
           ),
         );
+        // The names in it are never hyphenated by the browser.
+        expect(
+          html,
+          contains(
+            lang == Lang.de
+                ? 'Unter dem Namen <span class="nohy">wearenotabank</span> '
+                      'entstehen'
+                : 'Under the name <span class="nohy">wearenotabank</span> we '
+                      'make',
+          ),
+        );
+        expect(
+          html,
+          contains(
+            '<span class="nohy">viem_dart</span>, '
+            '${lang == Lang.de ? 'eine unabhängige' : 'an independent'}',
+          ),
+        );
+        expect(html, contains('<span class="nohy">Kevin Scheeren</span>'));
         // E-C-3: nothing sits between the H1 and the paragraph, on any width.
         final between = RegExp(
           '</h1>(.*?)<p class="bc-lede',

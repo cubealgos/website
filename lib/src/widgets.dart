@@ -53,9 +53,9 @@ class BackLink extends StatelessComponent {
 Component t(String value) => Component.text(value);
 
 /// The words that must never be split by the browser's automatic hyphenation:
-/// the product's name (wearenotabank `DEC-082` D2: "bank" is never set apart)
-/// and the founder's name.
-const noHyphenTerms = ['wearenotabank', 'Kevin Scheeren'];
+/// the product's name (wearenotabank `DEC-082` D2: "bank" is never set apart),
+/// its library viem_dart and the founder's name.
+const noHyphenTerms = ['wearenotabank', 'viem_dart', 'Kevin Scheeren'];
 
 final _noHyphen = RegExp(noHyphenTerms.map(RegExp.escape).join('|'));
 

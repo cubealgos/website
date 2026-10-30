@@ -2,14 +2,16 @@
 
 /// The home page copy, EN and DE side by side: the business card, layout B
 /// "Steckbrief" (brand decisions 56, 58 and 59; copy direction C of the
-/// reframe of 2026-10-29 with the regulatory edits E-C-2 and E-C-3; all rights
-/// reserved). Components render it, tests compare the built pages against it.
-/// The copy says what the studio is and makes, offers no client work, names
-/// no price and describes no software beyond wearenotabank.
+/// reframe of 2026-10-29 with the regulatory edits E-C-2 and E-C-3, and the
+/// H1 and paragraph of copy direction 2 "Dart trifft EVM" of 2026-10-30; all
+/// rights reserved). Components render it, tests compare the built pages
+/// against it. The copy says what the studio is and makes, offers no client
+/// work, names no price and describes no software beyond wearenotabank.
 ///
-/// The page exists in two states ([namesProduct]): named, with the H1 "Cube
-/// Algos is the studio behind wearenotabank." and the button to its GitHub
-/// organisation, and unnamed, with `h1Unnamed` (copy section 3.5) and the
+/// The page exists in two states ([namesProduct]): named, with the H1 "We
+/// build tools that connect Dart apps to EVM chains.", a paragraph that names
+/// wearenotabank and viem_dart, and the button to its GitHub organisation;
+/// and unnamed, with `h1Unnamed` (copy section 3.5), `ledeUnnamed` and the
 /// button to the contact page. Everything that differs is a field here.
 library;
 
@@ -27,17 +29,24 @@ String headlineText(Headline h) => '${h.pre}${h.mark}${h.post}';
 typedef HomeCopy = ({
   String eyebrow,
 
-  /// The H1 of the named state ([namesProduct]); the mark is the whole word
-  /// `wearenotabank`.
+  /// The H1 of the named state ([namesProduct]); the mark is the whole
+  /// phrase for the reader's side, the Dart apps.
   Headline h1,
 
   /// The H1 of the unnamed state (copy section 3.5).
   Headline h1Unnamed,
 
-  /// The paragraph under the H1, directly, at every width: it names the
-  /// object (developer tools: smart contracts, SDKs, libraries) so that the
-  /// name never meets a reader alone (regulatory edits E-C-2 and E-C-3).
+  /// The paragraph under the H1 in the named state, directly, at every
+  /// width: it names wearenotabank next to its object (SDKs, libraries,
+  /// smart contracts), so that the name never meets a reader alone
+  /// (wearenotabank `DEC-082` D3, regulatory edit E-C-3), never makes the
+  /// name the actor (D10), and calls viem_dart an independent port, never an
+  /// official viem release (regulatory edit E-C-6).
   String lede,
+
+  /// The paragraph of the unnamed state: the object line of regulatory edit
+  /// E-C-2, without the product's name.
+  String ledeUnnamed,
 
   /// The product's name as the Produkt row shows it: always the whole word,
   /// in lower case (wearenotabank `DEC-082` D2).
@@ -64,9 +73,9 @@ const Map<Lang, HomeCopy> homeCopy = {
   Lang.en: (
     eyebrow: 'Software studio · Heinsberg',
     h1: (
-      pre: 'Cube Algos is the studio behind ',
-      mark: 'wearenotabank',
-      post: '.',
+      pre: 'We build tools that connect ',
+      mark: 'Dart apps',
+      post: ' to EVM chains.',
     ),
     h1Unnamed: (
       pre: 'We build ',
@@ -74,6 +83,11 @@ const Map<Lang, HomeCopy> homeCopy = {
       post: ' software for EVM chains.',
     ),
     lede:
+        'Under the name wearenotabank we make SDKs, libraries and smart '
+        'contracts, among them viem_dart, an independent port of viem to pure '
+        'Dart. Kevin Scheeren founded the studio in Heinsberg in 2023 and runs '
+        'it as managing director.',
+    ledeUnnamed:
         'We make developer tools: smart contracts, SDKs and libraries for EVM '
         'chains, with a focus on Dart. Kevin Scheeren founded the studio in '
         'Heinsberg in 2023 and runs it as managing director.',
@@ -90,9 +104,9 @@ const Map<Lang, HomeCopy> homeCopy = {
   Lang.de: (
     eyebrow: 'Softwarestudio · Heinsberg',
     h1: (
-      pre: 'Cube Algos ist das Studio hinter ',
-      mark: 'wearenotabank',
-      post: '.',
+      pre: 'Wir bauen Werkzeuge, die ',
+      mark: 'Dart-Apps',
+      post: ' mit EVM-Chains verbinden.',
     ),
     h1Unnamed: (
       pre: 'Wir bauen ',
@@ -100,6 +114,11 @@ const Map<Lang, HomeCopy> homeCopy = {
       post: ' Software für EVM-Chains.',
     ),
     lede:
+        'Unter dem Namen wearenotabank entstehen SDKs, Bibliotheken und Smart '
+        'Contracts, darunter viem_dart, eine unabhängige Portierung von viem '
+        'in reines Dart. Gegründet hat das Studio Kevin Scheeren 2023 in '
+        'Heinsberg; er führt es als Geschäftsführer.',
+    ledeUnnamed:
         'Wir bauen Werkzeuge für die Softwareentwicklung: Smart Contracts, '
         'SDKs und Bibliotheken für EVM-Chains, mit Schwerpunkt auf Dart. '
         'Gegründet hat das Studio Kevin Scheeren 2023 in Heinsberg; er führt '
@@ -119,3 +138,7 @@ const Map<Lang, HomeCopy> homeCopy = {
 /// The headline of [lang] in the state in which the site [named] the product.
 Headline homeHeadline(Lang lang, {bool named = namesProduct}) =>
     named ? homeCopy[lang]!.h1 : homeCopy[lang]!.h1Unnamed;
+
+/// The paragraph of [lang] in the state in which the site [named] the product.
+String homeLede(Lang lang, {bool named = namesProduct}) =>
+    named ? homeCopy[lang]!.lede : homeCopy[lang]!.ledeUnnamed;
