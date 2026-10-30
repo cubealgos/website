@@ -74,7 +74,7 @@ class HomePage extends StatelessComponent {
       p(
         classes: 'bc-lede rise',
         attributes: const {'data-i': '2'},
-        noHyphen(c.lede),
+        noHyphen(homeLede(lang, named: productNamed)),
       ),
       el(
         'div',

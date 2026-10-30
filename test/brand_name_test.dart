@@ -15,6 +15,7 @@ import 'dart:io';
 
 import 'package:test/test.dart';
 import 'package:website/src/content/site_content.dart';
+import 'package:website/src/copy/home_copy.dart';
 import 'package:website/src/routes.dart';
 import 'package:website/src/widgets.dart';
 
@@ -134,7 +135,17 @@ void main() {
         ).allMatches(html))
           m[1],
       ];
-      expect(marks, ['wearenotabank'], reason: lang.code);
+      // The H1 marks the Dart apps; a mark that touched the name would have
+      // to cover the whole word.
+      expect(marks, [homeCopy[lang]!.h1.mark], reason: lang.code);
+      for (final mark in marks) {
+        expect(
+          mark == 'wearenotabank' ||
+              !mark!.toLowerCase().contains(RegExp('bank|notab')),
+          isTrue,
+          reason: '${lang.code}: "$mark"',
+        );
+      }
     }
     // No element wraps a part of the word either: the scan of every file
     // above reports a name split by a tag as a spelling or a loose "bank".
@@ -164,32 +175,27 @@ void main() {
     );
   });
 
-  test(
-    'every wearenotabank and Kevin Scheeren is wrapped, none hyphenated',
-    () {
-      final hits = <String>[];
-      var wrapped = 0;
-      for (final f in _textFiles().where((f) => f.path.endsWith('.html'))) {
-        final html = f.readAsStringSync();
-        hits.addAll(unwrappedTerms(html).map((t) => '${f.path}: $t'));
-        wrapped += RegExp('class="(mark )?nohy"').allMatches(html).length;
-      }
-      expect(hits, isEmpty);
-      // Home (both languages) and Contact carry the name several times, the
-      // Impressum and Home the founder's name.
-      expect(wrapped, greaterThanOrEqualTo(12));
-      final css = File('$_buildDir/site.css').readAsStringSync();
-      expect(
-        RegExp(r'\.nohy\s*\{[^}]*\bhyphens:\s*none').hasMatch(css),
-        isTrue,
-      );
-    },
-  );
+  test('every wearenotabank, viem_dart and Kevin Scheeren is wrapped, none '
+      'hyphenated', () {
+    final hits = <String>[];
+    var wrapped = 0;
+    for (final f in _textFiles().where((f) => f.path.endsWith('.html'))) {
+      final html = f.readAsStringSync();
+      hits.addAll(unwrappedTerms(html).map((t) => '${f.path}: $t'));
+      wrapped += RegExp('class="(mark )?nohy"').allMatches(html).length;
+    }
+    expect(hits, isEmpty);
+    // Home (both languages) and Contact carry the name several times, Home
+    // viem_dart, the Impressum the founder's name.
+    expect(wrapped, greaterThanOrEqualTo(12));
+    final css = File('$_buildDir/site.css').readAsStringSync();
+    expect(RegExp(r'\.nohy\s*\{[^}]*\bhyphens:\s*none').hasMatch(css), isTrue);
+  });
 
   test('noHyphen wraps the words and leaves the rest as text', () {
-    expect(noHyphenTerms, ['wearenotabank', 'Kevin Scheeren']);
-    final parts = noHyphen('Hi wearenotabank, Kevin Scheeren.');
-    expect(parts, hasLength(5));
+    expect(noHyphenTerms, ['wearenotabank', 'viem_dart', 'Kevin Scheeren']);
+    final parts = noHyphen('Hi wearenotabank, viem_dart, Kevin Scheeren.');
+    expect(parts, hasLength(7));
     expect(noHyphen('nothing to wrap'), hasLength(1));
     expect(noHyphen(''), isEmpty);
   });
@@ -213,7 +219,8 @@ void main() {
       // The first paragraph, directly under the H1, names it too.
       final paragraph = mainBlocks(html)[2];
       expect(paragraph, matches(object[lang]!), reason: lang.code);
-      expect(paragraph, isNot(contains('wearenotabank')));
+      // The name sits in the same paragraph as its object.
+      expect(paragraph, contains('wearenotabank'));
       // And so does the title's neighbour: the eyebrow names the studio kind.
       expect(
         mainBlocks(html).first,

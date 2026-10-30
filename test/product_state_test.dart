@@ -50,8 +50,16 @@ void main() {
 
       test('the H1, the button and the Produkt row name the product', () {
         final c = homeCopy[lang]!;
-        expect(html, contains(headlineText(c.h1).split('wearenotabank').first));
-        expect(html, contains('<span class="mark nohy">wearenotabank</span>'));
+        expect(
+          html,
+          contains(
+            '${c.h1.pre}<span class="mark nohy">${c.h1.mark}</span>'
+            '${c.h1.post}',
+          ),
+        );
+        expect(html, contains('<span class="nohy">wearenotabank</span>'));
+        expect(html, contains('<span class="nohy">viem_dart</span>'));
+        expect(_text(html), contains(c.lede));
         expect(html, contains('href="$wearenotabankOrgUrl"'));
         expect('class="btn"'.allMatches(html), hasLength(1));
         expect('<dt>'.allMatches(html), hasLength(5));
@@ -97,8 +105,10 @@ void main() {
         expect(home, isNot(contains('class="ext"')));
         expect(home, isNot(matches(_brand)));
         expect(home, isNot(contains(wearenotabankOrgUrl)));
-        // The paragraph does not name it and stays as it is.
-        expect(_text(home), contains(c.lede));
+        // The paragraph names neither the product nor its library.
+        expect(_text(home), contains(c.ledeUnnamed));
+        expect(_text(home), isNot(contains(c.lede)));
+        expect(home, isNot(contains('viem_dart')));
       });
 
       test(

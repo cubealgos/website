@@ -27,7 +27,7 @@ const Map<PageKey, Map<Lang, PageMeta>> pageMeta = {
           'Cube Algos is the software studio behind wearenotabank: smart '
           'contracts, SDKs and Dart libraries for EVM chains. In Heinsberg, '
           'Germany, since 2023.',
-      h1: 'Cube Algos is the studio behind wearenotabank.',
+      h1: 'We build tools that connect Dart apps to EVM chains.',
     ),
     Lang.de: (
       title: 'Cube Algos UG | Softwarestudio in Heinsberg',
@@ -35,7 +35,7 @@ const Map<PageKey, Map<Lang, PageMeta>> pageMeta = {
           'Cube Algos ist das Softwarestudio hinter wearenotabank: Smart '
           'Contracts, SDKs und Dart-Bibliotheken für EVM-Chains. Seit 2023 in '
           'Heinsberg.',
-      h1: 'Cube Algos ist das Studio hinter wearenotabank.',
+      h1: 'Wir bauen Werkzeuge, die Dart-Apps mit EVM-Chains verbinden.',
     ),
   },
   PageKey.contact: {
